@@ -1,13 +1,42 @@
 <body class="hold-transition skin-blue sidebar-mini fixed">
-<style>
-/* Fixed Navbar & Blur Effect */
-.main-header { position: fixed; width: 100%; top: 0; z-index: 1030; }
-.content-wrapper { margin-top: 50px; }
-.navbar { 
-    background-color: rgba(60, 141, 188, 0.7) !important; 
-    backdrop-filter: blur(10px); 
-    -webkit-backdrop-filter: blur(10px);
-}
-.logo { background-color: rgba(54, 127, 169, 0.8) !important; }
-</style>
-<div class="wrapper">  <header class="main-header">    <!-- Logo -->    <a href="<?php echo base_url();?>" class="logo">      <!-- mini logo for sidebar mini 50x50 pixels -->      <span class="logo-mini"><b>A</b>LT</span>      <!-- logo for regular state and mobile devices -->      <span class="logo-lg"><b>SPPD</b></span>    </a>    <!-- Header Navbar: style can be found in header.less -->    <nav class="navbar navbar-fixed-top">      <!-- Sidebar toggle button-->      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">		<i class="fa fa-list"></i>      </a>      <div class="navbar-custom-menu">        <ul class="nav navbar-nav">          <li class="dropdown user user-menu">            <a href="#" class="dropdown-toggle" data-toggle="dropdown">			<?php if($this->ion_auth->user()->row()->photo==""){?>                <img src="<?php echo base_url();?>assets2/dist/img/user.png" class="user-image" alt="User Image">			<?php } else {?>                <img src="<?php echo base_url();?>upload/profil/<?php echo $this->ion_auth->user()->row()->photo;?>" class="user-image" alt="User Image">			<?php } ?>              <span class="hidden-xs"><?php echo $this->ion_auth->user()->row()->first_name;?> <?php echo $this->ion_auth->user()->row()->last_name;?></span>            </a>            <ul class="dropdown-menu">              <!-- User image -->              <li class="user-header">				<?php if($this->ion_auth->user()->row()->photo==""){?>					<img src="<?php echo base_url();?>assets2/dist/img/user.png" class="img-circle" alt="User Image">				<?php } else {?>					<img src="<?php echo base_url();?>upload/profil/<?php echo $this->ion_auth->user()->row()->photo;?>" class="img-circle" alt="User Image">				<?php } ?>              </li>              <!-- Menu Footer-->              <li class="user-footer">                <div class="pull-left">                  <a href="<?php echo base_url()?>setting_root/user/update_view2/<?php echo $this->ion_auth->user()->row()->id;?>" class="btn btn-default btn-flat">Profile</a>                </div>                <div class="pull-right">                  <a href="<?php echo base_url()?>login/logout" class="btn btn-default btn-flat">Sign out</a>                </div>              </li>            </ul>          </li>        </ul>      </div>    </nav>  </header>
+    <style>
+        /* Fixed Navbar & Blur Effect */
+        .main-header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1030;
+        }
+
+        .content-wrapper {
+            margin-top: 50px;
+        }
+
+        .navbar {
+            background-color: rgba(60, 141, 188, 0.7) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            background-color: rgba(54, 127, 169, 0.8) !important;
+        }
+    </style>
+    <div class="wrapper">
+        <header class="main-header"> <!-- Logo --> <a href="<?php echo base_url(); ?>" class="logo"> <!-- mini logo for sidebar mini 50x50 pixels --> <span class="logo-mini"><b>A</b>LT</span> <!-- logo for regular state and mobile devices --> <span class="logo-lg"><b>SPPD</b></span> </a> <!-- Header Navbar: style can be found in header.less -->
+            <nav class="navbar navbar-fixed-top"> <!-- Sidebar toggle button--> <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button"> <i class="fa fa-list"></i> </a>
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown user user-menu"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <img src="<?php echo cek_file('upload/profil/' . $this->ion_auth->user()->row()->photo, 'assets2/dist/img/user.png'); ?>" class="user-image" alt="User Image"> <span class="hidden-xs"><?php echo $this->ion_auth->user()->row()->first_name; ?> <?php echo $this->ion_auth->user()->row()->last_name; ?></span> </a>
+                            <ul class="dropdown-menu"> <!-- User image -->
+                                <li class="user-header"> <img src="<?php echo cek_file('upload/profil/' . $this->ion_auth->user()->row()->photo, 'assets2/dist/img/user.png'); ?>" class="img-circle" alt="User Image"> </li> <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-left"> <a href="<?php echo base_url() ?>setting_root/user/update_view2/<?php echo $this->ion_auth->user()->row()->id; ?>" class="btn btn-default btn-flat">Profile</a> </div>
+                                    <div class="pull-right"> <a href="<?php echo base_url() ?>login/logout" class="btn btn-default btn-flat">Sign out</a> </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>

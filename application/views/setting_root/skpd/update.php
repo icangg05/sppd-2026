@@ -75,7 +75,7 @@ $is_superadmin = ($this->ion_auth->get_users_groups()->row()->id == 100 || ($thi
 								<label>KOP Surat</label>
 								<input type="file" class="form-control" name="userfile" value="<?php echo $entry[0]['kop_surat']; ?>">
 								<?php if ($entry[0]['kop_surat']) { ?>
-									<img src="<?php echo base_url(); ?>upload/kop_surat/<?php echo $entry[0]['kop_surat'] ?>" width="500">
+									<img src="<?php echo cek_file('upload/kop_surat/' . $entry[0]['kop_surat'], 'assets/img/works/1big-1.jpg'); ?>" width="500">
 								<?php } ?>
 							</div>
 						</div>
@@ -86,7 +86,7 @@ $is_superadmin = ($this->ion_auth->get_users_groups()->row()->id == 100 || ($thi
 									<label>KOP Surat Anggota DPRD</label>
 									<input type="file" class="form-control" name="userfile2" value="<?php echo $entry[0]['kop_surat2']; ?>">
 									<?php if ($entry[0]['kop_surat2']) { ?>
-										<img src="<?php echo base_url(); ?>upload/kop_surat/<?php echo $entry[0]['kop_surat2'] ?>" width="500">
+										<img src="<?php echo cek_file('upload/kop_surat/' . $entry[0]['kop_surat2'], 'assets/img/works/1big-1.jpg'); ?>" width="500">
 									<?php } ?>
 								</div>
 							</div>

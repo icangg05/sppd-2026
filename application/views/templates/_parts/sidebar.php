@@ -96,11 +96,7 @@
 		<!-- Sidebar user panel -->
 		<div class="user-panel">
 			<div class="pull-left image">
-				<?php if ($this->ion_auth->user()->row()->photo == "") { ?>
-					<img src="<?php echo base_url(); ?>assets2/dist/img/user.png" class="img-circle" alt="User Image">
-				<?php } else { ?>
-					<img src="<?php echo base_url(); ?>upload/profil/<?php echo $this->ion_auth->user()->row()->photo; ?>" class="img-circle" alt="User Image">
-				<?php } ?>
+				<img src="<?php echo cek_file('upload/profil/' . $this->ion_auth->user()->row()->photo, 'assets2/dist/img/user.png'); ?>" class="img-circle" alt="User Image">
 			</div>
 			<div class="pull-left info">
 				<p><?php echo $this->ion_auth->user()->row()->username; ?></p>

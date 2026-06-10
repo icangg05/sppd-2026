@@ -1,0 +1,29 @@
+# === CI3 Runtime ===
+application/logs/
+application/cache/
+application/config/database.php
+
+# === Upload & User Data ===
+# upload/
+# uploads/
+db/
+db_backup/
+temp-backup/
+_OLD_APP_BACKUP/
+# kop_surat/
+
+# === Logs ===
+error_log
+*.log
+
+# === Env & Secret ===
+.env
+.env.*
+
+# === Dependency ===
+vendor/
+node_modules/
+
+# === OS ===
+.DS_Store
+Thumbs.db

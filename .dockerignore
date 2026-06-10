@@ -1,0 +1,12 @@
+upload/
+db/
+temp-backup/
+.git
+.idea
+.vscode
+docker-compose.yml
+Dockerfile
+README.md
+**/*.tar.gz
+**/*.zip
+error_log

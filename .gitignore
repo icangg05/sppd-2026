@@ -4,8 +4,8 @@ application/cache/
 application/config/database.php
 
 # === Upload & User Data ===
-# upload/
-# uploads/
+upload/
+uploads/
 db/
 db_backup/
 temp-backup/

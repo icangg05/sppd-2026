@@ -176,16 +176,9 @@
 													} ?>"><a href="<?php echo base_url(); ?>telaah/list_telaah/index/sekwan"><i class="fa fa-dot-circle"></i> Sekwan</a></li>
 							<!-- Sekda -->
 						<?php } else if ($this->ion_auth->user()->row()->jenis_skpd == 3) { ?>
-							<?php
-							//cek kalo kasubag rt id 671 
-							if ($this->ion_auth->user()->row()->id == 671) {
-							?>
-								<li class="<?php if ($this->uri->segment(4) == "walikota") {
-															echo "active";
-														} ?>"><a href="<?php echo base_url(); ?>telaah/list_telaah/index/walikota"><i class="fa fa-dot-circle"></i> Walikota</a></li>
-							<?php
-							}
-							?>
+							<li class="<?php if ($this->uri->segment(4) == "walikota") {
+														echo "active";
+													} ?>"><a href="<?php echo base_url(); ?>telaah/list_telaah/index/walikota"><i class="fa fa-dot-circle"></i> Walikota</a></li>
 							<li class="<?php if ($this->uri->segment(4) == "sekda") {
 														echo "active";
 													} ?>"><a href="<?php echo base_url(); ?>telaah/list_telaah/index/sekda"><i class="fa fa-dot-circle"></i> Sekda, Asisten & Kabag (SETDA)</a></li>
@@ -796,14 +789,9 @@
 													} ?>"><a href="<?php echo base_url(); ?>telaah/list_telaah/index/sekwan"><i class="fa fa-dot-circle"></i> Sekwan</a></li>
 							<!-- Sekda -->
 						<?php } else if ($this->ion_auth->user()->row()->jenis_skpd == 3) { ?>
-							<?php
-							//cek kalo admin sekda id 31 
-							if ($this->ion_auth->user()->row()->id == 31) {
-							?>
-								<li class="<?php if ($this->uri->segment(4) == "walikota" || $this->uri->segment(5) == "walikota") {
-															echo "active";
-														} ?>"><a href="<?php echo base_url(); ?>telaah/list_telaah/index/walikota"><i class="fa fa-dot-circle"></i> Walikota</a></li>
-							<?php } ?>
+							<li class="<?php if ($this->uri->segment(4) == "walikota" || $this->uri->segment(5) == "walikota") {
+														echo "active";
+													} ?>"><a href="<?php echo base_url(); ?>telaah/list_telaah/index/walikota"><i class="fa fa-dot-circle"></i> Walikota</a></li>
 							<li class="<?php if ($this->uri->segment(4) == "sekda" || $this->uri->segment(5) == "sekda") {
 														echo "active";
 													} ?>"><a href="<?php echo base_url(); ?>telaah/list_telaah/index/sekda"><i class="fa fa-dot-circle"></i> Sekda, Asisten & Kabag (SETDA)</a></li>
@@ -893,6 +881,9 @@
 							<li class="<?php if ($this->uri->segment(2) == "walikota") {
 														echo "active";
 													} ?>"><a href="<?php echo base_url(); ?>setting_admin/walikota"><i class="fa fa-dot-circle"></i> Walikota</a></li>
+							<li class="<?php if ($this->uri->segment(2) == "setuju_bayar") {
+														echo "active";
+													} ?>"><a href="<?php echo base_url(); ?>setting_admin/setuju_bayar"><i class="fa fa-dot-circle"></i> Setuju Bayar (SETDA)</a></li>
 						<?php } ?>
 						<li class="<?php if ($this->uri->segment(2) == "pegawai") {
 													echo "active";

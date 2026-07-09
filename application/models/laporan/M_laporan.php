@@ -1194,4 +1194,37 @@ class M_laporan extends CI_Model
 
 		return $query->result_array();
 	}
+
+	/**
+	 * Khusus SETDA: nilai penandatangan "Setuju Bayar / Mengetahui" diambil dari
+	 * file upload/json/data.json (menggantikan data dari database) sehingga dinamis.
+	 * Struktur JSON: { "label", "nama", "asal_opd", "nip" }.
+	 * Mengembalikan array bentuk hasil query (index 0) agar kompatibel dengan
+	 * kode cetak yang memakai pegawai_nama / pegawai_nip / pegawai_namajabatan.
+	 * Bila file tidak ada / tidak valid / nama kosong, mengembalikan array kosong
+	 * sehingga pemanggil bisa fallback ke data database (get_sekda).
+	 */
+	public function get_setda_json()
+	{
+		$path = FCPATH . 'upload/json/data.json';
+
+		if (!is_file($path)) {
+			return array();
+		}
+
+		$json = json_decode(file_get_contents($path), true);
+
+		if (!is_array($json) || !isset($json['nama']) || trim($json['nama']) === '') {
+			return array();
+		}
+
+		return array(array(
+			'pegawai_nama'        => isset($json['nama']) ? $json['nama'] : '',
+			'pegawai_nip'         => isset($json['nip']) ? $json['nip'] : '',
+			'pegawai_namajabatan' => isset($json['label']) ? $json['label'] : '',
+			'setda_label'         => isset($json['label']) ? $json['label'] : '',
+			'setda_asal_opd'      => isset($json['asal_opd']) ? $json['asal_opd'] : '',
+			'setda_json'          => 1,
+		));
+	}
 }

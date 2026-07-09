@@ -1785,7 +1785,8 @@ class Laporan extends public_Controller {
 			$pdf->Cell(145,6,'BENDAHARA DANA KAPITASI JKN',0,0);
 			$pdf->Cell(60,6,'',0,1,'');
 		}else{
-			$pdf->Cell(55,6,'PENGGUNA ANGGARAN',0,0);
+			$pa_label = (!empty($data2[0]['setda_json'])) ? $data2[0]['setda_label'] : 'PENGGUNA ANGGARAN';
+			$pdf->Cell(55,6,$pa_label,0,0);
 			$pdf->Cell(3,6,'',0,0);
 			$pdf->Cell(145,6,'BENDAHARA PENGELUARAN',0,0);
 			$pdf->Cell(60,6,'',0,1,'');
@@ -1916,8 +1917,16 @@ class Laporan extends public_Controller {
 										$panjar = $this->m_kuitansi->get_kuitansi_panjar_walikota($telaah_id,$this->input->get('pegawai_id'));
 										break;
 		}
-		
-		
+
+		// Override khusus SETDA: penandatangan "Setuju Bayar / Pengguna Anggaran"
+		// diambil dari upload/json/data.json bila tersedia (kategori telaah SETDA).
+		if(in_array($data[0]['telaah_kategori'], array(4,8,9))){
+			$setda_json = $this->m_laporan->get_setda_json();
+			if(!empty($setda_json)){
+				$data2 = $setda_json;
+			}
+		}
+
 		if($data[0]['telaah_ttdspd']==1 || $data[0]['telaah_ttdspd']==14 ){
 			$tanda_tangan = $this->m_laporan->tanda_tangan_walikota($data[0]['telaah_ttdspd']);
 		} else {
@@ -2048,7 +2057,8 @@ class Laporan extends public_Controller {
 			$pdf->Cell(145,6,'BENDAHARA DANA KAPITASI JKN',0,0);
 			$pdf->Cell(60,6,'',0,1,'');
 		}else{
-			$pdf->Cell(55,6,'PENGGUNA ANGGARAN',0,0);
+			$pa_label = (!empty($data2[0]['setda_json'])) ? $data2[0]['setda_label'] : 'PENGGUNA ANGGARAN';
+			$pdf->Cell(55,6,$pa_label,0,0);
 			$pdf->Cell(3,6,'',0,0);
 			$pdf->Cell(145,6,'BENDAHARA PENGELUARAN',0,0);
 			$pdf->Cell(60,6,'',0,1,'');
@@ -2063,13 +2073,19 @@ class Laporan extends public_Controller {
 		$border = array(0,0,0,0,0);
 		$align = array('C','','C','','C');
 		
+		// Kolom Pengguna Anggaran: bila SETDA (dari JSON) sertakan asal OPD di atas nama
+		$pa_col = $data2[0]['pegawai_nama']."\n".'NIP. '.$data2[0]['pegawai_nip'];
+		// if(!empty($data2[0]['setda_json']) && trim($data2[0]['setda_asal_opd'])!==''){
+		// 	$pa_col = $data2[0]['setda_asal_opd']."\n".$data2[0]['pegawai_nama']."\n".'NIP. '.$data2[0]['pegawai_nip'];
+		// }
+
        if($data[0]['pegawai_jabatan']==1 || $data[0]['pegawai_jabatan']==16 || $data[0]['telaah_kategori']==3 || $data[0]['pegawai_nip']==0
 				|| $data[0]['pegawai_nip']==00|| $data[0]['pegawai_nip']==000){
-				$caption = array($data2[0]['pegawai_nama']."\n".'NIP. '.$data2[0]['pegawai_nip'],'',
+				$caption = array($pa_col,'',
 							 $bendahara[0]['pegawai_nama']."\n".'NIP. '.$bendahara[0]['pegawai_nip'],'',
 							 $data[0]['pegawai_nama']);
 			} else {
-				$caption = array($data2[0]['pegawai_nama']."\n".'NIP. '.$data2[0]['pegawai_nip'],'',
+				$caption = array($pa_col,'',
 							 $bendahara[0]['pegawai_nama']."\n".'NIP. '.$bendahara[0]['pegawai_nip'],'',
 							 $data[0]['pegawai_nama']."\n".'NIP. '.$data[0]['pegawai_nip']);
 			}
@@ -2161,9 +2177,16 @@ class Laporan extends public_Controller {
 			$tanda_tangan = $this->m_laporan->get_sekwan();
 		} else if($data[0]['telaah_kategori']==11 && $data[0]['telaah_jenis_skpd']==7 ) {
 			$tanda_tangan = $this->m_laporan->get_kepala_puskesmas($this->ion_auth->user()->row()->skpd_id);
-		} 	
-		
-		
+		}
+
+		// Override khusus SETDA: penandatangan "Setuju bayar" diambil dari upload/json/data.json
+		if(in_array($data[0]['telaah_kategori'], array(4,8,9))){
+			$setda_json = $this->m_laporan->get_setda_json();
+			if(!empty($setda_json)){
+				$tanda_tangan = $setda_json;
+			}
+		}
+
 		$pptk = $this->m_laporan->tanda_tangan($data[0]['telaah_ttdpptk']);
 
 		$staff_sekda = false;
@@ -2399,8 +2422,12 @@ class Laporan extends public_Controller {
 		$skpd_nama2 = ucwords($skpd_nama);
 		
 		$pdf->Cell(10,6,'',0,0,'C');
-		$pdf->Cell(7,6,$tanda_tangan[0]['pegawai_namajabatan'],0,0);
-		
+		$sb_jabatan = $tanda_tangan[0]['pegawai_namajabatan'];
+		// if(!empty($tanda_tangan[0]['setda_json']) && trim($tanda_tangan[0]['setda_asal_opd'])!==''){
+		// 	$sb_jabatan .= ' '.$tanda_tangan[0]['setda_asal_opd'];
+		// }
+		$pdf->Cell(7,6,$sb_jabatan,0,0);
+
 		$pdf->Cell(100,6,'',0,0);
 		$pdf->Cell(7,6,'Pejabat Pelaksana Teknis Kegiatan',0,0);
 		$pdf->Cell(7,6,'',0,0);
@@ -2506,9 +2533,16 @@ class Laporan extends public_Controller {
 			$tanda_tangan = $this->m_laporan->get_sekda(3);
 		} else if($data[0]['telaah_kategori']==11 && $data[0]['telaah_jenis_skpd']==7 ) {
 			$tanda_tangan = $this->m_laporan->get_kepala_puskesmas($this->ion_auth->user()->row()->skpd_id);
-		} 	
-		
-		
+		}
+
+		// Override khusus SETDA: penandatangan "Mengetahui" diambil dari upload/json/data.json
+		if(in_array($data[0]['telaah_kategori'], array(4,8,9,10))){
+			$setda_json = $this->m_laporan->get_setda_json();
+			if(!empty($setda_json)){
+				$tanda_tangan = $setda_json;
+			}
+		}
+
 		$pptk = $this->m_laporan->tanda_tangan($data[0]['telaah_ttdpptk']);
 		
         $pdf = new PDF_MC_Table('P','mm','legal');
@@ -2637,8 +2671,12 @@ class Laporan extends public_Controller {
 		$skpd_nama2 = ucwords($skpd_nama);
 		
         $pdf->Cell(40,6,'',0,0,'C');
-		
-		$pdf->MultiCell(80,6,$tanda_tangan[0]['pegawai_namajabatan'],0,'C');
+
+		$mengetahui_jabatan = $tanda_tangan[0]['pegawai_namajabatan'];
+		// if(!empty($tanda_tangan[0]['setda_json']) && trim($tanda_tangan[0]['setda_asal_opd'])!==''){
+		// 	$mengetahui_jabatan .= "\n".$tanda_tangan[0]['setda_asal_opd'];
+		// }
+		$pdf->MultiCell(80,6,$mengetahui_jabatan,0,'C');
 		
 		$pdf->Cell(10,15,'',0,1);
         $pdf->SetFont('Times','BU',10);

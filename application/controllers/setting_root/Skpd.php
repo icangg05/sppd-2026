@@ -176,7 +176,7 @@ class Skpd extends public_Controller
 				$this->m_log->create($log);
 
 				$this->session->set_flashdata('notif', 'Data SKPD Di SImpan !');
-				redirect('setting_root/setting_root/skpd');
+				redirect('setting_root/skpd');
 			} else {
 
 				$filename = $this->input->post('skpd_nama');
@@ -248,7 +248,7 @@ class Skpd extends public_Controller
 					$this->m_log->create($log);
 
 					$this->session->set_flashdata('notif', 'Data SKPD Di Simpan !');
-					redirect('setting_root/setting_root/skpd');
+					redirect('setting_root/skpd');
 				}
 			}
 		}

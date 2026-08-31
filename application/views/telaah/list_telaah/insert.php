@@ -781,6 +781,9 @@
 	$(document).ready(function() {
 
 		$('#myModalCekAnggaran').on('show.bs.modal', function() {
+			// #pelaksana-select hanya ada pada SPPD lanjutan; alur normal sudah diisi showPelaksana()
+			if (!$('#pelaksana-select').length) return;
+
 			var text = $('#pelaksana-select option:selected').text().trim();
 
 			if (!text || text === '- Pilih -') {

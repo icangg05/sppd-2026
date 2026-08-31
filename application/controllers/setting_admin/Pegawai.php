@@ -540,7 +540,7 @@ class Pegawai extends public_Controller
 		echo "</span></p>";
 
 		if ($this->ion_auth->user()->row()->skpd_id == 182) {
-			echo '<select class="form-control" name="telaah_jabatan_pelaksana" required>
+			echo '<select class="form-control" form="form-telaah" name="telaah_jabatan_pelaksana" required>
 				<option value="" >- Pilih Jabatan Dalam Perjalanan -</option>
 				<option value="1">Penanggung Jawab</option>
 				<option value="2">Pembantu Penanggung Jawab</option>
@@ -573,7 +573,7 @@ class Pegawai extends public_Controller
 			echo "</span></p>";
 
 			if ($this->ion_auth->user()->row()->skpd_id == 182) {
-				echo '<select class="form-control" name="telaah_jabatan_pengikut[]" required>
+				echo '<select class="form-control" form="form-telaah" name="telaah_jabatan_pengikut[]" required>
 						<option value="" >- Pilih Jabatan Dalam Perjalanan -</option>
 						<option value="1">Penanggung Jawab</option>
 						<option value="2">Pembantu Penanggung Jawab</option>

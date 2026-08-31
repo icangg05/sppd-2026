@@ -2127,6 +2127,8 @@ class Qr_new extends qr_Controller
 				$pdf->MultiCell(90, 6, "Anggota", 0, 1);
 			} else if ($data[0]['telaah_jabatan_pelaksana'] == 6) {
 				$pdf->MultiCell(90, 6, "Admin Tim", 0, 1);
+			} else { // TAMBAHAN KODE: jabatan kosong -> cegah baris tidak ganti
+				$pdf->MultiCell(90, 6, $data[0]['pegawai_namajabatan'], 0, 1);
 			}
 		} else {
 			$pdf->MultiCell(90, 6, $data[0]['pegawai_namajabatan'], 0, 1);
@@ -2195,6 +2197,8 @@ class Qr_new extends qr_Controller
 					$pdf->MultiCell(90, 6, "Anggota", 0, 1);
 				} else if ($v->telaah_jabatan_pengikut == 6) {
 					$pdf->MultiCell(90, 6, "Admin Tim", 0, 1);
+				} else { // TAMBAHAN KODE: jabatan kosong -> cegah baris tidak ganti
+					$pdf->MultiCell(90, 6, $v->pegawai_namajabatan, 0, 1);
 				}
 			} else {
 				$pdf->MultiCell(90, 6, $v->pegawai_namajabatan, 0, 1);

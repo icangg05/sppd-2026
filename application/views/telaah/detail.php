@@ -242,6 +242,8 @@
 												echo "<td class='col-md-3'>Anggota</td>";
 											} else if($entry[0]['telaah_jabatan_pelaksana']==6){
 												echo "<td class='col-md-3'>Admin Tim</td>";
+											} else { // jabatan kosong -> tetap cetak <td> agar kolom tidak bergeser
+												echo "<td class='col-md-3'>".$entry[0]['pegawai_namajabatan']."</td>";
 											}
 										} 
 										echo "<td><a href=".base_url()."telaah/history?pegawai_id=".$pelaksana." target='_blank'>Lihat History</a></td>";
@@ -277,6 +279,8 @@
 													echo "<td class='col-md-3'>Anggota</td>";
 												} else if($v->telaah_jabatan_pengikut==6){
 													echo "<td class='col-md-3'>Admin Tim</td>";
+												} else { // jabatan kosong -> tetap cetak <td> agar kolom tidak bergeser
+													echo "<td class='col-md-3'>".$v->pegawai_namajabatan."</td>";
 												}
 											} 
 											if($v->pegawai_jabatan==1){

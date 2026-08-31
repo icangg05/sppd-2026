@@ -248,6 +248,8 @@ class Api_tte extends qr_Controller {
 					$caption = array("","b.","Jabatan / Instansi","Anggota");
 				} else if($data[0]['telaah_jabatan_pelaksana']==6){
 					$caption = array("","b.","Jabatan / Instansi","Admin Tim");
+				} else { // TAMBAHAN KODE: jabatan kosong -> cegah $caption tak terdefinisi
+					$caption = array("","b.","Jabatan / Instansi",$data[0]['pegawai_namajabatan']);
 				}
 			} else {
 				if($data[0]['telaah_jabatan_pengikut']==1){
@@ -262,6 +264,8 @@ class Api_tte extends qr_Controller {
 					$caption = array("","b.","Jabatan / Instansi","Anggota");
 				} else if($data[0]['telaah_jabatan_pengikut']==6){
 					$caption = array("","b.","Jabatan / Instansi","Admin Tim");
+				} else { // TAMBAHAN KODE: jabatan kosong -> cegah $caption tak terdefinisi
+					$caption = array("","b.","Jabatan / Instansi",$data[0]['pegawai_namajabatan']);
 				}
 			}
 			
@@ -1259,6 +1263,8 @@ class Api_tte extends qr_Controller {
 				$pdf->MultiCell(90,6,"Anggota",0,1);
 			} else if($data[0]['telaah_jabatan_pelaksana']==6){
 				$pdf->MultiCell(90,6,"Admin Tim",0,1);
+			} else { // TAMBAHAN KODE: jabatan kosong -> cegah baris tidak ganti
+				$pdf->MultiCell(90,6,$data[0]['pegawai_namajabatan'],0,1);
 			}
 		} else {
 			$pdf->MultiCell(90,6,$data[0]['pegawai_namajabatan'],0,1);
@@ -1332,6 +1338,8 @@ class Api_tte extends qr_Controller {
 						$pdf->MultiCell(90,6,"Anggota",0,1);
 					} else if($v->telaah_jabatan_pengikut==6){
 						$pdf->MultiCell(90,6,"Admin Tim",0,1);
+					} else { // TAMBAHAN KODE: jabatan kosong -> cegah baris tidak ganti
+						$pdf->MultiCell(90,6,$v->pegawai_namajabatan,0,1);
 					}
 				} else {
 					$pdf->MultiCell(90,6,$v->pegawai_namajabatan,0,1);

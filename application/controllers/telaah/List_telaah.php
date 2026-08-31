@@ -1900,16 +1900,10 @@ class List_telaah extends public_Controller
 				break;
 
 			case "staff_setda":
-				$staff_sekda = $this->m_relasi_sekda->getsubbagian($this->ion_auth->user()->row()->id);
-				if ($staff_sekda) {
-					$this->data['pelaksana'] = $this->m_sekda->pegawai_setda($this->ion_auth->user()->row()->skpd_id, $staff_sekda[0]['bagian_id']);
-					$this->data['pengikut'] = $this->m_sekda->pegawai_setda($this->ion_auth->user()->row()->skpd_id, $staff_sekda[0]['bagian_id']);
-					$this->data['anggaran'] = $this->m_sekda->anggaran_setda($this->ion_auth->user()->row()->skpd_id, $staff_sekda[0]['bagian_id']);
-				} else {
-					$this->data['pelaksana'] = $this->m_sekda->pegawai($this->ion_auth->user()->row()->skpd_id);
-					$this->data['pengikut'] = $this->m_sekda->pegawai($this->ion_auth->user()->row()->skpd_id);
-					$this->data['anggaran'] = $this->m_sekda->anggaran($this->ion_auth->user()->row()->skpd_id);
-				}
+				// satu OPD (SETDA): pelaksana, pengikut & kegiatan sama dengan view sekda
+					$this->data['pelaksana'] = $this->m_pegawai->get_pegawai_skpd($this->ion_auth->user()->row()->skpd_id);
+					$this->data['pengikut'] = $this->m_pegawai->get_pegawai_skpd($this->ion_auth->user()->row()->skpd_id);
+					$this->data['anggaran'] = $this->m_anggaran->anggaran_opd($this->ion_auth->user()->row()->skpd_id);
 
 				$this->data['rekening'] = $this->m_sekda->rekening($this->ion_auth->user()->row()->skpd_id);
 				$this->data['provinsi'] = $this->m_sekda->get_provinsi();
@@ -2109,7 +2103,7 @@ class List_telaah extends public_Controller
 				$data['telaah_kecepatan'] = $this->input->post('telaah_kecepatan');
 				$data['telaah_pelaksana'] = $this->input->post('telaah_pelaksana');
 				if ($this->ion_auth->user()->row()->skpd_id == 182) {
-					$data['telaah_jabatan_pelaksana'] = $this->input->post('telaah_jabatan_pelaksana');
+					$data['telaah_jabatan_pelaksana'] = $this->input->post('telaah_jabatan_pelaksana') ?: null;
 					$data['telaah_no_surat_tugas'] = $this->input->post('telaah_no_surat_tugas');
 				}
 				if ($this->input->post('telaah_sekretariat') == 1) {
@@ -2277,7 +2271,7 @@ class List_telaah extends public_Controller
 					$data4['telaah_id'] = $last_id;
 					$data4['pegawai_id'] = $this->input->post('telaah_pengikut')[$i];
 					if ($this->ion_auth->user()->row()->skpd_id == 182) {
-						$data4['telaah_jabatan_pengikut'] = $this->input->post('telaah_jabatan_pengikut')[$i];
+						$data4['telaah_jabatan_pengikut'] = ($this->input->post('telaah_jabatan_pengikut')[$i] ?? '') ?: null;
 					}
 					$this->m_pengikut->create($data4);
 
@@ -2433,7 +2427,7 @@ class List_telaah extends public_Controller
 				$data['telaah_kecepatan'] = $this->input->post('telaah_kecepatan');
 				$data['telaah_pelaksana'] = $this->input->post('telaah_pelaksana');
 				if ($this->ion_auth->user()->row()->skpd_id == 182) {
-					$data['telaah_jabatan_pelaksana'] = $this->input->post('telaah_jabatan_pelaksana');
+					$data['telaah_jabatan_pelaksana'] = $this->input->post('telaah_jabatan_pelaksana') ?: null;
 					$data['telaah_no_surat_tugas'] = $this->input->post('telaah_no_surat_tugas');
 				}
 				if ($this->input->post('telaah_sekretariat') == 1) {
@@ -2598,7 +2592,7 @@ class List_telaah extends public_Controller
 					$data2['telaah_id']  = $last_id;
 					$data2['pegawai_id'] = $this->input->post('telaah_pengikut')[$i];
 					if ($this->ion_auth->user()->row()->skpd_id == 182) {
-						$data2['telaah_jabatan_pengikut'] = $this->input->post('telaah_jabatan_pengikut')[$i];
+						$data2['telaah_jabatan_pengikut'] = ($this->input->post('telaah_jabatan_pengikut')[$i] ?? '') ?: null;
 					}
 					$this->m_pengikut->create($data2);
 
@@ -2843,16 +2837,10 @@ class List_telaah extends public_Controller
 					break;
 
 				case "staff_setda":
-					$staff_sekda = $this->m_relasi_sekda->getsubbagian($this->ion_auth->user()->row()->id);
-					if ($staff_sekda) {
-						$this->data['pelaksana'] = $this->m_sekda->pegawai_setda($this->data['entry'][0]['skpd'], $staff_sekda[0]['bagian_id']);
-						$this->data['pengikut'] = $this->m_sekda->pegawai_setda($this->data['entry'][0]['skpd'], $staff_sekda[0]['bagian_id']);
-						$this->data['anggaran'] = $this->m_sekda->anggaran_setda($this->data['entry'][0]['skpd'], $staff_sekda[0]['bagian_id']);
-					} else {
-						$this->data['pelaksana'] = $this->m_sekda->pegawai($this->data['entry'][0]['skpd']);
-						$this->data['pengikut'] = $this->m_sekda->pegawai($this->data['entry'][0]['skpd']);
-						$this->data['anggaran'] = $this->m_sekda->anggaran($this->data['entry'][0]['skpd']);
-					}
+					// satu OPD (SETDA): pelaksana, pengikut & kegiatan sama dengan view sekda
+						$this->data['pelaksana'] = $this->m_pegawai->get_pegawai_skpd($this->data['entry'][0]['skpd']);
+						$this->data['pengikut'] = $this->m_pegawai->get_pegawai_skpd($this->data['entry'][0]['skpd']);
+						$this->data['anggaran'] = $this->m_anggaran->anggaran_opd($this->data['entry'][0]['skpd']);
 
 					$this->data['rekening'] = $this->m_sekda->rekening($this->data['entry'][0]['skpd']);
 					$this->data['provinsi'] = $this->m_sekda->get_provinsi();
@@ -2959,6 +2947,13 @@ class List_telaah extends public_Controller
 
 				$this->m_telaah->update($data);
 
+				## Form edit tidak menyediakan field jabatan perjalanan (khusus Inspektorat),
+				## jadi nilai lama disimpan dulu agar tidak hilang saat baris dibuat ulang.
+				$jabatan_lama = array();
+				foreach ($this->m_pengikut->get_pengikut($this->input->post('telaah_id')) as $lama) {
+					$jabatan_lama[$lama->pegawai_id] = $lama->telaah_jabatan_pengikut;
+				}
+
 				$this->m_pengikut->delete($this->input->post('telaah_id'));
 				$telaah_pengikut = $this->input->post('telaah_pengikut');
 				$jumlah = is_array($telaah_pengikut) ? count($telaah_pengikut) : 0;
@@ -2966,6 +2961,7 @@ class List_telaah extends public_Controller
 				for ($i = 0; $i < $jumlah; $i++) {
 					$data2['telaah_id'] = $this->input->post('telaah_id');
 					$data2['pegawai_id'] = $this->input->post('telaah_pengikut')[$i];
+					$data2['telaah_jabatan_pengikut'] = isset($jabatan_lama[$data2['pegawai_id']]) ? $jabatan_lama[$data2['pegawai_id']] : null;
 					$this->m_pengikut->create($data2);
 
 					## Create SPPD dan SPT Pengikut
@@ -3187,6 +3183,13 @@ class List_telaah extends public_Controller
 
 				$this->m_telaah->update($data);
 
+				## Form edit tidak menyediakan field jabatan perjalanan (khusus Inspektorat),
+				## jadi nilai lama disimpan dulu agar tidak hilang saat baris dibuat ulang.
+				$jabatan_lama = array();
+				foreach ($this->m_pengikut->get_pengikut($this->input->post('telaah_id')) as $lama) {
+					$jabatan_lama[$lama->pegawai_id] = $lama->telaah_jabatan_pengikut;
+				}
+
 				$this->m_pengikut->delete($this->input->post('telaah_id'));
 				$telaah_pengikut = $this->input->post('telaah_pengikut');
 				$jumlah = is_array($telaah_pengikut) ? count($telaah_pengikut) : 0;
@@ -3194,6 +3197,7 @@ class List_telaah extends public_Controller
 				for ($i = 0; $i < $jumlah; $i++) {
 					$data2['telaah_id'] = $this->input->post('telaah_id');
 					$data2['pegawai_id'] = $this->input->post('telaah_pengikut')[$i];
+					$data2['telaah_jabatan_pengikut'] = isset($jabatan_lama[$data2['pegawai_id']]) ? $jabatan_lama[$data2['pegawai_id']] : null;
 					$this->m_pengikut->create($data2);
 
 					## Create SPPD dan SPT Pengikut
@@ -5040,6 +5044,7 @@ class List_telaah extends public_Controller
 	## Create SPT
 	function cetak_spt($telaah_id, $posisi, $kategori_pelaksana, $pegawai_id)
 	{
+		$data2 = array(); // tidak semua cabang switch mengisinya
 		switch ($posisi) {
 			case "esselon":
 			case "camat":
@@ -5057,6 +5062,7 @@ class List_telaah extends public_Controller
 				if ($kategori_pelaksana == 1) {
 					## Pelaksana
 					$data = $this->m_laporan->get_pelaksana_opd($telaah_id);
+					$data2 = $this->m_laporan->get_pengikut2($telaah_id);
 				} else if ($kategori_pelaksana == 2) {
 					## Pengikut
 					$data = $this->m_laporan->get_pengikut_opd($telaah_id, $pegawai_id);
@@ -5192,7 +5198,7 @@ class List_telaah extends public_Controller
 
 			// Buat attribute baru 'jabatan_order' untuk mengurutkan data berdasarkan jabatan
 			foreach ($dataAnggota as &$item) {
-				if (isset($item['telaah_jabatan_pengikut'])) {
+				if (!empty($item['telaah_jabatan_pengikut'])) {
 					if ($item['telaah_jabatan_pengikut'] == 1) {
 						$item['jabatan_order'] = 1;
 					} else if ($item['telaah_jabatan_pengikut'] == 2) {
@@ -5225,6 +5231,12 @@ class List_telaah extends public_Controller
 				}
 			}
 			unset($item); // Hapus reference untuk menghindari side effect
+
+			// Pelaksana selalu di urutan pertama, apa pun jabatan perjalanannya.
+			// array_merge() menaruh $data (pelaksana) di indeks awal.
+			for ($p = 0; $p < count($data); $p++) {
+				$dataAnggota[$p]['jabatan_order'] = 0;
+			}
 
 			// Urutkan $dataAnggota berdasarkan value 'jabatan_order' dari terendah ke tertinggi
 			usort($dataAnggota, function ($a, $b) {
@@ -5294,9 +5306,9 @@ class List_telaah extends public_Controller
 			// }
 
 			// Pengikut
-			if (($posisi == "kadis" && $kategori_pelaksana == 1)
-				|| ($posisi == "kadis" && $kategori_pelaksana == 2)
-			) {
+			## Gate lama membuat pengikut tidak pernah dicetak pada SPT posisi "kadis".
+			## Qr_new (versi TTE) sudah menonaktifkannya; disamakan di sini.
+			if (false) {
 				$pdf->SetFont('Times', '', 10);
 				$pdf->Cell(20, 6, '', 0, 0);
 				$pdf->Cell(3, 6, '', 0, 0);
@@ -5428,7 +5440,7 @@ class List_telaah extends public_Controller
 						// } else if ($v['telaah_jabatan_pengikut'] == 6 || $v['pegawai_namajabatan'] == 'Admin Tim') {
 						// 	$pdf->MultiCell(90, 6, "Admin Tim", 0, 1);
 						// }
-						if (isset($v['telaah_jabatan_pengikut'])) {
+						if (!empty($v['telaah_jabatan_pengikut'])) {
 							if ($v['telaah_jabatan_pengikut'] == 1) {
 								$pdf->MultiCell(90, 6, "Penanggung Jawab", 0, 1);
 							} else if ($v['telaah_jabatan_pengikut'] == 2) {
@@ -5441,6 +5453,8 @@ class List_telaah extends public_Controller
 								$pdf->MultiCell(90, 6, "Anggota", 0, 1);
 							} else if ($v['telaah_jabatan_pengikut'] == 6) {
 								$pdf->MultiCell(90, 6, "Admin Tim", 0, 1);
+							} else { // TAMBAHAN KODE: jabatan kosong -> cegah baris tidak ganti
+								$pdf->MultiCell(90, 6, $v['pegawai_namajabatan'], 0, 1);
 							}
 						} else {
 							$pdf->MultiCell(90, 6, $v['pegawai_namajabatan'], 0, 1);
@@ -5516,9 +5530,9 @@ class List_telaah extends public_Controller
 			}
 
 			// Pengikut
-			if (($posisi == "kadis" && $kategori_pelaksana == 1)
-				|| ($posisi == "kadis" && $kategori_pelaksana == 2)
-			) {
+			## Gate lama membuat pengikut tidak pernah dicetak pada SPT posisi "kadis".
+			## Qr_new (versi TTE) sudah menonaktifkannya; disamakan di sini.
+			if (false) {
 			} else {
 				$no = 2;
 				foreach ($data2 as $v) {
@@ -5589,6 +5603,8 @@ class List_telaah extends public_Controller
 							$pdf->MultiCell(90, 6, "Anggota", 0, 1);
 						} else if ($v->telaah_jabatan_pengikut == 6) {
 							$pdf->MultiCell(90, 6, "Admin Tim", 0, 1);
+						} else { // TAMBAHAN KODE: jabatan kosong -> cegah baris tidak ganti
+							$pdf->MultiCell(90, 6, $v->pegawai_namajabatan, 0, 1);
 						}
 					} else {
 						$pdf->MultiCell(90, 6, $v->pegawai_namajabatan, 0, 1);

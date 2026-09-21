@@ -4391,7 +4391,7 @@ class List_telaah extends public_Controller
 
 		$pdf->Cell(5, 4, '', 'LR', 0, 'T');
 		$pdf->Cell(5, 4, '', '', 0, 'T');
-		$pdf->Cell(70, 4, 'menurut PP No.30 Tahun 2015', 'R', 0);
+		$pdf->Cell(70, 4, 'menurut PP No. 05 Tahun 2024', 'R', 0);
 		$pdf->Cell(80, 4, '', 'R', 1);
 
 

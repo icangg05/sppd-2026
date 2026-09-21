@@ -235,7 +235,7 @@ class Qr_new extends qr_Controller
 
 		$pdf->Cell(5, 4, '', 'LR', 0, 'T');
 		$pdf->Cell(5, 4, '', '', 0, 'T');
-		$pdf->Cell(70, 4, 'menurut PP No.30 Tahun 2015', 'R', 0);
+		$pdf->Cell(70, 4, 'menurut PP No. 05 Tahun 2024', 'R', 0);
 		$pdf->Cell(80, 4, '', 'R', 1);
 
 
@@ -1198,7 +1198,7 @@ class Qr_new extends qr_Controller
 		
 		$pdf->Cell(5,6,'','LR',0,'T');
 		$pdf->Cell(5,6,'','',0,'T');
-		$pdf->Cell(70,6,'menurut PP No.30 Tahun 2015','R',0);
+		$pdf->Cell(70,6,'menurut PP No. 05 Tahun 2024','R',0);
 		$pdf->Cell(80,6,'','R',1);
 		
 		## 3.b

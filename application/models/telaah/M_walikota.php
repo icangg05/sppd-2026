@@ -525,7 +525,7 @@ class M_walikota extends CI_Model
 		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana = table_pegawai.pegawai_id');
 		$this->db->join('table_skpd','table_pegawai.skpd_id = table_skpd.skpd_id');
 		$this->db->where("(table_telaah.telaah_status='1' OR table_telaah.telaah_status='2' OR table_telaah.telaah_status='5')");
-		$this->db->where("(table_telaah.telaah_domainperjalanan='1' OR table_telaah.telaah_domainperjalanan='2')");
+		$this->db->where("(table_telaah.telaah_domainperjalanan='1' OR table_telaah.telaah_domainperjalanan='2' OR table_telaah.telaah_domainperjalanan='5')");
 		$this->db->where('table_skpd.skpd_id',$skpd_id);
 		$this->db->order_by('total','DESC');
 		$query = $this->db->get ();
@@ -538,7 +538,7 @@ class M_walikota extends CI_Model
 		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana = table_pegawai.pegawai_id');
 		$this->db->join('table_skpd','table_pegawai.skpd_id = table_skpd.skpd_id');
 		$this->db->where("(table_telaah.telaah_status='1' OR table_telaah.telaah_status='2' OR table_telaah.telaah_status='5')");
-		$this->db->where("(table_telaah.telaah_domainperjalanan='1' OR table_telaah.telaah_domainperjalanan='2')");
+		$this->db->where("(table_telaah.telaah_domainperjalanan='1' OR table_telaah.telaah_domainperjalanan='2' OR table_telaah.telaah_domainperjalanan='5')");
 		$this->db->where("table_skpd.skpd_id !='171'");
 		$this->db->where("table_skpd.skpd_id !='172'");
 		$this->db->where('table_skpd.jenis_skpd',$jenis_skpd);

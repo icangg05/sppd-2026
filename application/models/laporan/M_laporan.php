@@ -33,7 +33,7 @@ class M_laporan extends CI_Model
 
 		$query = $this->db->get();
 
-		return $query->result_array();
+		return lokasi_luar_negeri($query->result_array());
 	}
 
 
@@ -67,7 +67,7 @@ class M_laporan extends CI_Model
 
 		$query = $this->db->get();
 
-		return $query->result_array();
+		return lokasi_luar_negeri($query->result_array());
 	}
 
 
@@ -93,7 +93,7 @@ class M_laporan extends CI_Model
 
 		$query = $this->db->get();
 
-		return $query->result_array();
+		return lokasi_luar_negeri($query->result_array());
 	}
 
 
@@ -123,7 +123,7 @@ class M_laporan extends CI_Model
 
 		$query = $this->db->get();
 
-		return $query->result_array();
+		return lokasi_luar_negeri($query->result_array());
 	}
 
 
@@ -153,7 +153,7 @@ class M_laporan extends CI_Model
 
 		$query = $this->db->get();
 
-		return $query->result_array();
+		return lokasi_luar_negeri($query->result_array());
 	}
 
 
@@ -201,7 +201,7 @@ class M_laporan extends CI_Model
 
 		$query = $this->db->get();
 
-		return $query->result_array();
+		return lokasi_luar_negeri($query->result_array());
 	}
 
 
@@ -235,7 +235,7 @@ class M_laporan extends CI_Model
 
 		$query = $this->db->get();
 
-		return $query->result_array();
+		return lokasi_luar_negeri($query->result_array());
 	}
 
 
@@ -267,7 +267,7 @@ class M_laporan extends CI_Model
 
 		$query = $this->db->get();
 
-		return $query->result_array();
+		return lokasi_luar_negeri($query->result_array());
 	}
 
 
@@ -295,7 +295,7 @@ class M_laporan extends CI_Model
 
 		$query = $this->db->get();
 
-		return $query->result_array();
+		return lokasi_luar_negeri($query->result_array());
 	}
 
 
@@ -325,7 +325,7 @@ class M_laporan extends CI_Model
 
 		$query = $this->db->get();
 
-		return $query->result_array();
+		return lokasi_luar_negeri($query->result_array());
 	}
 
 

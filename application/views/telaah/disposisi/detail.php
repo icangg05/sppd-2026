@@ -182,14 +182,22 @@
 								echo "DALAM DAERAH";
 							} else if ($entry[0]['telaah_domainperjalanan']==4){
 								echo "DALAM DAERAH";
+							} else if ($entry[0]['telaah_domainperjalanan']==5){
+								echo "LUAR NEGERI";
 							}
 							?></td>
 						</tr>
 						<tr>
 							<th class="col-md-3"></th>
 							<td><?php 
-								echo "Provinsi : ".$entry[0]['provinsi']."<br>";
-								echo "Kab/Kota : ".$entry[0]['kabupaten_kota']."<br><br>";
+								if ($entry[0]['telaah_domainperjalanan']==5){
+									$tujuan_ln = tujuan_luar_negeri($entry[0]);
+									echo "Negara : ".html_escape($tujuan_ln['negara'])."<br>";
+									echo "Kota : ".html_escape($tujuan_ln['kota'])."<br><br>";
+								} else {
+									echo "Provinsi : ".$entry[0]['provinsi']."<br>";
+									echo "Kab/Kota : ".$entry[0]['kabupaten_kota']."<br><br>";
+								}
 
 								$lokasi_tujuan = $this->m_lokasi_tujuan->get($entry[0]['telaah_id']);
 								foreach($lokasi_tujuan as $v){
@@ -201,7 +209,7 @@
 						</tr>
 						<tr>
 							<th class="col-md-3">Kantor Tujuan</th>
-							<td><?php echo "".$entry[0]['telaah_kantortujuan']; ?></td>
+							<td><?php echo kantor_tujuan($entry[0]); ?></td>
 						</tr>
 						<tr>
 							<th class="col-md-3">Kecepatan Telaah</th>

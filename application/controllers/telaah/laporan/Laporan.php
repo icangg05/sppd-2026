@@ -505,11 +505,11 @@ class Laporan extends public_Controller {
 		
 		//baris 2
 		if(($data[0]['telaah_kategori']==1 && $data[0]['jenis_skpd']!=7) || ($data[0]['telaah_kategori']==2)){
-			if($data[0]['telaah_domainperjalanan']==1 || $data[0]['telaah_domainperjalanan']==2 ){
+			if($data[0]['telaah_domainperjalanan']==1 || $data[0]['telaah_domainperjalanan']==2 || $data[0]['telaah_domainperjalanan']==5 ){
 				$pdf->SetWidths(array(5,30,45,5,30,45));
 				$border = array('LT','T','T','LT','T','TR');
 				$align = array('','','','','','');
-				$caption = array('I.','Tiba Di',': '.$data[0]['kabupaten_kota'],'','Berangkat dari',': '.$data[0]['kabupaten_kota']);
+				$caption = array('I.','Tiba Di',$pdf->TitikDua(45, $data[0]['kabupaten_kota']),'','Berangkat dari',$pdf->TitikDua(45, $data[0]['kabupaten_kota']));
 				$pdf->Row($caption, $border, $align);
 			} else {
 				$pdf->Cell(5,4,'I.','LT',0);
@@ -750,7 +750,7 @@ class Laporan extends public_Controller {
 		
 		//baris 5
 		if(($data[0]['telaah_kategori']==1 && $data[0]['jenis_skpd']!=7) || ($data[0]['telaah_kategori']==2)){
-			if($data[0]['telaah_domainperjalanan']==1 || $data[0]['telaah_domainperjalanan']==2 ){
+			if($data[0]['telaah_domainperjalanan']==1 || $data[0]['telaah_domainperjalanan']==2 || $data[0]['telaah_domainperjalanan']==5 ){
 				$pdf->SetWidths(array(5,30,45,80));
 				$border = array('LT','T','RT','LRT');
 				$align = array('','','','');

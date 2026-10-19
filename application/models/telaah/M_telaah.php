@@ -216,7 +216,7 @@ class M_telaah extends CI_Model
 		$this->db->from('table_telaah');
 		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana=table_pegawai.pegawai_id','left');
 		$this->db->join('table_timeline2','table_telaah.telaah_id=table_timeline2.telaah_id 
-						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2)','left');
+						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2 OR table_telaah.telaah_domainperjalanan = 5)','left');
 		$this->db->join('table_timeline4','table_telaah.telaah_id=table_timeline4.telaah_id','left');
 		$this->db->join('table_timeline5','table_telaah.telaah_id=table_timeline5.telaah_id','left');
 		$this->db->join('table_timeline9','table_telaah.telaah_id=table_timeline9.telaah_id','left');
@@ -281,7 +281,7 @@ class M_telaah extends CI_Model
 		$this->db->from('table_telaah');
 		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana=table_pegawai.pegawai_id','left');
 		$this->db->join('table_timeline2','table_telaah.telaah_id=table_timeline2.telaah_id 
-						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2)','left');
+						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2 OR table_telaah.telaah_domainperjalanan = 5)','left');
 		$this->db->join('table_timeline4','table_telaah.telaah_id=table_timeline4.telaah_id','left');
 		$this->db->join('table_timeline5','table_telaah.telaah_id=table_timeline5.telaah_id','left');
 		$this->db->join('table_timeline9','table_telaah.telaah_id=table_timeline9.telaah_id','left');
@@ -349,7 +349,7 @@ class M_telaah extends CI_Model
 		$this->db->from('table_telaah');
 		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana=table_pegawai.pegawai_id','left');
 		$this->db->join('table_timeline2','table_telaah.telaah_id=table_timeline2.telaah_id 
-						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2)','left');
+						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2 OR table_telaah.telaah_domainperjalanan = 5)','left');
 		$this->db->join('table_timeline4','table_telaah.telaah_id=table_timeline4.telaah_id','left');
 		$this->db->join('table_timeline5','table_telaah.telaah_id=table_timeline5.telaah_id','left');
 		$this->db->join('table_timeline10','table_telaah.telaah_id=table_timeline10.telaah_id','left');
@@ -407,7 +407,7 @@ class M_telaah extends CI_Model
 		$this->db->from('table_telaah');
 		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana=table_pegawai.pegawai_id','left');
 		$this->db->join('table_timeline2','table_telaah.telaah_id=table_timeline2.telaah_id 
-						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2)','left');
+						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2 OR table_telaah.telaah_domainperjalanan = 5)','left');
 		$this->db->join('table_timeline4','table_telaah.telaah_id=table_timeline4.telaah_id','left');
 		$this->db->join('table_timeline5','table_telaah.telaah_id=table_timeline5.telaah_id','left');
 		$this->db->join('table_timeline10','table_telaah.telaah_id=table_timeline10.telaah_id','left');
@@ -1487,5 +1487,71 @@ class M_telaah extends CI_Model
 		$query = $this->db->get ();
 		return $query->result_array();
 	}
-	
+
+	## File fisik milik satu perjalanan. Dipanggil SEBELUM datanya dihapus (butuh data telaah & pengikut),
+	## lalu hapus_file() dipanggil SETELAH datanya terhapus.
+	public function file_perjalanan($telaah_id) {
+		$telaah = $this->db->get_where('table_telaah', array('telaah_id' => $telaah_id))->row_array();
+		if (!$telaah) {
+			return array();
+		}
+
+		$file = array();
+
+		// Dokumen pendukung disimpan dengan nama asli file (overwrite), sehingga bisa dipakai bersama perjalanan lain
+		$dokumen = basename((string) $telaah['telaah_dokumenpendukung']);
+		$dipakai_lain = $this->db->where('telaah_dokumenpendukung', $telaah['telaah_dokumenpendukung'])
+			->where('telaah_id !=', $telaah_id)
+			->count_all_results('table_telaah');
+		if ($dokumen !== '' && $dipakai_lain == 0) {
+			$file[] = FCPATH . 'upload/telaah/' . $dokumen;
+		}
+
+		// Draf SPPD/SPT: SPPD-{telaah_id}-{pegawai_id}.pdf dan SPT-{telaah_id}-{pegawai_id}.pdf
+		foreach (array('SPPD', 'SPT') as $jenis) {
+			$file = array_merge($file, glob(FCPATH . 'upload/doc_perjalanan/' . $jenis . '-' . (int) $telaah_id . '-*.pdf') ?: array());
+		}
+
+		// File sementara TTE: "SPPD - {nama} - {waktu input}.pdf" / "SPT - ...". Waktu input bisa sama dengan
+		// perjalanan lain, jadi nama yang juga dimiliki perjalanan lain pada waktu yang sama dilewati.
+		$nama_lain = array();
+		$lain = $this->db->select('telaah_id, telaah_kategori, telaah_pelaksana')
+			->where('telaah_waktuinput', $telaah['telaah_waktuinput'])
+			->where('telaah_id !=', $telaah_id)
+			->get('table_telaah')->result_array();
+		foreach ($lain as $v) {
+			$nama_lain = array_merge($nama_lain, $this->nama_perjalanan($v));
+		}
+
+		$waktu = date('d-m-Y-H-i-s', strtotime($telaah['telaah_waktuinput']));
+		foreach (array_diff($this->nama_perjalanan($telaah), $nama_lain) as $nama) {
+			$file[] = FCPATH . 'upload/doc_dummy/SPPD - ' . $nama . ' - ' . $waktu . '.pdf';
+			$file[] = FCPATH . 'upload/doc_dummy/SPT - ' . $nama . ' - ' . $waktu . '.pdf';
+		}
+
+		return $file;
+	}
+
+	## Nama pelaksana & pengikut seperti pada nama file doc_dummy (DPRD memakai table_anggotadprd)
+	private function nama_perjalanan($telaah) {
+		$pengikut = $this->db->select('pegawai_id')->where('telaah_id', $telaah['telaah_id'])->get('table_pengikut')->result_array();
+		$id = array_merge(array($telaah['telaah_pelaksana']), array_column($pengikut, 'pegawai_id'));
+
+		if ($telaah['telaah_kategori'] == 3) {
+			$nama = $this->db->select('anggotadprd_name AS nama')->where_in('anggotadprd_id', $id)->get('table_anggotadprd')->result_array();
+		} else {
+			$nama = $this->db->select('pegawai_nama AS nama')->where_in('pegawai_id', $id)->get('table_pegawai')->result_array();
+		}
+
+		return array_column($nama, 'nama');
+	}
+
+	public function hapus_file($file) {
+		foreach ($file as $f) {
+			if (is_file($f) && !@unlink($f)) {
+				log_message('error', 'Gagal menghapus file perjalanan: ' . $f);
+			}
+		}
+	}
+
 }

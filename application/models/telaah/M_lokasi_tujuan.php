@@ -31,5 +31,9 @@ class M_lokasi_tujuan extends CI_Model
 	public function delete($lokasi_tujuan_id) {
 		$this->db->delete('table_lokasi_tujuan', array('lokasi_tujuan_id' => $lokasi_tujuan_id));
 	}
-	
+
+	public function delete_telaah($telaah_id) {
+		$this->db->delete('table_lokasi_tujuan', array('telaah_id' => $telaah_id));
+	}
+
 }

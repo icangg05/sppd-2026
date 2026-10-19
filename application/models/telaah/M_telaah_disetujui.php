@@ -142,7 +142,7 @@ class M_telaah_disetujui extends CI_Model
 		$this->db->from('table_telaah');
 		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana=table_pegawai.pegawai_id','left');
 		$this->db->join('table_timeline2','table_telaah.telaah_id=table_timeline2.telaah_id 
-						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2)','left');
+						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2 OR table_telaah.telaah_domainperjalanan = 5)','left');
 		$this->db->join('table_timeline4','table_telaah.telaah_id=table_timeline4.telaah_id','left');
 		$this->db->join('table_timeline5','table_telaah.telaah_id=table_timeline5.telaah_id','left');
 		$this->db->join('table_timeline9','table_telaah.telaah_id=table_timeline9.telaah_id','left');
@@ -202,7 +202,7 @@ class M_telaah_disetujui extends CI_Model
 		$this->db->from('table_telaah');
 		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana=table_pegawai.pegawai_id','left');
 		$this->db->join('table_timeline2','table_telaah.telaah_id=table_timeline2.telaah_id 
-						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2)','left');
+						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2 OR table_telaah.telaah_domainperjalanan = 5)','left');
 		$this->db->join('table_timeline4','table_telaah.telaah_id=table_timeline4.telaah_id','left');
 		$this->db->join('table_timeline5','table_telaah.telaah_id=table_timeline5.telaah_id','left');
 		$this->db->join('table_timeline9','table_telaah.telaah_id=table_timeline9.telaah_id','left');
@@ -264,7 +264,7 @@ class M_telaah_disetujui extends CI_Model
 		$this->db->from('table_telaah');
 		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana=table_pegawai.pegawai_id','left');
 		$this->db->join('table_timeline2','table_telaah.telaah_id=table_timeline2.telaah_id 
-						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2)','left');
+						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2 OR table_telaah.telaah_domainperjalanan = 5)','left');
 		$this->db->join('table_timeline4','table_telaah.telaah_id=table_timeline4.telaah_id','left');
 		$this->db->join('table_timeline5','table_telaah.telaah_id=table_timeline5.telaah_id','left');
 		$this->db->join('table_timeline10','table_telaah.telaah_id=table_timeline10.telaah_id','left');
@@ -313,7 +313,7 @@ class M_telaah_disetujui extends CI_Model
 		$this->db->from('table_telaah');
 		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana=table_pegawai.pegawai_id','left');
 		$this->db->join('table_timeline2','table_telaah.telaah_id=table_timeline2.telaah_id 
-						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2)','left');
+						AND (table_telaah.telaah_domainperjalanan = 1 OR table_telaah.telaah_domainperjalanan = 2 OR table_telaah.telaah_domainperjalanan = 5)','left');
 		$this->db->join('table_timeline4','table_telaah.telaah_id=table_timeline4.telaah_id','left');
 		$this->db->join('table_timeline5','table_telaah.telaah_id=table_timeline5.telaah_id','left');
 		$this->db->join('table_timeline10','table_telaah.telaah_id=table_timeline10.telaah_id','left');

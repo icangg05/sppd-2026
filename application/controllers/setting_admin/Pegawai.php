@@ -559,9 +559,18 @@ class Pegawai extends public_Controller
 		foreach ($pieces as $i => $key) {
 			if ($this->uri->segment(4) == "dprd") {
 				$datax = $this->m_anggota->get($key);
-				echo "<p style='text-align:left;'>: " . $datax[0]['anggotadprd_name'] . " <span style='float:right;'>";
 			} else {
 				$datax = $this->m_pegawai->get($key);
+			}
+
+			// id kosong / tidak ditemukan (mis. semua pengikut dihapus dari pilihan) tidak ditampilkan
+			if ($key === '' || empty($datax)) {
+				continue;
+			}
+
+			if ($this->uri->segment(4) == "dprd") {
+				echo "<p style='text-align:left;'>: " . $datax[0]['anggotadprd_name'] . " <span style='float:right;'>";
+			} else {
 				echo "<p style='text-align:left;'>: " . $datax[0]['pegawai_nama'] . " <span style='float:right;'>";
 			}
 

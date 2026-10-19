@@ -4,6 +4,15 @@
 		color: red;
 		font-weight: bold;
 	}
+
+	/* Select2 negara setinggi input lain (34px) agar kolom negara/kota sejajar dengan kolom kiri */
+	#ln .select2-container .select2-selection--single {
+		height: 34px;
+	}
+
+	#ln .select2-container--default .select2-selection--single .select2-selection__arrow {
+		height: 32px;
+	}
 </style>
 <div class="content-wrapper">
 	<!-- Content Header (Page header) -->
@@ -238,17 +247,7 @@
 												echo "<label> Domain Perjalanan</label>";
 											}
 											?>
-											<select class="form-control" name="telaah_domainperjalanan"
-												onchange=" if (this.selectedIndex==1){ 
-											document.getElementById('ldlp').style.display = 'inline'; 
-											document.getElementById('lddp').style.display = 'none'; 
-										} else if (this.selectedIndex==2){
-											document.getElementById('ldlp').style.display = 'none'; 
-											document.getElementById('lddp').style.display = 'inline';
-										} else {
-											document.getElementById('ldlp').style.display = 'none'; 
-											document.getElementById('lddp').style.display = 'none';
-										} ;">
+											<select class="form-control" name="telaah_domainperjalanan" onchange="toggleDomainPerjalanan(this.value);">
 												<option value="">- Pilih -</option>
 												<option value="1" <?php if ($entry[0]['telaah_domainperjalanan'] == "1") {
 																						echo "selected";
@@ -259,11 +258,19 @@
 												<option value="3" <?php if ($entry[0]['telaah_domainperjalanan'] == "3") {
 																						echo "selected";
 																					} ?>>DALAM DAERAH</option>
+												<option value="5" <?php if ($entry[0]['telaah_domainperjalanan'] == "5") {
+																						echo "selected";
+																					} ?>>LUAR NEGERI</option>
 											</select>
 										</div>
 									</div>
 
-									<div class="col-md-6 col-md-offset-6">
+									<?php
+									$luar_negeri = $entry[0]['telaah_domainperjalanan'] == "5";
+									$tujuan_ln = $luar_negeri ? tujuan_luar_negeri($entry[0]) : array('kota' => '');
+									?>
+									<!-- Untuk luar negeri spacer disembunyikan: negara & kota di kolom kanan, Tempat Tujuan mengisi kolom kiri di bawah Domain Perjalanan -->
+									<div class="col-md-6 col-md-offset-6" id="domain-spacer" style="display:<?php echo $luar_negeri ? 'none' : 'block'; ?>;">
 									</div>
 									<?php if ($entry[0]['telaah_domainperjalanan'] == "1") { ?>
 										<span id="ldlp">
@@ -328,6 +335,27 @@
 														</div>
 													</div>
 													</span>
+													<div id="ln"style="display:<?php echo $luar_negeri ? 'block' : 'none'; ?>;">
+														<div class="col-md-6 pull-right">
+															<div class="form-group">
+																<label>Negara Tujuan</label>
+																<select class="form-control select2" name="telaah_negaratujuan" style="width: 100%;">
+																	<option value="">- Pilih Negara -</option>
+																	<?php foreach (negara_list() as $id => $nama) {
+																		if ($luar_negeri && $entry[0]['telaah_kotatujuan'] == $id) {
+																			echo "<option value='$id' selected>$nama</option>";
+																		} else {
+																			echo "<option value='$id'>$nama</option>";
+																		}
+																	} ?>
+																</select>
+															</div>
+															<div class="form-group">
+																<label>Kota Tujuan</label>
+																<input type="text" class="form-control" name="telaah_kotatujuan_ln" maxlength="100" placeholder="Contoh : Tokyo" value="<?php echo html_escape($tujuan_ln['kota']); ?>">
+															</div>
+														</div>
+													</div>
 													<div class="col-md-6">
 														<div class="form-group">
 															<?php
@@ -338,11 +366,12 @@
 															}
 															?>
 															<label></label>
-															<input type="text" class="form-control" name="telaah_kantortujuan" value="<?php echo $entry[0]['telaah_kantortujuan']; ?>">
+															<input type="text" class="form-control" name="telaah_kantortujuan" value="<?php echo kantor_tujuan($entry[0]); ?>">
 														</div>
 													</div><br>
 													<div class="col-md-12">
 													</div>
+													<div id="tambah-tujuan" style="display:<?php echo $luar_negeri ? 'none' : 'block'; ?>;">
 													<div class="col-md-12">
 														<button type="button" class="btn btn-success btn-sm" id="btn-tambah-form">Tambah Tujuan</button>
 														<button type="button" class="btn btn-danger btn-sm" id="btn-reset-form">Reset Tujuan</button><br><br>
@@ -369,6 +398,7 @@
 														</table>
 													</div>
 													<div id="insert-form"></div>
+													</div>
 													<input type="hidden" id="jumlah-form" value="1">
 								</td>
 							</tr>
@@ -532,6 +562,15 @@
 		//Initialize Select2 Elements
 		$(".select2").select2();
 	});
+
+	// 1 = LDLP, 2 = LDDP, 3 = DALAM DAERAH, 5 = LUAR NEGERI
+	function toggleDomainPerjalanan(domain) {
+		document.getElementById('ldlp').style.display = (domain == '1') ? 'inline' : 'none';
+		document.getElementById('lddp').style.display = (domain == '2') ? 'inline' : 'none';
+		document.getElementById('ln').style.display = (domain == '5') ? 'block' : 'none';
+		document.getElementById('domain-spacer').style.display = (domain == '5') ? 'none' : 'block';
+		document.getElementById('tambah-tujuan').style.display = (domain == '5') ? 'none' : 'block';
+	}
 </script>
 
 <script>

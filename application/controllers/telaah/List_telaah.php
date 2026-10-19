@@ -1985,6 +1985,25 @@ class List_telaah extends public_Controller
 		}
 	}
 
+	## Perjalanan luar negeri (domain 5), cara penyimpanannya lihat helpers/luar_negeri_helper.php
+	private function rules_luar_negeri()
+	{
+		$this->form_validation->set_rules('telaah_negaratujuan', 'Negara Tujuan', array('required', array('negara_valid', 'negara_valid')), array('negara_valid' => '%s wajib dipilih dari daftar negara.'));
+		$this->form_validation->set_rules('telaah_kotatujuan_ln', 'Kota Tujuan', array('required', 'max_length[100]', array('kota_luar_negeri_valid', 'kota_luar_negeri_valid')), array('kota_luar_negeri_valid' => '%s tidak boleh mengandung tanda koma, gunakan "dan" untuk lebih dari satu kota.'));
+	}
+
+	private function set_tujuan_luar_negeri(&$data)
+	{
+		$data['telaah_provinsitujuan'] = 0;
+		$data['telaah_kotatujuan'] = (int) $this->input->post('telaah_negaratujuan');
+		$data['telaah_kantortujuan'] = gabung_tujuan_luar_negeri($this->input->post('telaah_kantortujuan'), $this->input->post('telaah_kotatujuan_ln'), $data['telaah_kotatujuan']);
+
+		// saat edit dari LDLP: buang tujuan tambahan dalam negeri yang tersisa
+		if (!empty($data['telaah_id'])) {
+			$this->m_lokasi_tujuan->delete_telaah($data['telaah_id']);
+		}
+	}
+
 	//Create Data
 	public function create()
 	{
@@ -2008,6 +2027,8 @@ class List_telaah extends public_Controller
 			$this->data['perjalanan'] = 2;
 			$data['telaah_provinsitujuan'] = 74;
 			$this->form_validation->set_rules('telaah_kotatujuan2', 'Kota Tujuan', 'required');
+		} else if ($this->input->post('telaah_domainperjalanan') == 5) {
+			$this->rules_luar_negeri();
 		}
 		$this->form_validation->set_rules('telaah_kantortujuan', 'Kantor Tujuan', 'required');
 		$this->form_validation->set_rules('telaah_kegiatan', 'Kegiatan', 'required|callback_kegiatan_check');
@@ -2098,6 +2119,9 @@ class List_telaah extends public_Controller
 				}
 
 				$data['telaah_kantortujuan'] = $this->input->post('telaah_kantortujuan');
+				if ($data['telaah_domainperjalanan'] == 5) {
+					$this->set_tujuan_luar_negeri($data);
+				}
 				$data['telaah_kegiatan'] = $this->input->post('telaah_kegiatan');
 				$data['telaah_kategoriperjalanan'] = $this->input->post('telaah_kategoriperjalanan');
 				$data['telaah_kecepatan'] = $this->input->post('telaah_kecepatan');
@@ -2321,7 +2345,8 @@ class List_telaah extends public_Controller
 					}
 				}
 
-				$prov_tujuan2 = $this->input->post('telaah_provinsitujuan2');
+				// luar negeri tidak memakai tujuan tambahan (table_lokasi_tujuan hanya provinsi/kabkot)
+				$prov_tujuan2 = $data['telaah_domainperjalanan'] == 5 ? null : $this->input->post('telaah_provinsitujuan2');
 				$jml_lokasi_tujuan = is_array($prov_tujuan2) ? count($prov_tujuan2) : 0;
 				for ($i = 0; $i < $jml_lokasi_tujuan; $i++) {
 					$data5['telaah_id'] = $last_id;
@@ -2422,6 +2447,9 @@ class List_telaah extends public_Controller
 				}
 
 				$data['telaah_kantortujuan'] = $this->input->post('telaah_kantortujuan');
+				if ($data['telaah_domainperjalanan'] == 5) {
+					$this->set_tujuan_luar_negeri($data);
+				}
 				$data['telaah_kegiatan'] = $this->input->post('telaah_kegiatan');
 				$data['telaah_kategoriperjalanan'] = $this->input->post('telaah_kategoriperjalanan');
 				$data['telaah_kecepatan'] = $this->input->post('telaah_kecepatan');
@@ -2642,7 +2670,8 @@ class List_telaah extends public_Controller
 					}
 				}
 
-				$prov_tujuan2 = $this->input->post('telaah_provinsitujuan2');
+				// luar negeri tidak memakai tujuan tambahan (table_lokasi_tujuan hanya provinsi/kabkot)
+				$prov_tujuan2 = $data['telaah_domainperjalanan'] == 5 ? null : $this->input->post('telaah_provinsitujuan2');
 				$jml_lokasi_tujuan = is_array($prov_tujuan2) ? count($prov_tujuan2) : 0;
 				for ($i = 0; $i < $jml_lokasi_tujuan; $i++) {
 					$data3['telaah_id'] = $last_id;
@@ -2886,6 +2915,9 @@ class List_telaah extends public_Controller
 		$this->form_validation->set_rules('telaah_hari', 'Lama Perjalanan (Hari)', 'required');
 		$this->form_validation->set_rules('telaah_tempatberangkat', 'Tempat Berangkat', 'required');
 		$this->form_validation->set_rules('telaah_domainperjalanan', 'Domain Perjalanan', 'required');
+		if ($this->input->post('telaah_domainperjalanan') == 5) {
+			$this->rules_luar_negeri();
+		}
 		$this->form_validation->set_rules('telaah_kantortujuan', 'Kantor Tujuan', 'required');
 		$this->form_validation->set_rules('telaah_kegiatan', 'Kegiatan', 'required');
 		$this->form_validation->set_rules('telaah_kategoriperjalanan', 'Kategori Perjalanan', 'required');
@@ -2934,6 +2966,9 @@ class List_telaah extends public_Controller
 				}
 
 				$data['telaah_kantortujuan'] = $this->input->post('telaah_kantortujuan');
+				if ($data['telaah_domainperjalanan'] == 5) {
+					$this->set_tujuan_luar_negeri($data);
+				}
 				$data['telaah_kegiatan'] = $this->input->post('telaah_kegiatan');
 				$data['telaah_kategoriperjalanan'] = $this->input->post('telaah_kategoriperjalanan');
 				$data['telaah_kecepatan'] = $this->input->post('telaah_kecepatan');
@@ -3010,7 +3045,8 @@ class List_telaah extends public_Controller
 					}
 				}
 
-				$prov_tujuan2 = $this->input->post('telaah_provinsitujuan2');
+				// luar negeri tidak memakai tujuan tambahan (table_lokasi_tujuan hanya provinsi/kabkot)
+				$prov_tujuan2 = $data['telaah_domainperjalanan'] == 5 ? null : $this->input->post('telaah_provinsitujuan2');
 				$jml_lokasi_tujuan = is_array($prov_tujuan2) ? count($prov_tujuan2) : 0;
 				for ($i = 0; $i < $jml_lokasi_tujuan; $i++) {
 					$data3['telaah_id'] = $this->input->post('telaah_id');
@@ -3174,6 +3210,9 @@ class List_telaah extends public_Controller
 				}
 
 				$data['telaah_kantortujuan'] = $this->input->post('telaah_kantortujuan');
+				if ($data['telaah_domainperjalanan'] == 5) {
+					$this->set_tujuan_luar_negeri($data);
+				}
 				$data['telaah_kegiatan'] = $this->input->post('telaah_kegiatan');
 				$data['telaah_kategoriperjalanan'] = $this->input->post('telaah_kategoriperjalanan');
 				$data['telaah_kecepatan'] = $this->input->post('telaah_kecepatan');
@@ -3246,7 +3285,8 @@ class List_telaah extends public_Controller
 					}
 				}
 
-				$prov_tujuan2 = $this->input->post('telaah_provinsitujuan2');
+				// luar negeri tidak memakai tujuan tambahan (table_lokasi_tujuan hanya provinsi/kabkot)
+				$prov_tujuan2 = $data['telaah_domainperjalanan'] == 5 ? null : $this->input->post('telaah_provinsitujuan2');
 				$jml_lokasi_tujuan = is_array($prov_tujuan2) ? count($prov_tujuan2) : 0;
 				for ($i = 0; $i < $jml_lokasi_tujuan; $i++) {
 					$data3['telaah_id'] = $this->input->post('telaah_id');
@@ -4208,9 +4248,14 @@ class List_telaah extends public_Controller
 
 		$arrayTable = array('table_telaah', 'table_timeline1', 'table_timeline2', 'table_timeline3', 'table_timeline4', 'table_timeline5', 'table_timeline6', 'table_timeline7', 'table_timeline8', 'table_timeline9', 'table_timeline10', 'table_timeline11', 'table_pengikut', 'table_pengeluaran_rill', 'table_kuitansi_panjar', 'table_laporanperjalanan', 'table_lokasi_tujuan', 'table_rincian_biaya', 'table_tanggal_perjalanan', 'table_relasi_sekda');
 
+		// daftar file fisik diambil sebelum datanya dihapus, filenya dihapus setelah data terhapus
+		$file = $this->m_telaah->file_perjalanan($this->input->post('telaah_id'));
+
 		for ($i = 0; $i < count($arrayTable); $i++) {
 			$this->m_kadis->delete_telaah($this->input->post('telaah_id'), $arrayTable[$i]);
 		}
+
+		$this->m_telaah->hapus_file($file);
 
 		$this->session->set_flashdata('notif', 'Data Telaah Staf Di Hapus !');
 		redirect('telaah/list_telaah/index/' . $this->input->post('url'));
@@ -4669,11 +4714,11 @@ class List_telaah extends public_Controller
 
 		//baris 2
 		if (($data[0]['telaah_kategori'] == 1 && $data[0]['jenis_skpd'] != 7) || ($data[0]['telaah_kategori'] == 2) || ($data[0]['jenis_skpd'] == 3)) {
-			if ($data[0]['telaah_domainperjalanan'] == 1 || $data[0]['telaah_domainperjalanan'] == 2) {
+			if ($data[0]['telaah_domainperjalanan'] == 1 || $data[0]['telaah_domainperjalanan'] == 2 || $data[0]['telaah_domainperjalanan'] == 5) {
 				$pdf->SetWidths(array(5, 25, 40, 5, 25, 40));
 				$border = array('LT', 'T', 'T', 'LT', 'T', 'TR');
 				$align = array('', '', '', '', '', '');
-				$caption = array('I.', 'Tiba Di', ': ' . $data[0]['kabupaten_kota'], '', 'Berangkat dari', ': ' . $data[0]['kabupaten_kota']);
+				$caption = array('I.', 'Tiba Di', $pdf->TitikDua(40, $data[0]['kabupaten_kota']), '', 'Berangkat dari', $pdf->TitikDua(40, $data[0]['kabupaten_kota']));
 				$pdf->Row($caption, $border, $align);
 			} else {
 				$pdf->Cell(5, 3, 'II.', 'LT', 0);
@@ -4924,7 +4969,7 @@ class List_telaah extends public_Controller
 		//baris 6
 
 		if (($data[0]['telaah_kategori'] == 1 && $data[0]['jenis_skpd'] != 7) || ($data[0]['telaah_kategori'] == 2)) {
-			if ($data[0]['telaah_domainperjalanan'] == 1 || $data[0]['telaah_domainperjalanan'] == 2) {
+			if ($data[0]['telaah_domainperjalanan'] == 1 || $data[0]['telaah_domainperjalanan'] == 2 || $data[0]['telaah_domainperjalanan'] == 5) {
 				$pdf->SetWidths(array(5, 25, 40, 70));
 				$border = array('LT', 'T', 'RT', 'LRT');
 				$align = array('', '', '', '');
@@ -5116,6 +5161,7 @@ class List_telaah extends public_Controller
 
 		if (($posisi == "kadis" && $kategori_pelaksana == 1 && $data[0]['telaah_domainperjalanan'] == 1)
 			|| ($posisi == "kadis" && $kategori_pelaksana == 1 && $data[0]['telaah_domainperjalanan'] == 2)
+			|| ($posisi == "kadis" && $kategori_pelaksana == 1 && $data[0]['telaah_domainperjalanan'] == 5)
 			|| $posisi == "camat" || $posisi == "sekwan" || $posisi == "walikota" || ($posisi == "sekda" && $kategori_pelaksana == 2)
 		) {
 			$pdf->SetFont('Times', 'B', 26);
@@ -5147,6 +5193,7 @@ class List_telaah extends public_Controller
 
 		if (($posisi == "kadis" && $kategori_pelaksana == 1 && $data[0]['telaah_domainperjalanan'] == 1)
 			|| ($posisi == "kadis" && $kategori_pelaksana == 1 && $data[0]['telaah_domainperjalanan'] == 2)
+			|| ($posisi == "kadis" && $kategori_pelaksana == 1 && $data[0]['telaah_domainperjalanan'] == 5)
 			|| $posisi == "camat" || $posisi == "sekwan" || $posisi == "walikota" || ($posisi == "sekda" && $kategori_pelaksana == 2)
 		) {
 			$pdf->Cell(140, 6, ': Walikota Kendari', 0, 1);

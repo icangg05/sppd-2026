@@ -4,17 +4,17 @@ class M_export extends CI_Model
 {
 	## Model Laporan Perjalanan Luar Daerah
 	public function get() {
-		$this->db->select('table_telaah.telaah_id, pegawai_nama, pegawai_namajabatan, pegawai_nip, pegawai_golongan, telaah_perihal, provinsi, tanggal_spt, tanggal_spd, telaah_tanggalberangkat, telaah_tanggalkembali, telaah_hari');
+		$this->db->select('table_telaah.telaah_id, pegawai_nama, pegawai_namajabatan, pegawai_nip, pegawai_golongan, telaah_perihal, provinsi, tanggal_spt, tanggal_spd, telaah_tanggalberangkat, telaah_tanggalkembali, telaah_hari, telaah_domainperjalanan, telaah_kotatujuan');
 		$this->db->from('table_telaah');
 		$this->db->join('table_pegawai','table_pegawai.pegawai_id = table_telaah.telaah_pelaksana','LEFT');
 		$this->db->join('table_provinsi','table_provinsi.provinsi_id = table_telaah.telaah_provinsitujuan','LEFT');
 		$this->db->join('table_tanggal_perjalanan','table_tanggal_perjalanan.telaah_id = table_telaah.telaah_id','LEFT');
-        $this->db->where('(telaah_domainperjalanan = 1 OR telaah_domainperjalanan = 2)');
+        $this->db->where('(telaah_domainperjalanan = 1 OR telaah_domainperjalanan = 2 OR telaah_domainperjalanan = 5)');
         $this->db->where('skpd_id', 1);
         $this->db->where('year(telaah_tanggalberangkat)',date('Y'));
         $this->db->order_by('table_telaah.telaah_id','DESC');
         $query = $this->db->get();
-        return $query->result();
+        return $this->negara_sebagai_provinsi($query->result());
 	}
 	
 	public function skpd() {
@@ -97,17 +97,17 @@ class M_export extends CI_Model
 	
 	#Model Rekapan Laporan Perjalanan Dinas#
 	public function get_laporan() {
-		$this->db->select('table_telaah.telaah_id, pegawai_nama, pegawai_namajabatan, pegawai_nip, pegawai_golongan, telaah_perihal, provinsi, tanggal_spt, tanggal_spd, telaah_tanggalberangkat, telaah_tanggalkembali, telaah_hari');
+		$this->db->select('table_telaah.telaah_id, pegawai_nama, pegawai_namajabatan, pegawai_nip, pegawai_golongan, telaah_perihal, provinsi, tanggal_spt, tanggal_spd, telaah_tanggalberangkat, telaah_tanggalkembali, telaah_hari, telaah_domainperjalanan, telaah_kotatujuan');
 		$this->db->from('table_telaah');
 		$this->db->join('table_pegawai','table_pegawai.pegawai_id = table_telaah.telaah_pelaksana','LEFT');
 		$this->db->join('table_provinsi','table_provinsi.provinsi_id = table_telaah.telaah_provinsitujuan','LEFT');
 		$this->db->join('table_tanggal_perjalanan','table_tanggal_perjalanan.telaah_id = table_telaah.telaah_id','LEFT');
-        $this->db->where('(telaah_domainperjalanan = 1 OR telaah_domainperjalanan = 2)');
+        $this->db->where('(telaah_domainperjalanan = 1 OR telaah_domainperjalanan = 2 OR telaah_domainperjalanan = 5)');
         $this->db->where('skpd_id', 1);
         $this->db->where('year(telaah_tanggalberangkat)',date('Y'));
         $this->db->order_by('table_telaah.telaah_id','DESC');
         $query = $this->db->get();
-        return $query->result();
+        return $this->negara_sebagai_provinsi($query->result());
 	}
 
 	#Model Rekapan Laporan Perjalanan Dinas#
@@ -159,7 +159,17 @@ class M_export extends CI_Model
 			return $query->result();
 		} else {
 			$query = $this->db->query($query1." UNION ALL ".$query2."");
-			return $query->result(); 
+			return $query->result();
 		}
+	}
+
+	## Perjalanan luar negeri tidak punya pasangan di table_provinsi, kolom provinsi diisi nama negara
+	private function negara_sebagai_provinsi($rows) {
+		foreach ($rows as $row) {
+			if ($row->telaah_domainperjalanan == 5) {
+				$row->provinsi = negara_nama($row->telaah_kotatujuan);
+			}
+		}
+		return $rows;
 	}
 }

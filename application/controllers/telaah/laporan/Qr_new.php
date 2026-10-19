@@ -626,11 +626,11 @@ class Qr_new extends qr_Controller
 
 		//baris 2
 		if (($data[0]['telaah_kategori'] == 1 && $data[0]['jenis_skpd'] != 7) || ($data[0]['telaah_kategori'] == 2)) {
-			if ($data[0]['telaah_domainperjalanan'] == 1 || $data[0]['telaah_domainperjalanan'] == 2) {
+			if ($data[0]['telaah_domainperjalanan'] == 1 || $data[0]['telaah_domainperjalanan'] == 2 || $data[0]['telaah_domainperjalanan'] == 5) {
 				$pdf->SetWidths(array(5, 25, 40, 5, 25, 40));
 				$border = array('LT', 'T', 'T', 'LT', 'T', 'TR');
 				$align = array('', '', '', '', '', '');
-				$caption = array('II.', 'Tiba Di', ': ' . $data[0]['kabupaten_kota'], '', 'Berangkat dari', ': ' . $data[0]['kabupaten_kota']);
+				$caption = array('II.', 'Tiba Di', $pdf->TitikDua(40, $data[0]['kabupaten_kota']), '', 'Berangkat dari', $pdf->TitikDua(40, $data[0]['kabupaten_kota']));
 				$pdf->Row($caption, $border, $align);
 			} else {
 				$pdf->Cell(5, 3, 'II.', 'LT', 0);
@@ -907,7 +907,7 @@ class Qr_new extends qr_Controller
 		//baris 6
 
 		if (($data[0]['telaah_kategori'] == 1 && $data[0]['jenis_skpd'] != 7) || ($data[0]['telaah_kategori'] == 2)) {
-			if ($data[0]['telaah_domainperjalanan'] == 1 || $data[0]['telaah_domainperjalanan'] == 2) {
+			if ($data[0]['telaah_domainperjalanan'] == 1 || $data[0]['telaah_domainperjalanan'] == 2 || $data[0]['telaah_domainperjalanan'] == 5) {
 				$pdf->SetWidths(array(5, 25, 40, 70));
 				$border = array('LT', 'T', 'RT', 'LRT');
 				$align = array('', '', '', '');
@@ -1485,7 +1485,7 @@ class Qr_new extends qr_Controller
 		
 		//baris 2
 		if(($data[0]['telaah_kategori']==1 && $data[0]['jenis_skpd']!=7) || ($data[0]['telaah_kategori']==2) || ($data[0]['jenis_skpd']==3)){
-			if($data[0]['telaah_domainperjalanan']==1 || $data[0]['telaah_domainperjalanan']==2 ){
+			if($data[0]['telaah_domainperjalanan']==1 || $data[0]['telaah_domainperjalanan']==2 || $data[0]['telaah_domainperjalanan']==5 ){
 				$pdf->SetWidths(array(5,30,45,5,30,45));
 				$border = array('LT','T','T','LT','T','TR');
 				$align = array('','','','','','');
@@ -1785,7 +1785,7 @@ class Qr_new extends qr_Controller
 		//baris 6
 		
 		if(($data[0]['telaah_kategori']==1 && $data[0]['jenis_skpd']!=7) || ($data[0]['telaah_kategori']==2)){
-			if($data[0]['telaah_domainperjalanan']==1 || $data[0]['telaah_domainperjalanan']==2 ){
+			if($data[0]['telaah_domainperjalanan']==1 || $data[0]['telaah_domainperjalanan']==2 || $data[0]['telaah_domainperjalanan']==5 ){
 				$pdf->SetWidths(array(5,30,45,80));
 				$border = array('LT','T','RT','LRT');
 				$align = array('','','','');
@@ -1995,6 +1995,7 @@ class Qr_new extends qr_Controller
 
 		if (($posisi == 2 && $kategori_pelaksana == 1 && $data[0]['telaah_domainperjalanan'] == 1)
 			|| ($posisi == 2 && $kategori_pelaksana == 1 && $data[0]['telaah_domainperjalanan'] == 2)
+			|| ($posisi == 2 && $kategori_pelaksana == 1 && $data[0]['telaah_domainperjalanan'] == 5)
 			|| ($posisi == 4 && $kategori_pelaksana == 2)
 			|| $posisi == "camat" || $posisi == 10 || $posisi == 8 || $posisi == 4
 		) {
@@ -2027,6 +2028,7 @@ class Qr_new extends qr_Controller
 
 		if (($posisi == 2 && $kategori_pelaksana == 1 && $data[0]['telaah_domainperjalanan'] == 1)
 			|| ($posisi == 2 && $kategori_pelaksana == 1 && $data[0]['telaah_domainperjalanan'] == 2)
+			|| ($posisi == 2 && $kategori_pelaksana == 1 && $data[0]['telaah_domainperjalanan'] == 5)
 			|| ($posisi == 4 && $kategori_pelaksana == 2)
 			|| $posisi == "camat" || $posisi == 10 || $posisi == 8 || $posisi == 4
 		) {
@@ -3711,6 +3713,7 @@ class Qr_new extends qr_Controller
 					## Hanya SPD
 				} else if (($this->input->post('telaah_kategori') == 2 && $this->input->post('posisi') == 'kadis' && $data[0]['telaah_domainperjalanan'] == 1)
 					|| ($this->input->post('telaah_kategori') == 2 && $this->input->post('posisi') == 'kadis' && $data[0]['telaah_domainperjalanan'] == 2)
+					|| ($this->input->post('telaah_kategori') == 2 && $this->input->post('posisi') == 'kadis' && $data[0]['telaah_domainperjalanan'] == 5)
 					|| ($this->input->post('telaah_kategori') == 3 && $this->input->post('posisi') == 'sekwan')
 					|| ($this->input->post('telaah_kategori') == 4 && $this->input->post('posisi') == 'sekda')
 					|| ($this->input->post('telaah_kategori') == 5 && $this->input->post('posisi') == 'camat')

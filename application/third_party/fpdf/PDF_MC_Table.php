@@ -137,6 +137,26 @@ function NbLines($w,$txt)
     return $nl;
 }
 
+// Teks ": nilai" untuk kolom Row() selebar $w. Baris lanjutan diberi indentasi dua spasi
+// (pada Arial lebar spasi = lebar titik dua) agar sejajar dengan teks setelah titik dua.
+function TitikDua($w, $txt)
+{
+    $wmax = $w - 2 * $this->cMargin - $this->GetStringWidth(': ');
+    $baris = array();
+    $line = '';
+    foreach (explode(' ', trim($txt)) as $kata) {
+        $coba = ($line === '') ? $kata : $line . ' ' . $kata;
+        if ($line !== '' && $this->GetStringWidth($coba) > $wmax) {
+            $baris[] = $line;
+            $line = $kata;
+        } else {
+            $line = $coba;
+        }
+    }
+    $baris[] = $line;
+    return ': ' . implode("\n  ", $baris);
+}
+
 protected $col = 0; // Current column
 protected $y0;      // Ordinate of column start
 

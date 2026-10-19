@@ -3,6 +3,15 @@
 		color: red;
 		font-weight: bold;
 	}
+
+	/* Select2 negara setinggi input lain (34px) agar kolom negara/kota sejajar dengan kolom kiri */
+	#ln .select2-container .select2-selection--single {
+		height: 34px;
+	}
+
+	#ln .select2-container--default .select2-selection--single .select2-selection__arrow {
+		height: 32px;
+	}
 </style>
 
 <div class="content-wrapper">
@@ -282,17 +291,7 @@
 												echo "<label> Domain Perjalanan</label>";
 											}
 											?>
-											<select class="form-control" name="telaah_domainperjalanan"
-												onchange=" if (this.selectedIndex==1){ 
-											document.getElementById('ldlp').style.display = 'inline'; 
-											document.getElementById('lddp').style.display = 'none'; 
-										} else if (this.selectedIndex==2){
-											document.getElementById('ldlp').style.display = 'none'; 
-											document.getElementById('lddp').style.display = 'inline';
-										} else {
-											document.getElementById('ldlp').style.display = 'none'; 
-											document.getElementById('lddp').style.display = 'none';
-										} ;">
+											<select class="form-control" name="telaah_domainperjalanan" onchange="toggleDomainPerjalanan(this.value);">
 												<option value="">- Pilih -</option>
 												<option value="1" <?php if (set_value('telaah_domainperjalanan') == "1") {
 																						echo "selected";
@@ -303,6 +302,9 @@
 												<option value="3" <?php if (set_value('telaah_domainperjalanan') == "3") {
 																						echo "selected";
 																					} ?>>DALAM DAERAH</option>
+												<option value="5" <?php if (set_value('telaah_domainperjalanan') == "5") {
+																						echo "selected";
+																					} ?>>LUAR NEGERI</option>
 											</select>
 										</div>
 									</div>
@@ -389,6 +391,41 @@
 						</div>
 					</div>
 				</div>
+
+				<!-- Negara & kota ditumpuk di kolom kanan (pull-right), sehingga Tempat Tujuan mengisi kolom kiri di bawah Domain Perjalanan -->
+				<div id="ln" style="display:<?php echo (set_value('telaah_domainperjalanan') == "5") ? 'block' : 'none'; ?>;">
+					<div class="col-md-6 pull-right">
+						<div class="form-group">
+							<?php
+							if (form_error('telaah_negaratujuan')) {
+								echo form_error('telaah_negaratujuan');
+							} else {
+								echo "<label> Negara Tujuan</label>";
+							}
+							?>
+							<select class="form-control select2" name="telaah_negaratujuan" style="width: 100%;">
+								<option value="">- Pilih Negara -</option>
+								<?php foreach (negara_list() as $id => $nama) {
+									if (set_value('telaah_negaratujuan') == $id) {
+										echo "<option value='$id' selected>$nama</option>";
+									} else {
+										echo "<option value='$id'>$nama</option>";
+									}
+								} ?>
+							</select>
+						</div>
+						<div class="form-group">
+							<?php
+							if (form_error('telaah_kotatujuan_ln')) {
+								echo form_error('telaah_kotatujuan_ln');
+							} else {
+								echo "<label> Kota Tujuan</label>";
+							}
+							?>
+							<input type="text" class="form-control" name="telaah_kotatujuan_ln" maxlength="100" placeholder="Contoh : Tokyo" value="<?php echo set_value('telaah_kotatujuan_ln'); ?>">
+						</div>
+					</div>
+				</div>
 				<div class="col-md-6">
 					<div class="form-group">
 						<?php
@@ -404,11 +441,13 @@
 				</div><br>
 				<div class="col-md-12">
 				</div>
-				<div class="col-md-12">
-					<button type="button" class="btn btn-success btn-sm" id="btn-tambah-form">Tambah Tujuan</button>
-					<button type="button" class="btn btn-danger btn-sm" id="btn-reset-form">Reset Tujuan</button><br><br>
+				<div id="tambah-tujuan" style="display:<?php echo (set_value('telaah_domainperjalanan') == "5") ? 'none' : 'block'; ?>;">
+					<div class="col-md-12">
+						<button type="button" class="btn btn-success btn-sm" id="btn-tambah-form">Tambah Tujuan</button>
+						<button type="button" class="btn btn-danger btn-sm" id="btn-reset-form">Reset Tujuan</button><br><br>
+					</div>
+					<div id="insert-form"></div>
 				</div>
-				<div id="insert-form"></div>
 				<input type="hidden" id="jumlah-form" value="1">
 				</td>
 				</tr>
@@ -838,6 +877,14 @@
 		//Initialize Select2 Elements
 		$(".select2").select2();
 	});
+
+	// 1 = LDLP, 2 = LDDP, 3 = DALAM DAERAH, 5 = LUAR NEGERI
+	function toggleDomainPerjalanan(domain) {
+		document.getElementById('ldlp').style.display = (domain == '1') ? 'inline' : 'none';
+		document.getElementById('lddp').style.display = (domain == '2') ? 'inline' : 'none';
+		document.getElementById('ln').style.display = (domain == '5') ? 'block' : 'none';
+		document.getElementById('tambah-tujuan').style.display = (domain == '5') ? 'none' : 'block';
+	}
 </script>
 
 <script>
@@ -1035,6 +1082,10 @@
 <script>
 	function showPengikut(str) {
 		var multipleValues = $("#select-meal-type").val() || [];
+		if (multipleValues.length == 0) {
+			$("#pengikut").html(": -");
+			return;
+		}
 		$.ajax({
 			<?php if ($this->uri->segment(4) == "dprd") { ?>
 				url: "<?php echo base_url(); ?>setting_admin/pegawai/get_pengikut/dprd/" + multipleValues.join("-") + "",

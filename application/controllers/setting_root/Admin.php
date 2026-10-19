@@ -1878,9 +1878,14 @@ class Admin extends public_Controller {
 		
 		$arrayTable=array('table_telaah','table_timeline1','table_timeline2','table_timeline3','table_timeline4', 'table_timeline5','table_timeline6','table_timeline7','table_timeline8','table_timeline9','table_timeline10','table_timeline11','table_pengikut','table_pengeluaran_rill', 'table_kuitansi_panjar','table_laporanperjalanan','table_lokasi_tujuan','table_rincian_biaya','table_tanggal_perjalanan');
 		
+		// daftar file fisik diambil sebelum datanya dihapus, filenya dihapus setelah data terhapus
+		$file = $this->m_telaah->file_perjalanan($this->input->post('telaah_id'));
+
 		for($i=0;$i<count($arrayTable);$i++){
 			$this->m_admin->delete_telaah($this->input->post('telaah_id'), $arrayTable[$i]);
 		}
+
+		$this->m_telaah->hapus_file($file);
 
 		redirect('setting_root/admin/'.$this->input->post('url'));
 

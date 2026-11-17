@@ -8,7 +8,7 @@ class M_asisten extends CI_Model
 	}
 	
 	public function record_count_search($column, $data) {
-		return $this->db->count_all("table_asisten WHERE $column like '%$data%'");
+		return $this->db->count_all("table_asisten WHERE $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data($limit, $start) {

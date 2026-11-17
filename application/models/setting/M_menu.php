@@ -11,7 +11,7 @@ class M_menu extends CI_Model
 	}
 	
 	public function getById($id) {
-		$query  = $this->db->query("SELECT * FROM core_menu WHERE id_menu='$id'");
+		$query  = $this->db->query("SELECT * FROM core_menu WHERE id_menu='".$this->db->escape_str((string) $id)."'");
 		return $query->result();
 	}
 	

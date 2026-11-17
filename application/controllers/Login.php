@@ -36,6 +36,8 @@ class Login extends MY_Controller {
 			else
 			{
 				$this->session->set_flashdata('notif', 'Nama user atau password salah!');
+				// username diisi kembali di form login setelah redirect
+				$this->session->set_flashdata('identity', $this->input->post('identity'));
 				redirect('login', 'refresh');
 			}
 		}
@@ -70,6 +72,8 @@ class Login extends MY_Controller {
 			else
 			{
 				$this->session->set_flashdata('notif', 'Nama user atau password salah!');
+				// username diisi kembali di form login setelah redirect
+				$this->session->set_flashdata('identity', $this->input->post('identity'));
 				redirect('login', 'refresh');
 			}
 		}

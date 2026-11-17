@@ -68,7 +68,7 @@ class Tanda_tangan extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 3 );
-			$column = $this->uri->segment ( 4 );
+			$column = kolom_aman($this->uri->segment ( 4 ));
 		}
 		
 		$config = array ();

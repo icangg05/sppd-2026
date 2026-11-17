@@ -6,6 +6,8 @@ class Api extends CI_Controller
     function __construct()
 	{
 		parent::__construct();
+		// API mobile dinonaktifkan (tidak dipakai, terbuka tanpa login). Hapus baris di bawah untuk mengaktifkan lagi.
+		show_404();
 		error_reporting(0);
 		$this->load->model('api/m_api');
 		$this->load->model('telaah/m_telaah');

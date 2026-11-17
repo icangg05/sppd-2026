@@ -32,7 +32,7 @@
 						<div class="inner">                                      
 						  <p>REALISASI ANGGARAN 
 						  <b><?php 
-						  $hasil = ($sisa_anggaran[0]->tes/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100;
+						  $hasil = $total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] > 0 ? ($sisa_anggaran[0]->tes/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100 : 0;
 						  echo " (".round($hasil,1)."%)";?></p></b>
 						  <h2><p>Rp. <?php echo number_format($sisa_anggaran[0]->tes, 0, ',', '.');?></p></h2>
 						</div>
@@ -44,7 +44,7 @@
 						<div class="inner">                                       
 						  <p>SISA ANGGARAN
 						  <b><?php 
-						  $hasil = (($total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] - $sisa_anggaran[0]->tes)/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100;
+						  $hasil = $total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] > 0 ? (($total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] - $sisa_anggaran[0]->tes)/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100 : 0;
 						  echo " (".round($hasil,1)."%)";?></b>
 						  </p>
 						  <h2><p>Rp. <?php echo number_format($total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] - $sisa_anggaran[0]->tes, 0, ',', '.');?></p></h2>
@@ -104,15 +104,19 @@
 							</ul>
 							<div class="tab-content">
 							<div class="pull-right"><a href="<?php echo base_url();?>telaah/disposisi/detail/<?php echo $this->uri->segment(4)?>/<?php echo $this->uri->segment(5)?>?telaah_id=<?php echo $this->input->get('telaah_id')?>" class="btn btn-primary"> Lihat Detail Perjalanan</a></div><br><br>
+							  <?php
+								$url_spt = url_dokumen('upload/doc_perjalanan/SPT-'.$telaah_id.'-'.$entry[0]['pegawai_id'].'.pdf');
+								$url_sppd = url_dokumen('upload/doc_perjalanan/SPPD-'.$telaah_id.'-'.$entry[0]['pegawai_id'].'.pdf');
+							  ?>
 							  <div class="tab-pane active" id="tab_1">
-								<object data="<?php echo base_url();?>upload/doc_perjalanan/SPT-<?php echo $telaah_id;?>-<?php echo $entry[0]['pegawai_id']; ?>.pdf" type="application/pdf" width="100%" height="700px">
-									<p>Preview dokumen tidak tersedia. Silakan <a href="<?php echo base_url();?>upload/doc_perjalanan/SPT-<?php echo $telaah_id;?>-<?php echo $entry[0]['pegawai_id']; ?>.pdf" target="_blank">Download Dokumen SPT</a>.</p>
+								<object data="<?php echo $url_spt; ?>" type="application/pdf" width="100%" height="700px">
+									<p>Preview dokumen tidak tersedia. Silakan <a href="<?php echo $url_spt; ?>" target="_blank">Download Dokumen SPT</a>.</p>
 								</object>
 							  </div>
 							  <!-- /.tab-pane -->
 							  <div class="tab-pane" id="tab_2">
-								<object data="<?php echo base_url();?>upload/doc_perjalanan/SPPD-<?php echo $telaah_id;?>-<?php echo $entry[0]['pegawai_id']; ?>.pdf" type="application/pdf" width="100%" height="700px">
-									<p>Preview dokumen tidak tersedia. Silakan <a href="<?php echo base_url();?>upload/doc_perjalanan/SPPD-<?php echo $telaah_id;?>-<?php echo $entry[0]['pegawai_id']; ?>.pdf" target="_blank">Download Dokumen SPPD</a>.</p>
+								<object data="<?php echo $url_sppd; ?>" type="application/pdf" width="100%" height="700px">
+									<p>Preview dokumen tidak tersedia. Silakan <a href="<?php echo $url_sppd; ?>" target="_blank">Download Dokumen SPPD</a>.</p>
 								</object>
 							  </div>
 							</div>
@@ -136,7 +140,7 @@
 											echo $entry[0]['anggotadprd_name'];
 											echo '</div>';
 											echo '<div class="col-md-4">';
-											echo "<button class='btn btn-warning btn-sm' onclick='tampilkan_nama()'>Lihat Laporan</button><br>";
+											echo "<button class='btn btn-warning btn-sm btn-lihat-laporan' onclick='tampilkan_nama(this)'>Lihat Laporan</button><br>";
 											echo '</div>';
 											echo "<input type='hidden' class'form-control' id='posisi' value='$posisi'>";
 											echo "<input type='hidden' class'form-control' id='kategori' value='$kategori'>";
@@ -148,7 +152,7 @@
 											echo $entry[0]['pegawai_nama'];
 											echo '</div>';
 											echo '<div class="col-md-4">';
-											echo "<button class='btn btn-warning btn-sm' onclick='tampilkan_nama()'>Lihat Laporan</button><br>";
+											echo "<button class='btn btn-warning btn-sm btn-lihat-laporan' onclick='tampilkan_nama(this)'>Lihat Laporan</button><br>";
 											echo '</div>';
 											echo "<input type='hidden' class'form-control' id='posisi' value='$posisi'>";
 											echo "<input type='hidden' class'form-control' id='kategori' value='$kategori'>";
@@ -158,18 +162,44 @@
 										}
 										 ?>
 										<script>
-											function tampilkan_nama(){
+											// ganti dokumen sesuai nama yang dipilih: tab yang sedang dibuka (SPT/SPPD) tetap dibuka,
+											// respons klik sebelumnya yang datang terlambat diabaikan, dan nama yang sedang dilihat ditandai
+											var urutan_laporan = 0;
+											function muat_laporan(url, tombol){
+												var urutan = ++urutan_laporan;
+												$.ajax({
+													url: url,
+													success: function(response){
+														if(urutan !== urutan_laporan){
+															return;
+														}
+														var tab = $("#hasil .nav-tabs li.active a").attr("href");
+														$("#hasil").replaceWith(response);
+														if(tab){
+															$("#hasil .nav-tabs a[href='" + tab + "']").tab("show");
+														}
+														tandai_laporan(tombol);
+													}
+												});
+											}
+
+											function tandai_laporan(tombol){
+												$(".btn-lihat-laporan").removeClass("btn-primary").addClass("btn-warning").text("Lihat Laporan");
+												$(tombol).removeClass("btn-warning").addClass("btn-primary").text("Sedang Dilihat");
+											}
+
+											// saat halaman dibuka, dokumen yang tampil adalah milik pelaksana
+											$(function(){
+												tandai_laporan($(".btn-lihat-laporan").first());
+											});
+
+											function tampilkan_nama(tombol){
 												posisi = document.getElementById("posisi").value;
 												kategori = document.getElementById("kategori").value;
 												telaah = document.getElementById("telaah").value;
 												pegawai = document.getElementById("pegawai").value;
 												pelaksana = document.getElementById("pelaksana").value;
-												 $.ajax({
-													 url:"<?php echo base_url();?>telaah/disposisi/tampilkan_laporan_sementara/"+posisi+"/"+kategori+"/"+telaah+"/"+pelaksana+"/"+pegawai+"",
-													success: function(response){
-														$("#hasil").html(response);
-													}
-												 });
+												muat_laporan("<?php echo base_url();?>telaah/disposisi/tampilkan_laporan_sementara/"+posisi+"/"+kategori+"/"+telaah+"/"+pelaksana+"/"+pegawai+"", tombol);
 												return false;
 											}
 										</script>
@@ -191,7 +221,7 @@
 												echo $v->anggotadprd_name;
 												echo '</div>';
 												echo '<div class="col-md-4">';
-												echo "<button class='btn btn-warning btn-sm' onclick='tampilkan_nama$no()'>Lihat Laporan</button><br><br>";
+												echo "<button class='btn btn-warning btn-sm btn-lihat-laporan' onclick='tampilkan_nama$no(this)'>Lihat Laporan</button><br><br>";
 												echo '</div>';
 												echo "<input type='hidden' class'form-control' id='posisi$no' value='$posisi'>";
 												echo "<input type='hidden' class'form-control' id='kategori$no' value='$kategori'>";
@@ -204,7 +234,7 @@
 												echo $v->pegawai_nama;
 												echo '</div>';
 												echo '<div class="col-md-4">';
-												echo "<button class='btn btn-warning btn-sm' onclick='tampilkan_nama$no()'>Lihat Laporan</button><br><br>";
+												echo "<button class='btn btn-warning btn-sm btn-lihat-laporan' onclick='tampilkan_nama$no(this)'>Lihat Laporan</button><br><br>";
 												echo '</div>';
 												echo "<input type='hidden' class'form-control' id='posisi$no' value='$posisi'>";
 												echo "<input type='hidden' class'form-control' id='kategori$no' value='$kategori'>";
@@ -214,18 +244,13 @@
 											}
 										?>
 										<script>
-											function tampilkan_nama<?= $no ?>(){
+											function tampilkan_nama<?= $no ?>(tombol){
 												posisi = document.getElementById("posisi<?php echo $no?>").value;
 												kategori = document.getElementById("kategori<?php echo $no?>").value;
 												telaah = document.getElementById("telaah<?php echo $no?>").value;
 												pegawai = document.getElementById("pegawai<?php echo $no?>").value;
 												pelaksana = document.getElementById("pelaksana<?php echo $no?>").value;
-												 $.ajax({
-													 url:"<?php echo base_url();?>telaah/disposisi/tampilkan_laporan_sementara/"+posisi+"/"+kategori+"/"+telaah+"/"+pelaksana+"/"+pegawai+"",
-													success: function(response){
-														$("#hasil").html(response);
-													}
-												 });
+												muat_laporan("<?php echo base_url();?>telaah/disposisi/tampilkan_laporan_sementara/"+posisi+"/"+kategori+"/"+telaah+"/"+pelaksana+"/"+pegawai+"", tombol);
 												return false;
 											}
 										</script>
@@ -340,7 +365,7 @@ Highcharts.chart('container', {
 		data: [{
 			name: 'Sisa Anggaran',
 			y: 	<?php 
-				  $hasil = (($total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] - $sisa_anggaran[0]->tes)/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100;
+				  $hasil = $total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] > 0 ? (($total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] - $sisa_anggaran[0]->tes)/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100 : 0;
 				  echo round($hasil,2);?>,
 			color: '#00a65a',
 			sliced: true,
@@ -348,7 +373,7 @@ Highcharts.chart('container', {
 		}, {
 			name: 'Anggaran terpakai',
 			y: <?php 
-				  $hasil = ($sisa_anggaran[0]->tes/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100;
+				  $hasil = $total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] > 0 ? ($sisa_anggaran[0]->tes/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100 : 0;
 				  echo round($hasil,2);?>,
 			color: '#dd4b39',
 		}]

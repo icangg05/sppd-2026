@@ -4,6 +4,8 @@ class Api_tte extends qr_Controller {
 	function __construct()
 	{
 		parent::__construct();
+		// API mobile dinonaktifkan (tidak dipakai, terbuka tanpa login). Hapus baris di bawah untuk mengaktifkan lagi.
+		show_404();
 		error_reporting(0);
 		$this->load->model('api/m_api');
 		$this->load->model('telaah/m_esselon');
@@ -2813,6 +2815,8 @@ class Api_tte extends qr_Controller {
     function downloadDokumenById($id_signed, $filename)
 	{
 	  $path = './upload/doc_TTE/'.$filename.'.pdf';
+        // hanya simpan bila respon benar-benar PDF (respon error tidak boleh menimpa dokumen); coba maksimal 3 kali
+        for ($coba = 1; $coba <= 3; $coba++) {
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -2833,13 +2837,24 @@ class Api_tte extends qr_Controller {
         ));
 
         $response = curl_exec($curl);
+        $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         
         $data = json_decode($response);
         $err = curl_error($curl);
 
         curl_close($curl);
 
-		file_put_contents($path, $response);
+		if ($id_signed && $http_code == 200 && is_string($response) && strncmp($response, '%PDF', 4) === 0) {
+			file_put_contents($path . '.tmp', $response);
+			rename($path . '.tmp', $path);
+			return TRUE;
+		}
+		if (!$id_signed) {
+			return FALSE;
+		}
+		sleep(1);
+        }
+		return FALSE;
     }
 
 	function cek()

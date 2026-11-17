@@ -102,6 +102,7 @@ class CI_Encrypt {
      */
     function encode($string, $key = '')
     {
+        $string = (string) $string;
         $key = $this->get_key($key);
         if ($this->_mcrypt_exists === TRUE)
         {
@@ -126,6 +127,7 @@ class CI_Encrypt {
      */
     function decode($string, $key = '')
     {
+        $string = (string) $string;
         $key = $this->get_key($key);
         if (preg_match('/[^a-zA-Z0-9\/\+=]/', $string))
         {

@@ -78,7 +78,7 @@ class M_history extends CI_Model
 		$this->db->where('telaah_status', 2);
 		$query2 = $this->db->get_compiled_select();
 		
-		$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT $start, $limit ");
+		$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT ".(int) $start.", ".(int) $limit." ");
 		return $query->result();
 	}
 	
@@ -98,7 +98,7 @@ class M_history extends CI_Model
 		$this->db->where('telaah_status', 2);
 		$query2 = $this->db->get_compiled_select();
 		
-		$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT $start, $limit ");
+		$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT ".(int) $start.", ".(int) $limit." ");
 		return $query->result();
 	}
 	
@@ -118,7 +118,7 @@ class M_history extends CI_Model
 		$this->db->where('telaah_status', 2);
 		$query2 = $this->db->get_compiled_select();
 		
-		$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT $start, $limit ");
+		$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT ".(int) $start.", ".(int) $limit." ");
 		return $query->result();
 	}
 	

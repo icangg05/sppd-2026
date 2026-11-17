@@ -341,7 +341,8 @@ $config['cache_query_string'] = FALSE;
 | https://codeigniter.com/user_guide/libraries/encryption.html
 |
 */
-$config['encryption_key'] = '02527-269-2503946-70386-34730519';
+// JANGAN ganti nilai kunci ini: dipakai men-decode telaah_id di QR SPPD yang sudah tercetak
+$config['encryption_key'] = getenv('CI_ENCRYPTION_KEY') ?: '02527-269-2503946-70386-34730519';
 
 /*
 |--------------------------------------------------------------------------
@@ -421,7 +422,7 @@ $config['cookie_prefix']	= '';
 $config['cookie_domain']	= '';
 $config['cookie_path']		= '/';
 $config['cookie_secure']	= FALSE;
-$config['cookie_httponly'] 	= FALSE;
+$config['cookie_httponly'] 	= TRUE;
 
 /*
 |--------------------------------------------------------------------------

@@ -45,7 +45,7 @@
              $asisten_id = base64_encode($this->encrypt->encode($v->asisten_id, $this->session->userdata('encrypt_key')));	
              ?>
              <tr>
-              <!--td><?php// echo $v->skpd_kode;?></td-->
+              <!--td><?php // echo $v->skpd_kode;?></td-->
               <td><?php echo $v->nama_asisten;?></td>
               <td><a href="<?php echo base_url();?>setting_root/asisten/update_view?asisten_id=<?php echo $asisten_id?>" class="btn btn-sm btn-flat btn-warning"><i class="fa fa-edit"></i> EDIT</a>
                <a href="<?php echo base_url();?>setting_root/asisten/delete?asisten_id=<?php echo $asisten_id?>" class="btn btn-sm btn-flat btn-danger" onclick="return confirm('Anda Yakin ?');"><i class="fa fa-trash"></i> HAPUS</a>

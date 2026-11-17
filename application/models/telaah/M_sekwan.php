@@ -65,13 +65,13 @@ class M_sekwan extends CI_Model
 	public function record_count($skpd_id) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='10' AND skpd_id='$skpd_id' ");
+			WHERE telaah_kategori='10' AND skpd_id='".$this->db->escape_str((string) $skpd_id)."' ");
 	}
 	
 	public function record_count_search($column, $data, $skpd_id) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='10' AND skpd_id='$skpd_id' AND $column like '%$data%'");
+			WHERE telaah_kategori='10' AND skpd_id='".$this->db->escape_str((string) $skpd_id)."' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data($limit, $start, $skpd_id) {

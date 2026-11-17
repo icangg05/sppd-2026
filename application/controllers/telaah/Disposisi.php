@@ -87,8 +87,8 @@ class Disposisi extends public_Controller {
 									$sum_all_pengeluaran_rill_skpd = $this->m_beranda->sum_all_pengeluaran_rill_skpd();
 									$this->data['sum_all_rincian_skpd'] = $sum_all_rincian_skpd +  $sum_all_pengeluaran_rill_skpd;
 									$this->data['sum_all_anggaran_skpd'] = $this->m_beranda->sum_all_anggaran_skpd();
-									$this->data['anggaran_terpakai'] = ($this->data['sum_all_rincian_skpd']/$this->data['sum_all_anggaran_skpd'])*100;
-									$this->data['anggaran_tersedia'] = (($this->data['sum_all_anggaran_skpd']-$this->data['sum_all_rincian_skpd'])/$this->data['sum_all_anggaran_skpd'])*100;
+									$this->data['anggaran_terpakai'] = $this->data['sum_all_anggaran_skpd'] > 0 ? ($this->data['sum_all_rincian_skpd']/$this->data['sum_all_anggaran_skpd'])*100 : 0;
+									$this->data['anggaran_tersedia'] = $this->data['sum_all_anggaran_skpd'] > 0 ? (($this->data['sum_all_anggaran_skpd']-$this->data['sum_all_rincian_skpd'])/$this->data['sum_all_anggaran_skpd'])*100 : 0;
 									  break;
 			case "sekda" 			: $count_data = $this->m_telaah->sekda('','');
 									  $config ["total_rows"] = $count_data[0]['numrows']+$count_data[1]['numrows'];
@@ -338,7 +338,7 @@ class Disposisi extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 5 );
-			$column = $this->uri->segment ( 6 );
+			$column = kolom_aman($this->uri->segment ( 6 ));
 		}
 		
 		$config = array ();
@@ -658,7 +658,7 @@ class Disposisi extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 5 );
-			$column = $this->uri->segment ( 6 );
+			$column = kolom_aman($this->uri->segment ( 6 ));
 		}
 		
 		$config = array ();
@@ -972,7 +972,7 @@ class Disposisi extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 4 );
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		
 		$config = array ();
@@ -3288,7 +3288,7 @@ class Disposisi extends public_Controller {
 	{
 		$data['telaah_id'] = $this->input->post('telaah_id');
 		$data['telaah_kategori'] = $this->input->post('telaah_kategori');
-		$ttd=explode(",",$this->input->post('tanda_tangan_spd'));
+		$ttd=explode(",",(string) $this->input->post('tanda_tangan_spd'));
 
 		$data['group'] = $ttd[0];
 		$data['pegawai_id'] = $ttd[1];
@@ -3347,10 +3347,14 @@ class Disposisi extends public_Controller {
   								
 		$posisi = $this->uri->segment(4);
 		$kategori = $this->uri->segment(5);
-		$telaah = $this->uri->segment(6);
-		$pelaksana = $this->uri->segment(7);
-		$pegawai = $this->uri->segment(8);
-		
+		$telaah = (int) $this->uri->segment(6);
+		$pelaksana = (int) $this->uri->segment(7);
+		$pegawai = (int) $this->uri->segment(8);
+
+		// SPT selalu milik pelaksana; SPPD pengikut memakai hasil TTE-nya jika sudah ditandatangani
+		$url_spt = url_dokumen("upload/doc_perjalanan/SPT-$telaah-$pelaksana.pdf");
+		$url_sppd = url_dokumen($pegawai == $pelaksana ? "upload/doc_perjalanan/SPPD-$telaah-$pegawai.pdf" : $this->m_pengikut->file_sppd($telaah, $pegawai));
+
 		echo "<div class='nav-tabs-custom' id='hasil'>
 		<ul class='nav nav-tabs'>
 		  <li class='active'><a href='#tab_1' data-toggle='tab'>SPT</a></li>
@@ -3359,14 +3363,14 @@ class Disposisi extends public_Controller {
 		<div class='tab-content'>
 		  <div class='pull-right'><a href='".base_url()."telaah/disposisi/detail/".$this->uri->segment(4)."/".$this->uri->segment(5)."?telaah_id=".$telaah_id."' class='btn btn-primary'> Lihat Detail Perjalanan</a></div><br><br>
 		  <div class='tab-pane active' id='tab_1'>
-			<object data='".base_url()."upload/doc_perjalanan/SPT-$telaah-$pelaksana.pdf' type='application/pdf' width='100%' height='700px'>
-				<p>Preview dokumen tidak tersedia. Silakan <a href='".base_url()."upload/doc_perjalanan/SPT-$telaah-$pelaksana.pdf' target='_blank'>Download Dokumen SPT</a>.</p>
+			<object data='$url_spt' type='application/pdf' width='100%' height='700px'>
+				<p>Preview dokumen tidak tersedia. Silakan <a href='$url_spt' target='_blank'>Download Dokumen SPT</a>.</p>
 			</object>
 		  </div>
 		  <!-- /.tab-pane -->
 		  <div class='tab-pane' id='tab_2'>
-			<object data='".base_url()."upload/doc_perjalanan/SPPD-$telaah-$pegawai.pdf' type='application/pdf' width='100%' height='700px'>
-				<p>Preview dokumen tidak tersedia. Silakan <a href='".base_url()."upload/doc_perjalanan/SPPD-$telaah-$pegawai.pdf' target='_blank'>Download Dokumen SPPD</a>.</p>
+			<object data='$url_sppd' type='application/pdf' width='100%' height='700px'>
+				<p>Preview dokumen tidak tersedia. Silakan <a href='$url_sppd' target='_blank'>Download Dokumen SPPD</a>.</p>
 			</object>
 		  </div>
 		</div>

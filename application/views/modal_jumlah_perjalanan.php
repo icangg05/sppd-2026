@@ -208,19 +208,19 @@
 		</tr>
 		<tr>
 		  <td class="col-md-6">Total</td>
-		  <td><span class="badge bg-aqua"><?php echo number_format($total_list_telaah[0]['total_list_telaah'], 0, ",", "."); ?></span></td>
+		  <td><span class="badge bg-aqua"><?php echo number_format((float) $total_list_telaah[0]['total_list_telaah'], 0, ",", "."); ?></span></td>
 		</tr>
 		<tr>
 		  <td class="col-md-6">Proses</td>
-		  <td><span class="badge bg-yellow"><?php echo number_format($total_list_telaah_diproses[0]['total_list_telaah_diproses'], 0, ",", "."); ?></span></td>
+		  <td><span class="badge bg-yellow"><?php echo number_format((float) $total_list_telaah_diproses[0]['total_list_telaah_diproses'], 0, ",", "."); ?></span></td>
 		</tr>
 		<tr>
 		  <td class="col-md-6">Selesai</td>
-		  <td><span class="badge bg-green"><?php echo number_format($total_list_telaah_diterima[0]['total_list_telaah_diterima'], 0, ",", "."); ?></span></td>
+		  <td><span class="badge bg-green"><?php echo number_format((float) $total_list_telaah_diterima[0]['total_list_telaah_diterima'], 0, ",", "."); ?></span></td>
 		</tr>
 		<tr>
 		  <td class="col-md-6">Tolak</td>
-		  <td><span class="badge bg-red"><?php echo number_format($total_list_telaah_ditolak[0]['total_list_telaah_ditolak'], 0, ",", "."); ?></span></td>
+		  <td><span class="badge bg-red"><?php echo number_format((float) $total_list_telaah_ditolak[0]['total_list_telaah_ditolak'], 0, ",", "."); ?></span></td>
 		</tr>
 	  </table>
 	  <br>
@@ -230,19 +230,19 @@
 		</tr>
 		<tr>
 		  <td class="col-md-6">Total</td>
-		  <td><span class="badge bg-aqua"><?php echo number_format($total_list_telaah_staff_camat[0]['total_list_telaah_staff'], 0, ",", "."); ?></span></td>
+		  <td><span class="badge bg-aqua"><?php echo number_format((float) $total_list_telaah_staff_camat[0]['total_list_telaah'], 0, ",", "."); ?></span></td>
 		</tr>
 		<tr>
 		  <td class="col-md-6">Proses</td>
-		  <td><span class="badge bg-yellow"><?php echo number_format($total_list_telaah_diproses_staff_camat[0]['total_list_telaah_diproses_staff'], 0, ",", "."); ?></span></td>
+		  <td><span class="badge bg-yellow"><?php echo number_format((float) $total_list_telaah_diproses_staff_camat[0]['total_list_telaah_diproses'], 0, ",", "."); ?></span></td>
 		</tr>
 		<tr>
 		  <td class="col-md-6">Selesai</td>
-		  <td><span class="badge bg-green"><?php echo number_format($total_list_telaah_diterima_staff_camat[0]['total_list_telaah_diterima_staff'], 0, ",", "."); ?></span></td>
+		  <td><span class="badge bg-green"><?php echo number_format((float) $total_list_telaah_diterima_staff_camat[0]['total_list_telaah_diterima'], 0, ",", "."); ?></span></td>
 		</tr>
 		<tr>
 		  <td class="col-md-6">Tolak</td>
-		  <td><span class="badge bg-red"><?php echo number_format($total_list_telaah_ditolak_staff_camat[0]['total_list_telaah_ditolak_staff'], 0, ",", "."); ?></span></td>
+		  <td><span class="badge bg-red"><?php echo number_format((float) $total_list_telaah_ditolak_staff_camat[0]['total_list_telaah_ditolak'], 0, ",", "."); ?></span></td>
 		</tr>
 	  </table>
 	  <br> 		
@@ -257,19 +257,19 @@
 		</tr>
 		<tr>
 		  <td class="col-md-6">Total</td>
-		  <td><span class="badge bg-aqua"><?php echo number_format($total_list_telaah[0]['total_list_telaah'], 0, ",", "."); ?></span></td>
+		  <td><span class="badge bg-aqua"><?php echo number_format((float) $total_list_telaah[0]['total_list_telaah'], 0, ",", "."); ?></span></td>
 		</tr>
 		<tr>
 		  <td class="col-md-6">Proses</td>
-		  <td><span class="badge bg-yellow"><?php echo number_format($total_list_telaah_diproses[0]['total_list_telaah_diproses'], 0, ",", "."); ?></span></td>
+		  <td><span class="badge bg-yellow"><?php echo number_format((float) $total_list_telaah_diproses[0]['total_list_telaah_diproses'], 0, ",", "."); ?></span></td>
 		</tr>
 		<tr>
 		  <td class="col-md-6">Selesai</td>
-		  <td><span class="badge bg-green"><?php echo number_format($total_list_telaah_diterima[0]['total_list_telaah_diterima'], 0, ",", "."); ?></span></td>
+		  <td><span class="badge bg-green"><?php echo number_format((float) $total_list_telaah_diterima[0]['total_list_telaah_diterima'], 0, ",", "."); ?></span></td>
 		</tr>
 		<tr>
 		  <td class="col-md-6">Tolak</td>
-		  <td><span class="badge bg-red"><?php echo number_format($total_list_telaah_ditolak[0]['total_list_telaah_ditolak'], 0, ",", "."); ?></span></td>
+		  <td><span class="badge bg-red"><?php echo number_format((float) $total_list_telaah_ditolak[0]['total_list_telaah_ditolak'], 0, ",", "."); ?></span></td>
 		</tr>
 	  </table>
 	  <br>

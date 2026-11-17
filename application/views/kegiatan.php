@@ -22,7 +22,7 @@
 						$rincian_biaya =  $this->m_anggaran->cek_sisa_anggaran_skpd($v->id_anggaran);
 						$pengeluaran_rill =  $this->m_anggaran->cek_pengeluaran_rill_skpd($v->id_anggaran);
 						$rincian = $rincian_biaya[0]->jumlah + $pengeluaran_rill[0]->jumlah;
-						$total = round(($rincian/$v->pagu)*100,2);
+						$total = $v->pagu > 0 ? round(($rincian/$v->pagu)*100,2) : ($rincian > 0 ? 100 : 0);
 						if($total >= 0 && $total <= 50){
 							echo "<span class='label label-success'>$total %</span>";
 						} else if($total > 50 && $total <= 75){

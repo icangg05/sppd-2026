@@ -76,7 +76,7 @@ class Admin extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 4 );
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		
 		$config = array ();
@@ -239,7 +239,7 @@ class Admin extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 4 );
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		
 		$config = array ();
@@ -402,7 +402,7 @@ class Admin extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 4 );
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		
 		$config = array ();
@@ -565,7 +565,7 @@ class Admin extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 4 );
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		
 		$config = array ();
@@ -728,7 +728,7 @@ class Admin extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 4 );
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		
 		$config = array ();
@@ -845,7 +845,7 @@ class Admin extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 4 );
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		
 		$config = array ();
@@ -962,7 +962,7 @@ class Admin extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 4 );
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		
 		$config = array ();
@@ -1108,7 +1108,7 @@ class Admin extends public_Controller {
 			$this->session->set_userdata($option);
 		}else {
 			$query = $this->uri->segment ( 4 );
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		
 		$config = array ();
@@ -1271,7 +1271,7 @@ class Admin extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 4 );
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		
 		$config = array ();
@@ -1434,7 +1434,7 @@ class Admin extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 4 );
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		
 		$config = array ();
@@ -1598,7 +1598,7 @@ class Admin extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 4 );
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		
 		$config = array ();
@@ -1760,7 +1760,7 @@ class Admin extends public_Controller {
 			$this->session->set_userdata($option);
 		}else {
 			$query = $this->uri->segment ( 4 );
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		
 		$config = array ();
@@ -1875,17 +1875,26 @@ class Admin extends public_Controller {
 	//Delete Telaah
 	public function delete_telaah()
 	{
-		
+		// hanya user id 1 / Administrator (grup 9 dan 100)
+		if(!($this->ion_auth->user()->row()->id == 1 || in_array($this->ion_auth->get_users_groups()->row()->id, array(9, 100))) || $this->input->post('telaah_id') == ''){
+			redirect('setting_root/admin/'.$this->input->post('url'));
+		}
+
 		$arrayTable=array('table_telaah','table_timeline1','table_timeline2','table_timeline3','table_timeline4', 'table_timeline5','table_timeline6','table_timeline7','table_timeline8','table_timeline9','table_timeline10','table_timeline11','table_pengikut','table_pengeluaran_rill', 'table_kuitansi_panjar','table_laporanperjalanan','table_lokasi_tujuan','table_rincian_biaya','table_tanggal_perjalanan');
-		
+
 		// daftar file fisik diambil sebelum datanya dihapus, filenya dihapus setelah data terhapus
 		$file = $this->m_telaah->file_perjalanan($this->input->post('telaah_id'));
 
+		// semua tabel terhapus atau tidak sama sekali
+		$this->db->trans_start();
 		for($i=0;$i<count($arrayTable);$i++){
 			$this->m_admin->delete_telaah($this->input->post('telaah_id'), $arrayTable[$i]);
 		}
+		$this->db->trans_complete();
 
-		$this->m_telaah->hapus_file($file);
+		if($this->db->trans_status() !== FALSE){
+			$this->m_telaah->hapus_file($file);
+		}
 
 		redirect('setting_root/admin/'.$this->input->post('url'));
 

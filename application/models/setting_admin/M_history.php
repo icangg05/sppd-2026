@@ -5,7 +5,7 @@ class M_history extends CI_Model
 	public function record_count($pegawai_id) {
 		return $this->db->count_all("table_telaah, table_pegawai 
 			WHERE table_telaah.telaah_pelaksana = table_pegawai.pegawai_id
-			AND pegawai_id='$pegawai_id'
+			AND pegawai_id='".$this->db->escape_str((string) $pegawai_id)."'
 			AND telaah_status=2 
 			AND telaah_kategori!=3
 			AND telaah_kategori!=8");
@@ -13,7 +13,7 @@ class M_history extends CI_Model
 	public function record_count_walikota($pegawai_id) {
 		return $this->db->count_all("table_telaah, table_pimpinan
 			WHERE table_telaah.telaah_pelaksana = table_pimpinan.pegawai_id
-			AND pegawai_id='$pegawai_id'
+			AND pegawai_id='".$this->db->escape_str((string) $pegawai_id)."'
 			AND telaah_status=2");
 	}
 	
@@ -44,7 +44,7 @@ class M_history extends CI_Model
 	public function record_count_dprd($anggotadprd_id) {
 		return $this->db->count_all("table_telaah, table_anggotadprd 
 			WHERE table_telaah.telaah_pelaksana = table_anggotadprd.anggotadprd_id
-			AND anggotadprd_id='$anggotadprd_id'");
+			AND anggotadprd_id='".$this->db->escape_str((string) $anggotadprd_id)."'");
 	}
 	
 	public function data_dprd($limit, $start, $anggotadprd_id) {

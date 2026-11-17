@@ -2,10 +2,18 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 class Qr_new extends qr_Controller
 {
+	// respon mentah terakhir dari server TTE & pesan kegagalan pertama (lihat downloadDokumenById)
+	private $respon_tte = '';
+	private $gagal_tte = '';
+
 	function __construct()
 	{
 		parent::__construct();
 		error_reporting(0);
+		// selain halaman publik QR (sppd), semua method di sini (TTE, cetak, cek status) wajib login
+		if (strtolower($this->router->method) !== 'sppd' && !$this->ion_auth->logged_in()) {
+			redirect('login');
+		}
 		$this->load->model('telaah/m_esselon');
 		$this->load->model('telaah/m_dprd');
 		$this->load->model('telaah/m_sekda');
@@ -3409,6 +3417,12 @@ class Qr_new extends qr_Controller
 		}
 		$nik = $pegawai_nik[0]['pegawai_nik'];
 
+		// passphrase kosong tidak perlu dikirim ke server TTE
+		if ((string) $this->input->post('passphrase') === '') {
+			$this->session->set_flashdata('notif', 'Passphrase TTE Wajib Diisi !!!');
+			redirect('telaah/disposisi/lihat_laporan/' . $this->input->post('posisi') . '/' . $this->input->post('telaah_kategori') . '?telaah_id=' . $telaah_id);
+		}
+
 		if ($nik == "") {
 			$this->session->set_flashdata('notif', 'NIK Pegawai Belum Diinput !!!');
 			redirect('telaah/disposisi/lihat_laporan/' . $this->input->post('posisi') . '/' . $this->input->post('telaah_kategori') . '?telaah_id=' . $telaah_id);
@@ -3823,6 +3837,15 @@ class Qr_new extends qr_Controller
 					$log_tte['action_table'] = "Tracking SPPD";
 					$this->m_log->create_tte($log_tte);
 					redirect('telaah/disposisi/lihat_laporan/' . $this->input->post('posisi') . '/' . $this->input->post('telaah_kategori') . '?telaah_id=' . $telaah_id);
+				} else if ($this->gagal_tte) {
+					$this->session->set_flashdata('notif', $this->gagal_tte);
+
+					$log_tte['telaah_id'] = $this->input->post('telaah_id');
+					$log_tte['pegawai_id'] = $data[0]['pegawai_id'];
+					$log_tte['action'] = $this->gagal_tte;
+					$log_tte['action_table'] = "Tracking SPPD";
+					$this->m_log->create_tte($log_tte);
+					redirect('telaah/disposisi/lihat_laporan/' . $this->input->post('posisi') . '/' . $this->input->post('telaah_kategori') . '?telaah_id=' . $telaah_id);
 				} else {
 
 					// COPY FILE TTE KE FOLDER PERJALANAN AGAR BISA DILIHAT DI PREVIEW
@@ -4193,6 +4216,12 @@ class Qr_new extends qr_Controller
 
 	/*API BSSN*/
 
+	// kredensial server TTE dari env TTE_BASIC_AUTH (base64 "user:password"), fallback ke nilai lama
+	private function tte_auth_header()
+	{
+		return "Authorization: Basic " . (getenv('TTE_BASIC_AUTH') ?: 'ZXNwcGQ6TUEzNDVnRmJCR0hUTWRkeDdlVXI=');
+	}
+
 	function sendSignRequest($filename, $y, $height, $nik, $passphrase, $telaah_id)
 	{
 		$curl 	= curl_init();
@@ -4208,7 +4237,7 @@ class Qr_new extends qr_Controller
 		$post_data = $this->build_data_files($boundary, $files);
 
 		curl_setopt_array($curl, array(
-			CURLOPT_URL => "http://103.85.5.99/api/sign/pdf?nik=" . $nik . "&passphrase=" . $passphrase . "&tampilan=visible&halaman=pertama&image=false&linkQR=https://sppd.kendarikota.go.id/telaah/history/detail?telaah_id=" . $telaah_id . "&xAxis=254&yAxis=" . $y . "&width=304&height=" . $height . "&jenis_response=BASE64",
+			CURLOPT_URL => "http://103.85.5.99/api/sign/pdf?nik=" . rawurlencode($nik) . "&passphrase=" . rawurlencode($passphrase) . "&tampilan=visible&halaman=pertama&image=false&linkQR=https://sppd.kendarikota.go.id/telaah/history/detail?telaah_id=" . $telaah_id . "&xAxis=254&yAxis=" . $y . "&width=304&height=" . $height . "&jenis_response=BASE64",
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_ENCODING => "",
 			CURLOPT_MAXREDIRS => 10,
@@ -4219,8 +4248,7 @@ class Qr_new extends qr_Controller
 			CURLOPT_CUSTOMREQUEST => "POST",
 			CURLOPT_POSTFIELDS => $post_data,
 			CURLOPT_HTTPHEADER => array(
-				"Authorization: Basic ZXNwcGQ6TUEzNDVnRmJCR0hUTWRkeDdlVXI=",
-				"Cookie: JSESSIONID=B6F0F44F9A818A66C075B863164349D3",
+				$this->tte_auth_header(),
 				"Content-Type: multipart/form-data; boundary=" . $delimiter,
 				"Content-Length: " . strlen($post_data)
 			),
@@ -4228,6 +4256,7 @@ class Qr_new extends qr_Controller
 
 		$response = curl_exec($curl);
 		$err = curl_error($curl);
+		$this->respon_tte = ($response === false) ? 'koneksi gagal: ' . $err : $response;
 
 		curl_close($curl);
 		return $response;
@@ -4235,7 +4264,6 @@ class Qr_new extends qr_Controller
 
 	function sendSignRequest4($filename, $nik, $passphrase, $telaah_id)
 	{
-		$curl 	= curl_init();
 		$file1 	= $_SERVER['DOCUMENT_ROOT'] . '/upload/doc_TTE/' . $filename . ".pdf";
 		$filenames = array($file1);
 		foreach ($filenames as $f) {
@@ -4246,9 +4274,12 @@ class Qr_new extends qr_Controller
 		$delimiter = '-------------' . $boundary;
 		$post_data = $this->build_data_files($boundary, $files);
 
+		// tanda tangan kedua atas dokumen yang baru ditandatangani kadang gagal sesaat: coba sekali lagi
+		for ($coba = 1; $coba <= 2; $coba++) {
+		$curl = curl_init();
 		curl_setopt_array($curl, array(
 			// CURLOPT_URL => "http://103.148.189.3/api/sign/pdf?nik=".$nik."&passphrase=".$passphrase."&tampilan=visible&halaman=pertama&image=false&linkQR=https://sppd.kendarikota.go.id/telaah/history/detail?telaah_id=".$telaah_id."&xAxis=780&yAxis=573&width=820&height=613&jenis_response=BASE64",
-			CURLOPT_URL => "http://103.85.5.99/api/sign/pdf?nik=" . $nik . "&passphrase=" . $passphrase . "&tampilan=visible&halaman=pertama&image=false&linkQR=https://sppd.kendarikota.go.id/telaah/history/detail?telaah_id=" . $telaah_id . "&xAxis=775&yAxis=573&width=825&height=623&jenis_response=BASE64",
+			CURLOPT_URL => "http://103.85.5.99/api/sign/pdf?nik=" . rawurlencode($nik) . "&passphrase=" . rawurlencode($passphrase) . "&tampilan=visible&halaman=pertama&image=false&linkQR=https://sppd.kendarikota.go.id/telaah/history/detail?telaah_id=" . $telaah_id . "&xAxis=775&yAxis=573&width=825&height=623&jenis_response=BASE64",
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_ENCODING => "",
 			CURLOPT_MAXREDIRS => 10,
@@ -4259,8 +4290,7 @@ class Qr_new extends qr_Controller
 			CURLOPT_CUSTOMREQUEST => "POST",
 			CURLOPT_POSTFIELDS => $post_data,
 			CURLOPT_HTTPHEADER => array(
-				"Authorization: Basic ZXNwcGQ6TUEzNDVnRmJCR0hUTWRkeDdlVXI=",
-				"Cookie: JSESSIONID=B6F0F44F9A818A66C075B863164349D3",
+				$this->tte_auth_header(),
 				"Content-Type: multipart/form-data; boundary=" . $delimiter,
 				"Content-Length: " . strlen($post_data)
 			),
@@ -4268,8 +4298,15 @@ class Qr_new extends qr_Controller
 
 		$response = curl_exec($curl);
 		$err = curl_error($curl);
+		$this->respon_tte = ($response === false) ? 'koneksi gagal: ' . $err : $response;
 
 		curl_close($curl);
+		$hasil = json_decode((string) $response, TRUE);
+		if (!empty($hasil['id_dokumen']) || !empty($hasil['error'])) {
+			break;
+		}
+		sleep(1);
+		}
 		return $response;
 	}
 
@@ -4294,7 +4331,7 @@ class Qr_new extends qr_Controller
 
 		curl_setopt_array($curl, array(
 			// CURLOPT_URL => "https://api-bsre.bssn.go.id/esign/v2/api/entity/sign/request?penandatangan=".$nik."&tampilan=visible&image=false&linkQR=http://sppd.kendarikota.go.id/&halaman=".$x."&yAxis=".$y."&xAxis=220&width=545&height=".$height."",
-			CURLOPT_URL => "http://103.85.5.99/api/sign/pdf?nik=" . $nik . "&passphrase=" . $passphrase . "&tampilan=visible&halaman=" . $x . "&image=false&linkQR=https://sppd.kendarikota.go.id/telaah/history/detail?telaah_id=" . $telaah_id . "&xAxis=220&yAxis=" . $y . "&width=545&height=" . $height . "&jenis_response=BASE64",
+			CURLOPT_URL => "http://103.85.5.99/api/sign/pdf?nik=" . rawurlencode($nik) . "&passphrase=" . rawurlencode($passphrase) . "&tampilan=visible&halaman=" . $x . "&image=false&linkQR=https://sppd.kendarikota.go.id/telaah/history/detail?telaah_id=" . $telaah_id . "&xAxis=220&yAxis=" . $y . "&width=545&height=" . $height . "&jenis_response=BASE64",
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_ENCODING => "",
 			CURLOPT_MAXREDIRS => 10,
@@ -4305,8 +4342,7 @@ class Qr_new extends qr_Controller
 			CURLOPT_CUSTOMREQUEST => "POST",
 			CURLOPT_POSTFIELDS => $post_data,
 			CURLOPT_HTTPHEADER => array(
-				"Authorization: Basic ZXNwcGQ6TUEzNDVnRmJCR0hUTWRkeDdlVXI=",
-				"Cookie: JSESSIONID=B6F0F44F9A818A66C075B863164349D3",
+				$this->tte_auth_header(),
 				"Content-Type: multipart/form-data; boundary=" . $delimiter,
 				"Content-Length: " . strlen($post_data)
 			),
@@ -4315,6 +4351,7 @@ class Qr_new extends qr_Controller
 		$response = curl_exec($curl);
 		//var_dump($response);
 		$err = curl_error($curl);
+		$this->respon_tte = ($response === false) ? 'koneksi gagal: ' . $err : $response;
 
 		curl_close($curl);
 		return $response;
@@ -4340,7 +4377,7 @@ class Qr_new extends qr_Controller
 		$post_data = $this->build_data_files($boundary, $files);
 
 		curl_setopt_array($curl, array(
-			CURLOPT_URL => "http://103.85.5.99/api/sign/pdf?nik=" . $nik . "&passphrase=" . $passphrase . "&tampilan=visible&halaman=" . $x . "&image=false&linkQR=https://sppd.kendarikota.go.id/telaah/history/detail?telaah_id=" . $telaah_id . "&xAxis=220&yAxis=" . $y . "&width=600&height=" . $height . "&jenis_response=BASE64",
+			CURLOPT_URL => "http://103.85.5.99/api/sign/pdf?nik=" . rawurlencode($nik) . "&passphrase=" . rawurlencode($passphrase) . "&tampilan=visible&halaman=" . $x . "&image=false&linkQR=https://sppd.kendarikota.go.id/telaah/history/detail?telaah_id=" . $telaah_id . "&xAxis=220&yAxis=" . $y . "&width=600&height=" . $height . "&jenis_response=BASE64",
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_ENCODING => "",
 			CURLOPT_MAXREDIRS => 10,
@@ -4351,8 +4388,7 @@ class Qr_new extends qr_Controller
 			CURLOPT_CUSTOMREQUEST => "POST",
 			CURLOPT_POSTFIELDS => $post_data,
 			CURLOPT_HTTPHEADER => array(
-				"Authorization: Basic ZXNwcGQ6TUEzNDVnRmJCR0hUTWRkeDdlVXI=",
-				"Cookie: JSESSIONID=B6F0F44F9A818A66C075B863164349D3",
+				$this->tte_auth_header(),
 				"Content-Type: multipart/form-data; boundary=" . $delimiter,
 				"Content-Length: " . strlen($post_data)
 			),
@@ -4361,6 +4397,7 @@ class Qr_new extends qr_Controller
 		$response = curl_exec($curl);
 		//var_dump($response);
 		$err = curl_error($curl);
+		$this->respon_tte = ($response === false) ? 'koneksi gagal: ' . $err : $response;
 
 		curl_close($curl);
 		return $response;
@@ -4388,6 +4425,17 @@ class Qr_new extends qr_Controller
 	function downloadDokumenById($id_signed, $filename)
 	{
 		$path = './upload/doc_TTE/' . $filename . '.pdf';
+
+		// tanda tangan gagal (tidak ada id_dokumen): dokumen yang ada jangan ditimpa respon error
+		if (empty($id_signed)) {
+			$hasil = json_decode((string) $this->respon_tte, TRUE);
+			$pesan = $hasil['error'] ?? $hasil['message'] ?? ('respon server TTE: ' . ($this->respon_tte === '' ? 'kosong' : substr(strip_tags($this->respon_tte), 0, 200)));
+			$this->catat_gagal_tte($filename, $pesan);
+			return FALSE;
+		}
+
+		// dokumen kadang belum siap tepat setelah ditandatangani: coba maksimal 3 kali
+		for ($coba = 1; $coba <= 3; $coba++) {
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -4402,19 +4450,32 @@ class Qr_new extends qr_Controller
 			CURLOPT_CUSTOMREQUEST => "GET",
 			CURLOPT_POSTFIELDS => "",
 			CURLOPT_HTTPHEADER => array(
-				"Authorization: Basic ZXNwcGQ6TUEzNDVnRmJCR0hUTWRkeDdlVXI=",
-				"Cookie: JSESSIONID=F1D09FBCC3D8557219B5645C03A26292"
+				$this->tte_auth_header(),
 			),
 		));
 
 		$response = curl_exec($curl);
-
-		$data = json_decode($response);
-		$err = curl_error($curl);
+		$http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
 		curl_close($curl);
 
-		file_put_contents($path, $response);
+		if ($http_code == 200 && is_string($response) && strncmp($response, '%PDF', 4) === 0) {
+			file_put_contents($path . '.tmp', $response);
+			rename($path . '.tmp', $path);
+			return TRUE;
+		}
+		sleep(1);
+		}
+
+		$this->catat_gagal_tte($filename, 'dokumen bertanda tangan gagal diunduh dari server TTE');
+		return FALSE;
+	}
+
+	private function catat_gagal_tte($filename, $pesan)
+	{
+		if ($this->gagal_tte === '') {
+			$this->gagal_tte = 'TTE ' . $filename . ' gagal: ' . $pesan . '. Silakan ulangi penandatanganan.';
+		}
 	}
 
 	function cek()
@@ -4478,7 +4539,7 @@ class Qr_new extends qr_Controller
 				CURLOPT_CUSTOMREQUEST => "POST",
 				CURLOPT_POSTFIELDS => $post_data,
 				CURLOPT_HTTPHEADER => array(
-					"Authorization: Bearer 5adf074e-c995-450b-af5f-009c137b80e5",
+					"Authorization: Bearer " . (getenv('BSSN_TOKEN') ?: '5adf074e-c995-450b-af5f-009c137b80e5'),
 					"cache-control:no-cache",
 					"Content-Type: multipart/form-data; boundary=" . $delimiter,
 					"Content-Length: " . strlen($post_data)
@@ -4498,7 +4559,7 @@ class Qr_new extends qr_Controller
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-			CURLOPT_URL => "http://103.85.5.99/api/user/status/" . $nik,
+			CURLOPT_URL => "http://103.85.5.99/api/user/status/" . rawurlencode($nik),
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_ENCODING => "",
 			CURLOPT_SSL_VERIFYPEER => false,
@@ -4509,8 +4570,7 @@ class Qr_new extends qr_Controller
 			CURLOPT_CUSTOMREQUEST => "GET",
 			CURLOPT_POSTFIELDS => "",
 			CURLOPT_HTTPHEADER => array(
-				"Authorization: Basic ZXNwcGQ6TUEzNDVnRmJCR0hUTWRkeDdlVXI=",
-				"Cookie: JSESSIONID=B802700FFE129CAFDAC66800E0472D3F"
+				$this->tte_auth_header(),
 			),
 		));
 

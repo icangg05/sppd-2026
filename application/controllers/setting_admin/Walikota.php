@@ -57,7 +57,7 @@ class Walikota extends public_Controller {
 	public function search()
 	{
 		if($this->input->post('submit')){
-			$column = $this->input->post('column');
+			$column = kolom_aman($this->input->post('column'));
 			$query = $this->input->post('data');
 			
 			$option = array(
@@ -67,7 +67,7 @@ class Walikota extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 4 );
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		$config = array ();
 		$config ["total_rows"] = $this->m_walikota->data_search($column,$query,'','');

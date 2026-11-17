@@ -1627,7 +1627,7 @@ class Ion_auth_model extends CI_Model
 
 		return $this->db->query("select *, users.id as user_id from users
 								left join table_skpd ON users.skpd_id = table_skpd.skpd_id
-								where users.id = '$id' ");
+								where users.id = '".$this->db->escape_str((string) $id)."' ");
 	}
 
 	/**

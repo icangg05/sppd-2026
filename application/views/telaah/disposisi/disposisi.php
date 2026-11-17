@@ -187,7 +187,7 @@
 												<input type="hidden" name="jabatan" value="<?php echo $this->uri->segment(4);?>">
 												<input type="hidden" name="posisi" value="<?php echo $this->uri->segment(5);?>">
 												<input type="hidden" name="kategori" value="<?php echo $this->input->get('telaah_kategori');?>">
-												<small id="passwordHelpInline" class="text-muted"><input type="password" name="passphrase" id="inputPassword6" class="form-control mx-sm-3" aria-describedby="passwordHelpInline" >
+												<small id="passwordHelpInline" class="text-muted"><input type="password" name="passphrase" id="inputPassword6" required class="form-control mx-sm-3" aria-describedby="passwordHelpInline" >
 												<small id="passwordHelpInline" class="text-muted">
 												  Must be 6-8 characters long.
 												</small></td>
@@ -232,3 +232,5 @@
  			});
  		});
  	</script>
+
+<?php $this->load->view('telaah/tte_tombol_loading'); ?>

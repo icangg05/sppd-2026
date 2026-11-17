@@ -4,12 +4,45 @@
 		font-weight: bold;
 	}
 
-	/* Select2 negara setinggi input lain (34px) agar kolom negara/kota sejajar dengan kolom kiri */
-	#ln .select2-container .select2-selection--single {
+	/* Ringkasan error validasi: teks gelap di latar terang agar terbaca */
+	.alert-validasi {
+		background: #fdf2f1;
+		border: 1px solid #f5c6c1;
+		border-left: 4px solid #dd4b39;
+		border-radius: 3px;
+		color: #7a271d;
+		padding: 12px 16px;
+		margin-bottom: 15px;
+	}
+
+	.alert-validasi h4 {
+		margin: 0 0 4px;
+		font-size: 16px;
+		font-weight: 600;
+		color: #b03a2e;
+	}
+
+	.alert-validasi p {
+		margin: 0 0 6px;
+	}
+
+	.alert-validasi ul {
+		margin: 0;
+		padding-left: 20px;
+	}
+
+	/* Select2 tujuan (negara, provinsi, kota) setinggi input lain (34px) agar kolomnya sejajar */
+	#ln .select2-container .select2-selection--single,
+	#ldlp .select2-container .select2-selection--single,
+	#lddp .select2-container .select2-selection--single,
+	#insert-form .select2-container .select2-selection--single {
 		height: 34px;
 	}
 
-	#ln .select2-container--default .select2-selection--single .select2-selection__arrow {
+	#ln .select2-container--default .select2-selection--single .select2-selection__arrow,
+	#ldlp .select2-container--default .select2-selection--single .select2-selection__arrow,
+	#lddp .select2-container--default .select2-selection--single .select2-selection__arrow,
+	#insert-form .select2-container--default .select2-selection--single .select2-selection__arrow {
 		height: 32px;
 	}
 </style>
@@ -80,17 +113,13 @@
 					?>
 					<div class="table-responsive box-body">
 						<?php if (validation_errors()) { ?>
-							<div class="alert alert-danger">
-								<h4><i class="icon fa fa-ban"></i> Peringatan!</h4>
-								<?php echo validation_errors(); ?>
+							<div class="alert-validasi">
+								<h4><i class="icon fa fa-exclamation-triangle"></i> Data belum dapat disimpan</h4>
+								<p>Periksa kembali isian berikut. Isian lain yang sudah diisi tetap tersimpan di form.</p>
+								<ul><?php echo validation_errors('<li>', '</li>'); ?></ul>
 							</div>
 						<?php } ?>
 						<table class="table table-bordered ">
-							<?php
-							if (form_error('kop_surat')) {
-								echo '<p class="alert alert-danger text-center"><b>' . form_error('kop_surat') . '</b></p>';
-							}
-							?>
 							<tr class="info">
 								<th class="col-md-3" colspan="2">
 									<center>DATA PERIHAL</center>
@@ -102,8 +131,8 @@
 										<?php if ($this->uri->segment(4) == 'esselon') { ?>
 											<option value="Kepala OPD">Kepala OPD</option>
 										<?php } else if ($this->uri->segment(4) == 'kadis') { ?>
-											<option value="Walikota">Walikota</option>
-											<option value="Kepala OPD">Kepala OPD</option>
+											<option value="Walikota" <?php echo set_select('telaah_kepada', 'Walikota'); ?>>Walikota</option>
+											<option value="Kepala OPD" <?php echo set_select('telaah_kepada', 'Kepala OPD'); ?>>Kepala OPD</option>
 										<?php } else if ($this->uri->segment(4) == 'dprd') { ?>
 											<option value="Ketua DPRD">Ketua DPRD</option>
 										<?php } else if (
@@ -326,7 +355,7 @@
 												echo "<label> Provinsi</label>";
 											}
 											?>
-											<select class="form-control" name="telaah_provinsitujuan" id="provinsi_id" selectpicker chzn-select" onChange="tampil_kabupaten()" data-live-search="true" data-live-search-style="begins">
+											<select class="form-control select2" name="telaah_provinsitujuan" id="provinsi_id" onChange="tampil_kabupaten()" style="width: 100%;">
 												<option value="">- Pilih Provinsi -</option>
 												<?php foreach ($provinsi as $v) {
 													if (set_value('telaah_provinsitujuan') == $v->provinsi_id) {
@@ -347,7 +376,7 @@
 												echo "<label> Kota Tujuan</label>";
 											}
 											?>
-											<select class="form-control" name="telaah_kotatujuan" id="kabkot_id" selectpicker chzn-select" data-live-search="true" data-live-search-style="begins">
+											<select class="form-control select2" name="telaah_kotatujuan" id="kabkot_id" style="width: 100%;">
 												<option value="">- Pilih Kabupaten/Kota -</option>
 												<?php foreach ($kabupaten2 as $v) {
 													if (set_value('telaah_kotatujuan') == $v->kabkot_id) {
@@ -378,7 +407,7 @@
 								echo "<label> Kota Tujuan</label>";
 							}
 							?>
-							<select class="form-control" name="telaah_kotatujuan2" data-live-search="true" data-live-search-style="begins">
+							<select class="form-control select2" name="telaah_kotatujuan2" style="width: 100%;">
 								<option value="">- Pilih Kabupaten/Kota -</option>
 								<?php foreach ($kabupaten as $v) {
 									if (set_value('telaah_kotatujuan2') == $v->kabkot_id) {
@@ -446,9 +475,9 @@
 						<button type="button" class="btn btn-success btn-sm" id="btn-tambah-form">Tambah Tujuan</button>
 						<button type="button" class="btn btn-danger btn-sm" id="btn-reset-form">Reset Tujuan</button><br><br>
 					</div>
-					<div id="insert-form"></div>
+					<div id="insert-form"><?php $this->load->view('telaah/list_telaah/tujuan_tambahan'); ?></div>
 				</div>
-				<input type="hidden" id="jumlah-form" value="1">
+				<input type="hidden" id="jumlah-form" value="<?php echo count((array) $this->input->post('telaah_provinsitujuan2')) + 1; ?>">
 				</td>
 				</tr>
 				<tr class="info">
@@ -480,7 +509,7 @@
 								$pengeluaran_rill =  $this->m_anggaran->cek_pengeluaran_rill_skpd(set_value('telaah_kegiatan'));
 								$sisa = $pagu[0]['pagu'] - ($rincian_biaya[0]->jumlah + $pengeluaran_rill[0]->jumlah);
 								$rincian = $rincian_biaya[0]->jumlah + $pengeluaran_rill[0]->jumlah;
-								$total = round(($rincian / $pagu[0]['pagu']) * 100, 2);
+								$total = $pagu[0]['pagu'] > 0 ? round(($rincian / $pagu[0]['pagu']) * 100, 2) : ($rincian > 0 ? 100 : 0);
 
 								if ($total >= 0 && $total <= 50) {
 									echo "	<table class='table table-bordered table-striped'>
@@ -597,6 +626,9 @@
 					<td>
 						<?php echo form_error('userfile'); ?>
 						<input type="file" class="form-control" name="userfile" value="<?php echo set_value('userfile'); ?>">
+							<?php if ($dokumen_sementara) { ?>
+								<p class="help-block"><i class="fa fa-paperclip"></i> File yang sudah dipilih tetap tersimpan: <b><?php echo html_escape($dokumen_sementara['nama']); ?></b>. Pilih file lain hanya jika ingin menggantinya.</p>
+							<?php } ?>
 					</td>
 				</tr>
 				<tr class="info">
@@ -695,7 +727,7 @@
 						<td>
 							<div class="checkbox">
 								<label>
-									<input type="checkbox" name="telaah_sekretariat" value="1"> Pegawai Sekretariat
+									<input type="checkbox" name="telaah_sekretariat" value="1" <?php echo set_checkbox('telaah_sekretariat', '1'); ?>> Pegawai Sekretariat
 								</label>
 							</div>
 						</td>
@@ -714,7 +746,7 @@
 							<option value="">- Pilih -</option>
 
 							<?php foreach ($pengikut as $v): ?>
-								<option value="<?= $v->pegawai_id ?>">
+								<option value="<?= $v->pegawai_id ?>" <?= set_select('telaah_pengikut', $v->pegawai_id) ?>>
 									<?= !empty($v->pegawai_nip) ? $v->pegawai_nip . ' || ' : '' ?> <?= $v->pegawai_nama ?>
 								</option>
 							<?php endforeach; ?>
@@ -899,7 +931,7 @@
 				"<div class='col-md-6'>" +
 				"<div class='form-group'>" +
 				"<label>Provinsi</label>" +
-				"<select class='form-control' name='telaah_provinsitujuan2[]' id='provinsi_id" + jumlah + "' selectpicker chzn-select' onChange='tampil_kabupaten" + jumlah + "()' data-live-search='true' data-live-search-style='begins'>" +
+				"<select class='form-control select2' name='telaah_provinsitujuan2[]' id='provinsi_id" + jumlah + "' onChange='tampil_kabupaten" + jumlah + "()' style='width: 100%;'>" +
 				"<option value=''>- Pilih Provinsi -</option>" +
 				"<?php foreach ($provinsi as $v) {
 						echo "<option value='$v->provinsi_id'>$v->provinsi</option>";
@@ -911,11 +943,12 @@
 				"<div class='col-md-6'>" +
 				"<div class='form-group'>" +
 				"<label>Kota Tujuan</label>" +
-				"<select class='form-control' name='telaah_kotatujuan3[]' id='kabkot_id" + jumlah + "' selectpicker chzn-select' data-live-search='true' data-live-search-style='begins'>" +
+				"<select class='form-control select2' name='telaah_kotatujuan3[]' id='kabkot_id" + jumlah + "' style='width: 100%;'>" +
 				"<option value=''>- Pilih Kabupaten/Kota -</option>" +
 				"</select>" +
 				"</div>" +
 				"</div>");
+			$("#insert-form select").not(".select2-hidden-accessible").select2(); // tujuan tambahan memakai select2 seperti tujuan utama
 
 
 			$("#jumlah-form").val(nextform); // Ubah value textbox jumlah-form dengan variabel nextform
@@ -934,7 +967,7 @@
 		$.ajax({
 			url: "<?php echo base_url(); ?>beranda/get/" + provinsi_id + "",
 			success: function(response) {
-				$("#kabkot_id").html(response);
+				$("#kabkot_id").html(response).trigger('change.select2');
 			}
 		});
 		return false;
@@ -978,7 +1011,7 @@
 		$.ajax({
 			url: "<?php echo base_url(); ?>beranda/get/" + provinsi_id1 + "",
 			success: function(response) {
-				$("#kabkot_id1").html(response);
+				$("#kabkot_id1").html(response).trigger('change.select2');
 			}
 		});
 		return false;
@@ -990,7 +1023,7 @@
 		$.ajax({
 			url: "<?php echo base_url(); ?>beranda/get/" + provinsi_id2 + "",
 			success: function(response) {
-				$("#kabkot_id2").html(response);
+				$("#kabkot_id2").html(response).trigger('change.select2');
 			}
 		});
 		return false;
@@ -1002,7 +1035,7 @@
 		$.ajax({
 			url: "<?php echo base_url(); ?>beranda/get/" + provinsi_id3 + "",
 			success: function(response) {
-				$("#kabkot_id3").html(response);
+				$("#kabkot_id3").html(response).trigger('change.select2');
 			}
 		});
 		return false;
@@ -1014,7 +1047,7 @@
 		$.ajax({
 			url: "<?php echo base_url(); ?>beranda/get/" + provinsi_id4 + "",
 			success: function(response) {
-				$("#kabkot_id4").html(response);
+				$("#kabkot_id4").html(response).trigger('change.select2');
 			}
 		});
 		return false;
@@ -1026,7 +1059,7 @@
 		$.ajax({
 			url: "<?php echo base_url(); ?>beranda/get/" + provinsi_id5 + "",
 			success: function(response) {
-				$("#kabkot_id5").html(response);
+				$("#kabkot_id5").html(response).trigger('change.select2');
 			}
 		});
 		return false;
@@ -1056,6 +1089,12 @@
 </script>
 
 <script>
+	// Jabatan dalam perjalanan (Inspektorat) dari isian sebelumnya, dipasang lagi setelah daftarnya dimuat ulang
+	var jabatanLama = <?php echo json_encode(array(
+		'pelaksana' => (string) $this->input->post('telaah_jabatan_pelaksana'),
+		'pengikut' => array_values((array) $this->input->post('telaah_jabatan_pengikut'))
+	), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+
 	function showPelaksana(str) {
 		var xhttp;
 		if (str == "") {
@@ -1066,6 +1105,10 @@
 		xhttp.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
 				document.getElementById("pelaksana").innerHTML = this.responseText;
+				if (jabatanLama.pelaksana) {
+					$('select[name="telaah_jabatan_pelaksana"]').val(jabatanLama.pelaksana);
+					jabatanLama.pelaksana = '';
+				}
 			}
 		};
 		<?php if ($this->uri->segment(4) == "walikota") { ?>
@@ -1095,7 +1138,27 @@
 
 			success: function(response) {
 				$("#pengikut").html(response);
+				$('select[name="telaah_jabatan_pengikut[]"]').each(function(i) {
+					if (jabatanLama.pengikut[i]) {
+						$(this).val(jabatanLama.pengikut[i]);
+					}
+				});
+				jabatanLama.pengikut = [];
 			}
 		});
 	}
+
+	// Form tampil ulang setelah validasi gagal: isi kembali ringkasan pelaksana, pengikut & anggaran di modal konfirmasi
+	$(function() {
+		var pelaksana = $('select[name="telaah_pelaksana"]').val();
+		if (pelaksana) {
+			showPelaksana(pelaksana);
+		}
+		if (($("#select-meal-type").val() || []).length) {
+			showPengikut();
+		}
+		if ($('#anggaran').val()) {
+			tampil_anggaran();
+		}
+	});
 </script>

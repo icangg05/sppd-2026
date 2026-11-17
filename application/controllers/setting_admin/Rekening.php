@@ -57,7 +57,7 @@ class Rekening extends public_Controller {
 	public function search()
 	{
 		if($this->input->post('submit')){
-			$column = $this->input->post('column');
+			$column = kolom_aman($this->input->post('column'));
 			$query = $this->input->post('data');
 			
 			$option = array(
@@ -67,7 +67,7 @@ class Rekening extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 3 );
-			$column = $this->uri->segment ( 4 );
+			$column = kolom_aman($this->uri->segment ( 4 ));
 		}
 		
 		$config = array ();

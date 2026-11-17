@@ -55,7 +55,7 @@ class Log_tte extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = str_replace("%20"," ",$this->uri->segment ( 4 ));
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		
 		## Pagination

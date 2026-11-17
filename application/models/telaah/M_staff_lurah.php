@@ -69,11 +69,18 @@ class M_staff_lurah extends CI_Model
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
 			LEFT JOIN table_skpd ON table_skpd.skpd_id=table_pegawai.skpd_id
-			WHERE telaah_kategori='7' AND table_pegawai.skpd_id = '$skpd_id'");
+			WHERE telaah_kategori='7' AND table_pegawai.skpd_id = '".$this->db->escape_str((string) $skpd_id)."'");
 	}
 	
 	public function record_count_search($column, $data,$skpd_id) {
-		return $this->db->count_all("table_telaah WHERE telaah_kategori='7' AND skpd_id = '$skpd_id' AND $column like '%$data%'");
+		// kondisi sama dengan data_search() (table_telaah tidak punya kolom skpd_id)
+		$this->db->from('table_telaah');
+		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana=table_pegawai.pegawai_id','left');
+		$this->db->join('table_skpd','table_skpd.skpd_id=table_pegawai.skpd_id','left');
+		$this->db->where('table_telaah.telaah_kategori',7);
+		$this->db->where('table_pegawai.skpd_id',$skpd_id);
+		$this->db->like($column,$data);
+		return $this->db->count_all_results();
 	}
 	
 	public function data($limit, $start, $skpd_id) {

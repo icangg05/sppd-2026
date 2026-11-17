@@ -121,7 +121,7 @@ class M_admin extends CI_Model
 	public function record_count_search_esselon($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='1' AND $column like '%$data%'");
+			WHERE telaah_kategori='1' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data_search_esselon($column, $value, $limit, $start) {
@@ -175,7 +175,7 @@ class M_admin extends CI_Model
 	public function record_count_search_kadis($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='2' AND $column like '%$data%'");
+			WHERE telaah_kategori='2' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data_search_kadis($column, $value, $limit, $start) {
@@ -247,7 +247,7 @@ class M_admin extends CI_Model
 	public function record_count_search_dprd($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_anggotadprd ON table_telaah.telaah_pelaksana=table_anggotadprd.anggotadprd_id
-			WHERE telaah_kategori='3' AND $column like '%$data%'");
+			WHERE telaah_kategori='3' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data_dprd($limit, $start) {
@@ -329,7 +329,7 @@ class M_admin extends CI_Model
 	public function record_count_search_sekda($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='4'AND $column like '%$data%'");
+			WHERE telaah_kategori='4'AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data_sekda($limit, $start) {
@@ -417,13 +417,13 @@ class M_admin extends CI_Model
 									LEFT JOIN table_subbagian ON table_subbagian.subbagian_id=table_relasi_sekda.subbagian_id
 									LEFT JOIN table_bagian ON table_bagian.bagian_id=table_subbagian.bagian_id
 									WHERE telaah_kategori='9'
-									AND table_bagian.bagian_id='$bagian_id' ");
+									AND table_bagian.bagian_id='".$this->db->escape_str((string) $bagian_id)."' ");
 	}
 	
 	public function record_count_search_staffsekda($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='9'AND $column like '%$data%'");
+			WHERE telaah_kategori='9'AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function record_count_search_staffsekda_bag($column, $data, $bagian_id) {
@@ -528,7 +528,7 @@ class M_admin extends CI_Model
 	public function record_count_search_camat($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='5' AND $column like '%$data%'");
+			WHERE telaah_kategori='5' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data_camat($limit, $start) {
@@ -615,7 +615,7 @@ class M_admin extends CI_Model
 	public function record_count_search($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='5' AND $column like '%$data%'");
+			WHERE telaah_kategori='5' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data_lurah($limit, $start) {
@@ -686,7 +686,7 @@ class M_admin extends CI_Model
 	public function record_count_search_sekwan($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='10' AND $column like '%$data%'");
+			WHERE telaah_kategori='10' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data_sekwan($limit, $start) {
@@ -856,7 +856,7 @@ class M_admin extends CI_Model
 	public function record_count_search_staffdprd($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='6' AND $column like '%$data%'");
+			WHERE telaah_kategori='6' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data_staffdprd($limit, $start) {
@@ -985,7 +985,7 @@ class M_admin extends CI_Model
 	public function record_count_search_staffcamat($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='7' AND $column like '%$data%'");
+			WHERE telaah_kategori='7' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data_staffcamat($limit, $start) {
@@ -1089,7 +1089,7 @@ class M_admin extends CI_Model
 	public function record_count_search_stafflurah($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='7' AND $column like '%$data%'");
+			WHERE telaah_kategori='7' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data_stafflurah($limit, $start) {
@@ -1197,7 +1197,7 @@ class M_admin extends CI_Model
 	public function record_count_search_walikota($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pimpinan ON table_telaah.telaah_pelaksana=table_pimpinan.pegawai_id
-			WHERE telaah_kategori='8' AND $column like '%$data%'");
+			WHERE telaah_kategori='8' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	public function data_search_walikota($column, $value, $limit, $start) {
 		$this->db->select('*');
@@ -1224,7 +1224,7 @@ class M_admin extends CI_Model
 	public function record_count_search_kapus($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='11' AND $column like '%$data%'");
+			WHERE telaah_kategori='11' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data_kapus($limit, $start) {

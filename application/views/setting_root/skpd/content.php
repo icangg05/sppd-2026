@@ -45,7 +45,7 @@
              $skpd_id = base64_encode($this->encrypt->encode($v->skpd_id, $this->session->userdata('encrypt_key')));	
              ?>
              <tr>
-              <!--td><?php// echo $v->skpd_kode;?></td-->
+              <!--td><?php // echo $v->skpd_kode;?></td-->
               <td><?php echo $v->skpd_nama;?></td>
               <td><a href="<?php echo base_url();?>setting_root/skpd/update_view?skpd_id=<?php echo $skpd_id?>" class="btn btn-sm btn-flat btn-warning"><i class="fa fa-edit"></i> EDIT</a>
                <a href="<?php echo base_url();?>setting_root/skpd/delete?skpd_id=<?php echo $skpd_id?>" class="btn btn-sm btn-flat btn-danger" onclick="return confirm('Anda Yakin ?');"><i class="fa fa-trash"></i> HAPUS</a>

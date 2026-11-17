@@ -148,13 +148,13 @@ class M_esselon extends CI_Model
 	public function record_count($skpd_id) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='1' AND skpd_id='$skpd_id' ");
+			WHERE telaah_kategori='1' AND skpd_id='".$this->db->escape_str((string) $skpd_id)."' ");
 	}
 	
 	public function record_count_search($column, $data, $skpd_id) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='1' AND skpd_id='$skpd_id' AND $column like '%$data%'");
+			WHERE telaah_kategori='1' AND skpd_id='".$this->db->escape_str((string) $skpd_id)."' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data($limit, $start, $skpd_id) {
@@ -199,7 +199,7 @@ class M_esselon extends CI_Model
 			LEFT JOIN table_jenis_skpd ON table_jenis_skpd.jenis_skpd_id=table_skpd.jenis_skpd
 			WHERE telaah_kategori='1'
 			AND (table_jenis_skpd.jenis_skpd_id = 7 OR table_jenis_skpd.jenis_skpd_id = 10)
-			AND $column like '%$data%'");
+			AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data2($limit, $start) {

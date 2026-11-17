@@ -67,7 +67,7 @@ class M_widget extends CI_Model
   		$query  = $this->db->query("SELECT * FROM table_telaah a
   																		LEFT JOIN table_pegawai 	b ON a.telaah_pelaksana		=	b.pegawai_id
   																		LEFT JOIN table_skpd 			c ON b.skpd_id						=	c.skpd_id
-  																		WHERE b.skpd_id='$idSKPD'
+  																		WHERE b.skpd_id='".$this->db->escape_str((string) $idSKPD)."'
   															");
   	}
 

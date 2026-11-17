@@ -149,7 +149,7 @@ class Spt extends public_Controller {
 		{	
 			$telaah_id = base64_encode($this->encrypt->encode($this->input->post('telaah_id'), $this->session->userdata('encrypt_key')));	
 			
-			$ttd=explode(",",$this->input->post('telaah_ttdspt'));
+			$ttd=explode(",",(string) $this->input->post('telaah_ttdspt'));
 
 			echo $ttd[0]; //Code 
 			echo $ttd[1]; //Description  
@@ -322,7 +322,7 @@ class Spt extends public_Controller {
 			
 			$telaah_id = base64_encode($this->encrypt->encode($this->input->post('telaah_id'), $this->session->userdata('encrypt_key')));	
 			
-			$ttd=explode(",",$this->input->post('telaah_ttdspt'));
+			$ttd=explode(",",(string) $this->input->post('telaah_ttdspt'));
 
 			echo $ttd[0]; //Code 
 			echo $ttd[1]; //Description  

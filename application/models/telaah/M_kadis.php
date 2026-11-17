@@ -74,7 +74,7 @@ class M_kadis extends CI_Model
 		$query  = $this->db->query("SELECT (SELECT SUM(tarif*item) ) as jumlah  FROM table_rincian_biaya a 
 									LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
 									LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran 
-									WHERE c.skpd_id='$id_skpd' ");
+									WHERE c.skpd_id='".$this->db->escape_str((string) $id_skpd)."' ");
 		return $query->result_array();
 	}
 	
@@ -82,7 +82,7 @@ class M_kadis extends CI_Model
 		$query  = $this->db->query("SELECT SUM(tarif) as jumlah FROM table_pengeluaran_rill a
 									LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
 									LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran
-									WHERE c.skpd_id='$id_skpd' ");
+									WHERE c.skpd_id='".$this->db->escape_str((string) $id_skpd)."' ");
 		return $query->result_array();
 	}
 	
@@ -101,7 +101,7 @@ class M_kadis extends CI_Model
 									LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
 									LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran 
 									WHERE c.jenis_anggaran=1 
-									AND c.skpd_id='$id_skpd' ");
+									AND c.skpd_id='".$this->db->escape_str((string) $id_skpd)."' ");
 		return $query->result_array();
 	}
 	
@@ -110,7 +110,7 @@ class M_kadis extends CI_Model
 									LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
 									LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran
 									WHERE c.jenis_anggaran=1 
-									AND c.skpd_id='$id_skpd' ");
+									AND c.skpd_id='".$this->db->escape_str((string) $id_skpd)."' ");
 		return $query->result_array();
 	}
 	
@@ -129,7 +129,7 @@ class M_kadis extends CI_Model
 									LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
 									LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran 
 									WHERE c.jenis_anggaran=2 
-									AND c.skpd_id='$id_skpd' ");
+									AND c.skpd_id='".$this->db->escape_str((string) $id_skpd)."' ");
 		return $query->result_array();
 	}
 	
@@ -138,7 +138,7 @@ class M_kadis extends CI_Model
 									LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
 									LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran
 									WHERE c.jenis_anggaran=2 
-									AND c.skpd_id='$id_skpd' ");
+									AND c.skpd_id='".$this->db->escape_str((string) $id_skpd)."' ");
 		return $query->result_array();
 	}
 	
@@ -157,7 +157,7 @@ class M_kadis extends CI_Model
 									LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
 									LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran 
 									WHERE c.jenis_anggaran=3 
-									AND c.skpd_id='$id_skpd' ");
+									AND c.skpd_id='".$this->db->escape_str((string) $id_skpd)."' ");
 		return $query->result_array();
 	}
 	
@@ -166,7 +166,7 @@ class M_kadis extends CI_Model
 									LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
 									LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran
 									WHERE c.jenis_anggaran=3 
-									AND c.skpd_id='$id_skpd' ");
+									AND c.skpd_id='".$this->db->escape_str((string) $id_skpd)."' ");
 		return $query->result_array();
 	}
 	
@@ -183,13 +183,13 @@ class M_kadis extends CI_Model
 	public function record_count($skpd_id) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='2'AND skpd_id='$skpd_id' ");
+			WHERE telaah_kategori='2'AND skpd_id='".$this->db->escape_str((string) $skpd_id)."' ");
 	}
 	
 	public function record_count_search($column, $data, $skpd_id) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='2' AND skpd_id='$skpd_id' AND $column like '%$data%'");
+			WHERE telaah_kategori='2' AND skpd_id='".$this->db->escape_str((string) $skpd_id)."' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data($limit, $start, $skpd_id) {

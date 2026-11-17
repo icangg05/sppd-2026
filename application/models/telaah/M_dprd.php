@@ -70,7 +70,7 @@ class M_dprd extends CI_Model
 	public function record_count_search($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_anggotadprd ON table_telaah.telaah_pelaksana=table_anggotadprd.anggotadprd_id
-			WHERE telaah_kategori='3' AND $column like '%$data%'");
+			WHERE telaah_kategori='3' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data($limit, $start) {
@@ -98,13 +98,14 @@ class M_dprd extends CI_Model
 	
 	public function data_search2($column, $value, $limit, $start) {
 		//$qs = implode('* ', explode(' ', $value)).'*'; 
-		$qs = implode('|', explode(' ', $value)).''; 
+		// tiap kata dicari sebagai teks biasa (bukan pola regex) dan di-escape agar aman dari SQL injection
+		$qs = implode('|', array_map('preg_quote', explode(' ', (string) $value)));
 		$this->db->select('*');
 		$this->db->from('table_telaah');
 		$this->db->join('table_anggotadprd','table_telaah.telaah_pelaksana=table_anggotadprd.anggotadprd_id','left');
 		$this->db->where('table_telaah.telaah_kategori',3);
 		//$this->db->where("MATCH ($column) AGAINST ('$qs')", NULL, FALSE);
-		$this->db->where("$column REGEXP '$qs'");
+		$this->db->where("$column REGEXP ".$this->db->escape($qs), NULL, FALSE);
 		$this->db->order_by('telaah_waktuinput','DESC');
 		if($limit){
 			$this->db->limit ($limit, $start);
@@ -266,7 +267,7 @@ class M_dprd extends CI_Model
 	}
 	
 	public function cek_sisa_anggaran($id_anggaran) {
-		$query  = $this->db->query("SELECT (SELECT SUM(tarif*item) ) as tes  FROM table_rincian_biaya a LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran WHERE c.id_anggaran='$id_anggaran' ");
+		$query  = $this->db->query("SELECT (SELECT SUM(tarif*item) ) as tes  FROM table_rincian_biaya a LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran WHERE c.id_anggaran='".$this->db->escape_str((string) $id_anggaran)."' ");
 		return $query->result();
 	}
 	
@@ -274,17 +275,17 @@ class M_dprd extends CI_Model
 		$query  = $this->db->query("SELECT SUM(tarif) as jumlah FROM table_pengeluaran_rill a
 									LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
 									LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran
-									WHERE c.id_anggaran='$id_anggaran' ");
+									WHERE c.id_anggaran='".$this->db->escape_str((string) $id_anggaran)."' ");
 		return $query->result();
 	}
 	
 	public function cek_sisa_anggaran_skpd($id_skpd) {
-		$query  = $this->db->query("SELECT (SELECT SUM(tarif*item) ) as tes  FROM table_rincian_biaya a LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran WHERE c.skpd_id='$id_skpd' ");
+		$query  = $this->db->query("SELECT (SELECT SUM(tarif*item) ) as tes  FROM table_rincian_biaya a LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran WHERE c.skpd_id='".$this->db->escape_str((string) $id_skpd)."' ");
 		return $query->result();
 	}
 	
 	public function cek_sisa_anggaran_walikota($id_skpd) {
-		$query  = $this->db->query("SELECT (SELECT SUM(tarif*item)) AS tes FROM table_rincian_biaya a LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran WHERE c.skpd_id='$id_skpd' AND b.telaah_kategori=8 ");
+		$query  = $this->db->query("SELECT (SELECT SUM(tarif*item)) AS tes FROM table_rincian_biaya a LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran WHERE c.skpd_id='".$this->db->escape_str((string) $id_skpd)."' AND b.telaah_kategori=8 ");
 		return $query->result();
 	}
 	

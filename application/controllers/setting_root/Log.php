@@ -59,7 +59,7 @@ class Log extends public_Controller {
 	public function search()
 	{
 		if($this->input->post('submit')){
-			$column = $this->input->post('column');
+			$column = kolom_aman($this->input->post('column'));
 			$query = $this->input->post('data');
 			
 			$option = array(
@@ -69,7 +69,7 @@ class Log extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 4 );
-			$column = $this->uri->segment ( 5 );
+			$column = kolom_aman($this->uri->segment ( 5 ));
 		}
 		
 		$config = array ();
@@ -162,7 +162,7 @@ class Log extends public_Controller {
 	public function search_status_log()
 	{
 		if($this->input->post('submit')){
-			$column = $this->input->post('column');
+			$column = kolom_aman($this->input->post('column'));
 			$query = $this->input->post('data');
 			
 			$option = array(
@@ -172,7 +172,7 @@ class Log extends public_Controller {
 			$this->session->set_userdata($option);
 		}else{
 			$query = $this->uri->segment ( 5 );
-			$column = $this->uri->segment ( 6 );
+			$column = kolom_aman($this->uri->segment ( 6 ));
 		}
 		
 		$config = array ();

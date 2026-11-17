@@ -88,7 +88,7 @@
 						<div class="inner">
 						  <p>REALISASI
 						  <b><?php 
-						  $hasil = ($anggaran_terpakai/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100;
+						  $hasil = $total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] > 0 ? ($anggaran_terpakai/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100 : 0;
 						  echo " (".round($hasil,1)."%)";?></p></b>
 						  <h2><p>Rp. <?php echo number_format($anggaran_terpakai, 0, ',', '.');?></p></h2>
 						</div>
@@ -100,7 +100,7 @@
 						<div class="inner">                                   
 						  <p>SISA
 						  <b><?php 
-						  $hasil = (($total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] - $anggaran_terpakai)/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100;
+						  $hasil = $total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] > 0 ? (($total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] - $anggaran_terpakai)/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100 : 0;
 						  echo " (".round($hasil,1)."%)";?></p></b>
 						  <h2><p>Rp. <?php echo number_format($total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] - $anggaran_terpakai, 0, ',', '.');?></p></h2>
 						</div>
@@ -141,7 +141,7 @@
 						<div class="inner">
 						  <p>REALISASI
 						  <b><?php 
-						  $hasil = ($realisasi_anggaran_luar_daerah/$total_anggaran_luar_daerah[0]['total_anggaran']) * 100;
+						  $hasil = $total_anggaran_luar_daerah[0]['total_anggaran'] > 0 ? ($realisasi_anggaran_luar_daerah/$total_anggaran_luar_daerah[0]['total_anggaran']) * 100 : 0;
 						  echo " (".round($hasil,1)."%)";?></b> </p>
 						  <h2><p>Rp. <?php echo number_format($realisasi_anggaran_luar_daerah, 0, ',', '.');?></p></h2>
 						</div>
@@ -153,7 +153,7 @@
 						<div class="inner">                                   
 						  <p>SISA
 						  <b><?php 
-						  $hasil = (($total_anggaran_luar_daerah[0]['total_anggaran'] - $realisasi_anggaran_luar_daerah)/$total_anggaran_luar_daerah[0]['total_anggaran']) * 100;
+						  $hasil = $total_anggaran_luar_daerah[0]['total_anggaran'] > 0 ? (($total_anggaran_luar_daerah[0]['total_anggaran'] - $realisasi_anggaran_luar_daerah)/$total_anggaran_luar_daerah[0]['total_anggaran']) * 100 : 0;
 						  echo " (".round($hasil,1)."%)";?></b></p>
 						  <h2><p>Rp. <?php echo number_format($total_anggaran_luar_daerah[0]['total_anggaran'] - $realisasi_anggaran_luar_daerah, 0, ',', '.');?></p></h2>
 						</div>
@@ -193,7 +193,7 @@
 						<div class="inner">
 						  <p>REALISASI
 						  <b><?php 
-						  $hasil = ($realisasi_anggaran_dalam_daerah/$total_anggaran_dalam_daerah[0]['total_anggaran']) * 100;
+						  $hasil = $total_anggaran_dalam_daerah[0]['total_anggaran'] > 0 ? ($realisasi_anggaran_dalam_daerah/$total_anggaran_dalam_daerah[0]['total_anggaran']) * 100 : 0;
 						  echo " (".round($hasil,1)."%)";?></p></b>
 						  <h2><p>Rp. <?php echo number_format($realisasi_anggaran_dalam_daerah, 0, ',', '.');?></p></h2>
 						</div>
@@ -205,7 +205,7 @@
 						<div class="inner">                                   
 						  <p>SISA
 						  <b><?php 
-						  $hasil = (($total_anggaran_dalam_daerah[0]['total_anggaran'] - $realisasi_anggaran_dalam_daerah)/$total_anggaran_dalam_daerah[0]['total_anggaran']) * 100;
+						  $hasil = $total_anggaran_dalam_daerah[0]['total_anggaran'] > 0 ? (($total_anggaran_dalam_daerah[0]['total_anggaran'] - $realisasi_anggaran_dalam_daerah)/$total_anggaran_dalam_daerah[0]['total_anggaran']) * 100 : 0;
 						  echo " (".round($hasil,1)."%)";?></p></b>
 						  <h2><p>Rp. <?php echo number_format($total_anggaran_dalam_daerah[0]['total_anggaran'] - $realisasi_anggaran_dalam_daerah, 0, ',', '.');?></p></h2>
 						</div>
@@ -245,7 +245,7 @@
 						<div class="inner">
 						  <p>REALISASI
 						  <b><?php 
-						  $hasil = ($realisasi_anggaran_bimtek/$total_anggaran_bimtek[0]['total_anggaran']) * 100;
+						  $hasil = $total_anggaran_bimtek[0]['total_anggaran'] > 0 ? ($realisasi_anggaran_bimtek/$total_anggaran_bimtek[0]['total_anggaran']) * 100 : 0;
 						  echo " (".round($hasil,1)."%)";?></p></b>
 						  <h2><p>Rp. <?php echo number_format($realisasi_anggaran_bimtek, 0, ',', '.');?></p></h2>
 						</div>
@@ -257,7 +257,7 @@
 						<div class="inner">                                   
 						  <p>SISA
 						  <b><?php 
-						  $hasil = (($total_anggaran_bimtek[0]['total_anggaran'] - $realisasi_anggaran_bimtek)/$total_anggaran_bimtek[0]['total_anggaran']) * 100;
+						  $hasil = $total_anggaran_bimtek[0]['total_anggaran'] > 0 ? (($total_anggaran_bimtek[0]['total_anggaran'] - $realisasi_anggaran_bimtek)/$total_anggaran_bimtek[0]['total_anggaran']) * 100 : 0;
 						  echo " (".round($hasil,1)."%)";?></p></b>
 						  <h2><p>Rp. <?php echo number_format($total_anggaran_bimtek[0]['total_anggaran'] - $realisasi_anggaran_bimtek, 0, ',', '.');?></p></h2>
 						</div>
@@ -506,7 +506,7 @@ Highcharts.chart('container', {
         data: [{
             name: '',
             y: 	<?php 
-				  $hasil = (($total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] - $anggaran_terpakai)/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100;
+				  $hasil = $total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] > 0 ? (($total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] - $anggaran_terpakai)/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100 : 0;
 				  echo round($hasil,2);?>,
 			color: '#00a65a',
             sliced: true,
@@ -514,7 +514,7 @@ Highcharts.chart('container', {
         }, {
             name: '',
             y: <?php 
-				  $hasil = ($anggaran_terpakai/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100;
+				  $hasil = $total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] > 0 ? ($anggaran_terpakai/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100 : 0;
 				  echo round($hasil,2);?>,
 			color: '#dd4b39',
         }]
@@ -558,7 +558,7 @@ Highcharts.chart('container2', {
         data: [{
             name: '',
             y: 	<?php 
-				  $hasil = (($total_anggaran_dalam_daerah[0]['total_anggaran'] - $realisasi_anggaran_dalam_daerah)/$total_anggaran_dalam_daerah[0]['total_anggaran']) * 100;
+				  $hasil = $total_anggaran_dalam_daerah[0]['total_anggaran'] > 0 ? (($total_anggaran_dalam_daerah[0]['total_anggaran'] - $realisasi_anggaran_dalam_daerah)/$total_anggaran_dalam_daerah[0]['total_anggaran']) * 100 : 0;
 				  echo round($hasil,2);?>,
 			color: '#00a65a',
             sliced: true,
@@ -566,7 +566,7 @@ Highcharts.chart('container2', {
         }, {
             name: '',
             y: <?php 
-				  $hasil = ($realisasi_anggaran_dalam_daerah/$total_anggaran_dalam_daerah[0]['total_anggaran']) * 100;
+				  $hasil = $total_anggaran_dalam_daerah[0]['total_anggaran'] > 0 ? ($realisasi_anggaran_dalam_daerah/$total_anggaran_dalam_daerah[0]['total_anggaran']) * 100 : 0;
 				  echo round($hasil,2);?>,
 			color: '#dd4b39',
         }]
@@ -610,7 +610,7 @@ Highcharts.chart('container3', {
         data: [{
             name: '',
             y: 	<?php 
-				  $hasil = (($total_anggaran_luar_daerah[0]['total_anggaran'] - $realisasi_anggaran_luar_daerah)/$total_anggaran_luar_daerah[0]['total_anggaran']) * 100;
+				  $hasil = $total_anggaran_luar_daerah[0]['total_anggaran'] > 0 ? (($total_anggaran_luar_daerah[0]['total_anggaran'] - $realisasi_anggaran_luar_daerah)/$total_anggaran_luar_daerah[0]['total_anggaran']) * 100 : 0;
 				  echo round($hasil,2);?>,
 			color: '#00a65a',
             sliced: true,
@@ -618,7 +618,7 @@ Highcharts.chart('container3', {
         }, {
             name: '',
             y: <?php 
-				  $hasil = ($realisasi_anggaran_luar_daerah/$total_anggaran_luar_daerah[0]['total_anggaran']) * 100;
+				  $hasil = $total_anggaran_luar_daerah[0]['total_anggaran'] > 0 ? ($realisasi_anggaran_luar_daerah/$total_anggaran_luar_daerah[0]['total_anggaran']) * 100 : 0;
 				  echo round($hasil,2);?>,
 			color: '#dd4b39',
         }]
@@ -662,7 +662,7 @@ Highcharts.chart('container4', {
         data: [{
             name: '',
             y: 	<?php 
-				  $hasil = (($total_anggaran_bimtek[0]['total_anggaran'] - $realisasi_anggaran_bimtek)/$total_anggaran_bimtek[0]['total_anggaran']) * 100;
+				  $hasil = $total_anggaran_bimtek[0]['total_anggaran'] > 0 ? (($total_anggaran_bimtek[0]['total_anggaran'] - $realisasi_anggaran_bimtek)/$total_anggaran_bimtek[0]['total_anggaran']) * 100 : 0;
 				  echo round($hasil,2);?>,
 			color: '#00a65a',
             sliced: true,
@@ -670,7 +670,7 @@ Highcharts.chart('container4', {
         }, {
             name: '',
             y: <?php 
-				  $hasil = ($realisasi_anggaran_bimtek/$total_anggaran_bimtek[0]['total_anggaran']) * 100;
+				  $hasil = $total_anggaran_bimtek[0]['total_anggaran'] > 0 ? ($realisasi_anggaran_bimtek/$total_anggaran_bimtek[0]['total_anggaran']) * 100 : 0;
 				  echo round($hasil,2);?>,
 			color: '#dd4b39',
         }]

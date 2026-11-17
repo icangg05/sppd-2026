@@ -5,12 +5,45 @@
 		font-weight: bold;
 	}
 
-	/* Select2 negara setinggi input lain (34px) agar kolom negara/kota sejajar dengan kolom kiri */
-	#ln .select2-container .select2-selection--single {
+	/* Ringkasan error validasi: teks gelap di latar terang agar terbaca */
+	.alert-validasi {
+		background: #fdf2f1;
+		border: 1px solid #f5c6c1;
+		border-left: 4px solid #dd4b39;
+		border-radius: 3px;
+		color: #7a271d;
+		padding: 12px 16px;
+		margin-bottom: 15px;
+	}
+
+	.alert-validasi h4 {
+		margin: 0 0 4px;
+		font-size: 16px;
+		font-weight: 600;
+		color: #b03a2e;
+	}
+
+	.alert-validasi p {
+		margin: 0 0 6px;
+	}
+
+	.alert-validasi ul {
+		margin: 0;
+		padding-left: 20px;
+	}
+
+	/* Select2 tujuan (negara, provinsi, kota) setinggi input lain (34px) agar kolomnya sejajar */
+	#ln .select2-container .select2-selection--single,
+	#ldlp .select2-container .select2-selection--single,
+	#lddp .select2-container .select2-selection--single,
+	#insert-form .select2-container .select2-selection--single {
 		height: 34px;
 	}
 
-	#ln .select2-container--default .select2-selection--single .select2-selection__arrow {
+	#ln .select2-container--default .select2-selection--single .select2-selection__arrow,
+	#ldlp .select2-container--default .select2-selection--single .select2-selection__arrow,
+	#lddp .select2-container--default .select2-selection--single .select2-selection__arrow,
+	#insert-form .select2-container--default .select2-selection--single .select2-selection__arrow {
 		height: 32px;
 	}
 </style>
@@ -84,6 +117,13 @@
 							echo '<p class="alert alert-danger text-center"><b>' . $message2 . '</b></p>';
 						}
 						?>
+						<?php if (validation_errors()) { ?>
+							<div class="alert-validasi">
+								<h4><i class="icon fa fa-exclamation-triangle"></i> Data belum dapat disimpan</h4>
+								<p>Periksa kembali isian berikut. Isian lain yang sudah diubah tetap tersimpan di form.</p>
+								<ul><?php echo validation_errors('<li>', '</li>'); ?></ul>
+							</div>
+						<?php } ?>
 						<table class="table table-bordered ">
 							<input type="hidden" class="form-control" name="telaah_id" value="<?php echo $entry[0]['telaah_id'] ?>">
 							<input type="hidden" class="form-control" name="telaah_status" value="<?php echo $entry[0]['telaah_status'] ?>">
@@ -280,7 +320,7 @@
 											<div class="col-md-6">
 												<div class="form-group">
 													<label>Provinsi</label>
-													<select class="form-control" name="telaah_provinsitujuan" id="provinsi_id" selectpicker chzn-select" onChange="tampil_kabupaten()" data-live-search="true" data-live-search-style="begins">
+													<select class="form-control select2" name="telaah_provinsitujuan" id="provinsi_id" onChange="tampil_kabupaten()" style="width: 100%;">
 														<option value="">- Pilih Provinsi -</option>
 														<?php foreach ($provinsi as $v) {
 															if ($entry[0]['telaah_provinsitujuan'] == $v->provinsi_id) {
@@ -295,7 +335,7 @@
 											<div class="col-md-6">
 												<div class="form-group">
 													<label>Kota Tujuan</label>
-													<select class="form-control" name="telaah_kotatujuan" id="kabkot_id" selectpicker chzn-select" data-live-search="true" data-live-search-style="begins">
+													<select class="form-control select2" name="telaah_kotatujuan" id="kabkot_id" style="width: 100%;">
 														<option value="">- Pilih Kabupaten/Kota -</option>
 														<?php
 														if ($entry[0]['telaah_domainperjalanan'] == "1") {
@@ -320,7 +360,7 @@
 													<div class="col-md-6">
 														<div class="form-group">
 															<label>Kota Tujuan</label>
-															<select class="form-control" name="telaah_kotatujuan2" data-live-search="true" data-live-search-style="begins">
+															<select class="form-control select2" name="telaah_kotatujuan2" style="width: 100%;">
 																<option value="">- Pilih Kabupaten/Kota -</option>
 																<?php
 																$kabupaten = $this->m_telaah->get_kabupaten(74);
@@ -352,7 +392,7 @@
 															</div>
 															<div class="form-group">
 																<label>Kota Tujuan</label>
-																<input type="text" class="form-control" name="telaah_kotatujuan_ln" maxlength="100" placeholder="Contoh : Tokyo" value="<?php echo html_escape($tujuan_ln['kota']); ?>">
+																<input type="text" class="form-control" name="telaah_kotatujuan_ln" maxlength="100" placeholder="Contoh : Tokyo" value="<?php echo set_value('telaah_kotatujuan_ln', $tujuan_ln['kota']); ?>">
 															</div>
 														</div>
 													</div>
@@ -366,7 +406,7 @@
 															}
 															?>
 															<label></label>
-															<input type="text" class="form-control" name="telaah_kantortujuan" value="<?php echo kantor_tujuan($entry[0]); ?>">
+															<input type="text" class="form-control" name="telaah_kantortujuan" value="<?php echo set_value('telaah_kantortujuan', kantor_tujuan($entry[0])); ?>">
 														</div>
 													</div><br>
 													<div class="col-md-12">
@@ -397,9 +437,9 @@
 															<?php } ?>
 														</table>
 													</div>
-													<div id="insert-form"></div>
+													<div id="insert-form"><?php $this->load->view('telaah/list_telaah/tujuan_tambahan'); ?></div>
 													</div>
-													<input type="hidden" id="jumlah-form" value="1">
+													<input type="hidden" id="jumlah-form" value="<?php echo count((array) $this->input->post('telaah_provinsitujuan2')) + 1; ?>">
 								</td>
 							</tr>
 							<tr class="info">
@@ -465,10 +505,14 @@
 								<?php echo form_error('userfile');
 								if ($entry[0]['telaah_dokumenpendukung']) {
 								?>
-									<td><input type="file" name="userfile"><a href="<?php echo base_url('upload/telaah/' . $entry[0]['telaah_dokumenpendukung']); ?>" target="_blank">Lihat File</a></td>
+									<td><input type="file" name="userfile"><a href="<?php echo base_url('upload/telaah/' . $entry[0]['telaah_dokumenpendukung']); ?>" target="_blank">Lihat File</a>
 								<?php } else { ?>
-									<td><input type="file" name="userfile"></td>
+									<td><input type="file" name="userfile">
 								<?php } ?>
+									<?php if ($dokumen_sementara) { ?>
+										<p class="help-block"><i class="fa fa-paperclip"></i> File baru yang sudah dipilih tetap tersimpan: <b><?php echo html_escape($dokumen_sementara['nama']); ?></b>. Pilih file lain hanya jika ingin menggantinya.</p>
+									<?php } ?>
+									</td>
 							</tr>
 							<tr>
 								<th class="col-md-3">Pelaksana Perjalanan Dinas</th>
@@ -492,7 +536,7 @@
 									<td>
 										<div class="checkbox">
 											<label>
-												<input type="checkbox" name="telaah_sekretariat" value="1"> Pegawai Sekretariat
+												<input type="checkbox" name="telaah_sekretariat" value="1" <?php if ($entry[0]['telaah_sekretariat'] == 1) echo 'checked'; ?>> Pegawai Sekretariat
 											</label>
 										</div>
 									</td>
@@ -501,12 +545,16 @@
 							<tr>
 								<th class="col-md-3">Pengikut</th>
 								<td>
-									<select class="form-control select2" name="telaah_pengikut[]" multiple="multiple">
+									<select class="form-control <?= ($this->uri->segment(4) == 'walikota') ? 'select2-ajax' : 'select2'; ?>" name="telaah_pengikut[]" multiple="multiple">
 										<option value="">- Pilih -</option>
 										<?php foreach ($pengikut as $v): ?>
 											<?php
-											$dataPengikut = $this->m_pengikut->get($entry[0]['telaah_id'], $v->pegawai_id);
-											$isSelected   = (!empty($dataPengikut) && $v->pegawai_id == $dataPengikut[0]['pegawai_id']);
+											if ($pengikut_terpilih !== NULL) { // form tampil ulang: pilihan terakhir user
+												$isSelected = in_array((string) $v->pegawai_id, $pengikut_terpilih, TRUE);
+											} else {
+												$dataPengikut = $this->m_pengikut->get($entry[0]['telaah_id'], $v->pegawai_id);
+												$isSelected   = (!empty($dataPengikut) && $v->pegawai_id == $dataPengikut[0]['pegawai_id']);
+											}
 											?>
 
 											<option value="<?= $v->pegawai_id; ?>" <?= $isSelected ? 'selected' : ''; ?>>
@@ -561,6 +609,29 @@
 	$(function() {
 		//Initialize Select2 Elements
 		$(".select2").select2();
+
+		<?php if ($this->uri->segment(4) == 'walikota'): ?>
+			$('.select2-ajax').select2({
+				ajax: {
+					url: '<?php echo base_url("telaah/list_telaah/search_pegawai_ajax"); ?>',
+					dataType: 'json',
+					delay: 250,
+					data: function(params) {
+						return {
+							q: params.term // search term
+						};
+					},
+					processResults: function(data) {
+						return {
+							results: data.items
+						};
+					},
+					cache: true
+				},
+				placeholder: '- Cari Pegawai (Ketik Nama/NIP) -',
+				minimumInputLength: 1
+			});
+		<?php endif; ?>
 	});
 
 	// 1 = LDLP, 2 = LDDP, 3 = DALAM DAERAH, 5 = LUAR NEGERI
@@ -585,7 +656,7 @@
 				"<div class='col-md-6'>" +
 				"<div class='form-group'>" +
 				"<label>Provinsi</label>" +
-				"<select class='form-control' name='telaah_provinsitujuan2[]' id='provinsi_id" + jumlah + "' selectpicker chzn-select' onChange='tampil_kabupaten" + jumlah + "()' data-live-search='true' data-live-search-style='begins'>" +
+				"<select class='form-control select2' name='telaah_provinsitujuan2[]' id='provinsi_id" + jumlah + "' onChange='tampil_kabupaten" + jumlah + "()' style='width: 100%;'>" +
 				"<option value=''>- Pilih Provinsi -</option>" +
 				"<?php foreach ($provinsi as $v) {
 						echo "<option value='$v->provinsi_id'>$v->provinsi</option>";
@@ -597,11 +668,12 @@
 				"<div class='col-md-6'>" +
 				"<div class='form-group'>" +
 				"<label>Kota Tujuan</label>" +
-				"<select class='form-control' name='telaah_kotatujuan3[]' id='kabkot_id" + jumlah + "' selectpicker chzn-select' data-live-search='true' data-live-search-style='begins'>" +
+				"<select class='form-control select2' name='telaah_kotatujuan3[]' id='kabkot_id" + jumlah + "' style='width: 100%;'>" +
 				"<option value=''>- Pilih Kabupaten/Kota -</option>" +
 				"</select>" +
 				"</div>" +
 				"</div>");
+			$("#insert-form select").not(".select2-hidden-accessible").select2(); // tujuan tambahan memakai select2 seperti tujuan utama
 
 
 			$("#jumlah-form").val(nextform); // Ubah value textbox jumlah-form dengan variabel nextform
@@ -620,7 +692,7 @@
 		$.ajax({
 			url: "<?php echo base_url(); ?>beranda/get/" + provinsi_id + "",
 			success: function(response) {
-				$("#kabkot_id").html(response);
+				$("#kabkot_id").html(response).trigger('change.select2');
 			}
 		});
 		return false;
@@ -632,7 +704,7 @@
 		$.ajax({
 			url: "<?php echo base_url(); ?>beranda/get/" + provinsi_id1 + "",
 			success: function(response) {
-				$("#kabkot_id1").html(response);
+				$("#kabkot_id1").html(response).trigger('change.select2');
 			}
 		});
 		return false;
@@ -644,7 +716,7 @@
 		$.ajax({
 			url: "<?php echo base_url(); ?>beranda/get/" + provinsi_id2 + "",
 			success: function(response) {
-				$("#kabkot_id2").html(response);
+				$("#kabkot_id2").html(response).trigger('change.select2');
 			}
 		});
 		return false;
@@ -656,7 +728,7 @@
 		$.ajax({
 			url: "<?php echo base_url(); ?>beranda/get/" + provinsi_id3 + "",
 			success: function(response) {
-				$("#kabkot_id3").html(response);
+				$("#kabkot_id3").html(response).trigger('change.select2');
 			}
 		});
 		return false;
@@ -668,7 +740,7 @@
 		$.ajax({
 			url: "<?php echo base_url(); ?>beranda/get/" + provinsi_id4 + "",
 			success: function(response) {
-				$("#kabkot_id4").html(response);
+				$("#kabkot_id4").html(response).trigger('change.select2');
 			}
 		});
 		return false;
@@ -680,7 +752,7 @@
 		$.ajax({
 			url: "<?php echo base_url(); ?>beranda/get/" + provinsi_id5 + "",
 			success: function(response) {
-				$("#kabkot_id5").html(response);
+				$("#kabkot_id5").html(response).trigger('change.select2');
 			}
 		});
 		return false;
@@ -690,7 +762,7 @@
 	function tampil_anggaran() {
 		anggaran = document.getElementById("anggaran").value;
 		$.ajax({
-			url: "<?php echo base_url(); ?>beranda/get_anggaran/" + anggaran + "",
+			url: "<?php echo base_url(); ?>beranda/get_anggaran/1/" + anggaran + "",
 			success: function(response) {
 				$("#jumlah_anggaran").html(response);
 			}

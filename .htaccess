@@ -1,5 +1,10 @@
+# daftar isi folder (mis. upload/doc_TTE/) tidak boleh ditampilkan
+Options -Indexes +FollowSymLinks
+
+# file skrip di folder upload tidak boleh dijalankan/diakses
+RedirectMatch 403 (?i)/upload/.*\.(php\d?|phtml|phar)$
+
 <IfModule mod_rewrite.c>
-	Options Indexes FollowSymLinks
 	RewriteEngine on
 	RewriteCond $1 !^(index\.php|resources|robots\.txt)
 	RewriteCond %{REQUEST_FILENAME} !-f

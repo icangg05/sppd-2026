@@ -4,11 +4,11 @@ class M_rekening extends CI_Model
 {
 	
 	public function record_count($skpd_id) {
-		return $this->db->count_all("table_rekening WHERE skpd_id = '$skpd_id'");
+		return $this->db->count_all("table_rekening WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."'");
 	}
 	
 	public function record_count_search($column, $data, $skpd_id) {
-		return $this->db->count_all("table_rekening WHERE skpd_id = '$skpd_id' AND $column like '%$data%'");
+		return $this->db->count_all("table_rekening WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data($limit, $start, $skpd_id) {

@@ -293,6 +293,7 @@
 
                     <?php
                     $message = $this->session->flashdata('notif');
+                    $identity = (string) $this->session->flashdata('identity');
                     if($message){
                         echo '<div class="alert alert-danger text-center" style="border-radius: 10px; font-size: 14px; padding: 10px; margin-bottom: 25px;">'.$message .'</div>';
                     }
@@ -300,12 +301,12 @@
 
                     <form action="<?php echo base_url();?>login" method="post" accept-charset="utf-8">
                         <div class="form-group floating-group">
-                            <input type="text" class="form-control floating-control" name="identity" id="identity" placeholder=" " required>
+                            <input type="text" class="form-control floating-control" name="identity" id="identity" placeholder=" " value="<?php echo html_escape($identity); ?>" required>
                             <label for="identity" class="floating-label">User Name</label>
                         </div>
-                        
+
                         <div class="form-group floating-group">
-                            <input type="password" class="form-control floating-control" name="password" id="password" placeholder=" " required>
+                            <input type="password" class="form-control floating-control" name="password" id="password" placeholder=" " required<?php echo $identity !== '' ? ' autofocus' : ''; ?>>
                             <label for="password" class="floating-label">Password</label>
                         </div>
 

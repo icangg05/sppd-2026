@@ -95,7 +95,7 @@
 						<input type="hidden" name="pegawai_id" value="<?php echo $penandatangan[0]['pegawai_id']?>">
 						<input type="hidden" name="tte" value="<?php echo $this->uri->segment(2)?>">
 						<input type="hidden" name="posisi" value="<?php echo $this->uri->segment(4)?>">
-							<input type="password" name="passphrase" id="inputPassword6" class="form-control mx-sm-3" aria-describedby="passwordHelpInline" >
+							<input type="password" name="passphrase" id="inputPassword6" required class="form-control mx-sm-3" aria-describedby="passwordHelpInline" >
 						<small id="passwordHelpInline" class="text-muted">
 						  Must be 6-8 characters long.
 						</small>
@@ -129,3 +129,4 @@
 <!-- /.content -->
 </div>
   <!-- /.content-wrapper -->
+<?php $this->load->view('telaah/tte_tombol_loading'); ?>

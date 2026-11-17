@@ -287,6 +287,7 @@ class Beranda extends public_Controller {
 				$this->data['total_list_telaah_diproses_staff_lurah'] = $this->m_staff_lurah->total_list_telaah_diproses($this->ion_auth->user()->row()->skpd_id);
 				$this->data['total_list_telaah_diterima_staff_lurah'] = $this->m_staff_lurah->total_list_telaah_diterima($this->ion_auth->user()->row()->skpd_id);
 				$this->data['total_list_telaah_ditolak_staff_lurah'] = $this->m_staff_lurah->total_list_telaah_ditolak($this->ion_auth->user()->row()->skpd_id);
+				$this->data['posisi_kaopd'] = $this->m_admin->posisi_kaopd($this->ion_auth->user()->row()->skpd_id);
 			// 14 (Bendahara Camat) (Staff Camat)
 			} else if($this->ion_auth->get_users_groups()->row()->id == 14 && $this->ion_auth->user()->row()->jenis_skpd == 4){
 				$this->data['count_perjalanan'] = $this->m_beranda->count_perjalanan('','','');
@@ -309,6 +310,10 @@ class Beranda extends public_Controller {
 
 				}
 				$this->data['total_pegawai'] = $this->m_camat->total_pegawai($this->ion_auth->user()->row()->skpd_id);
+				$this->data['total_list_telaah'] = $this->m_camat->total_list_telaah($this->ion_auth->user()->row()->skpd_id);
+				$this->data['total_list_telaah_diproses'] = $this->m_camat->total_list_telaah_diproses($this->ion_auth->user()->row()->skpd_id);
+				$this->data['total_list_telaah_diterima'] = $this->m_camat->total_list_telaah_diterima($this->ion_auth->user()->row()->skpd_id);
+				$this->data['total_list_telaah_ditolak'] = $this->m_camat->total_list_telaah_ditolak($this->ion_auth->user()->row()->skpd_id);
 				$this->data['total_list_telaah_staff_camat'] = $this->m_staff_camat->total_list_telaah($this->ion_auth->user()->row()->skpd_id);
 				$this->data['total_list_telaah_diproses_staff_camat'] = $this->m_staff_camat->total_list_telaah_diproses($this->ion_auth->user()->row()->skpd_id);
 				$this->data['total_list_telaah_diterima_staff_camat'] = $this->m_staff_camat->total_list_telaah_diterima($this->ion_auth->user()->row()->skpd_id);
@@ -340,6 +345,10 @@ class Beranda extends public_Controller {
 
 				}
 				$this->data['total_pegawai'] = $this->m_lurah->total_pegawai($this->ion_auth->user()->row()->skpd_id);
+				$this->data['total_list_telaah'] = $this->m_lurah->total_list_telaah($this->ion_auth->user()->row()->skpd_id);
+				$this->data['total_list_telaah_diproses'] = $this->m_lurah->total_list_telaah_diproses($this->ion_auth->user()->row()->skpd_id);
+				$this->data['total_list_telaah_diterima'] = $this->m_lurah->total_list_telaah_diterima($this->ion_auth->user()->row()->skpd_id);
+				$this->data['total_list_telaah_ditolak'] = $this->m_lurah->total_list_telaah_ditolak($this->ion_auth->user()->row()->skpd_id);
 				$this->data['total_list_telaah_staff_lurah'] = $this->m_staff_lurah->total_list_telaah($this->ion_auth->user()->row()->skpd_id);
 				$this->data['total_list_telaah_diproses_staff_lurah'] = $this->m_staff_lurah->total_list_telaah_diproses($this->ion_auth->user()->row()->skpd_id);
 				$this->data['total_list_telaah_diterima_staff_lurah'] = $this->m_staff_lurah->total_list_telaah_diterima($this->ion_auth->user()->row()->skpd_id);
@@ -348,6 +357,7 @@ class Beranda extends public_Controller {
 				$this->data['total_list_telaah_diproses_staff_lurah'] = $this->m_staff_lurah->total_list_telaah_diproses($this->ion_auth->user()->row()->skpd_id);
 				$this->data['total_list_telaah_diterima_staff_lurah'] = $this->m_staff_lurah->total_list_telaah_diterima($this->ion_auth->user()->row()->skpd_id);
 				$this->data['total_list_telaah_ditolak_staff_lurah'] = $this->m_staff_lurah->total_list_telaah_ditolak($this->ion_auth->user()->row()->skpd_id);
+				$this->data['posisi_kaopd'] = $this->m_admin->posisi_kaopd($this->ion_auth->user()->row()->skpd_id);
 			// 9 (Administrator Full)
 			} else if(($this->ion_auth->get_users_groups()->row()->id == 9 && $this->ion_auth->user()->row()->skpd_id=="")||($this->ion_auth->get_users_groups()->row()->id == 100)){
 				$this->data['total_pegawai'] = $this->m_admin->total_pegawai();
@@ -832,7 +842,7 @@ class Beranda extends public_Controller {
 		$data['rincian_biaya'] = $this->m_anggaran->cek_sisa_anggaran_skpd($this->uri->segment(4));
 		$data['pengeluaran_rill'] = $this->m_anggaran->cek_pengeluaran_rill_skpd($this->uri->segment(4));
 		$data['id_anggaran'] = $this->uri->segment(4);
-		$pelaksana=explode(",",$this->uri->segment(5));
+		$pelaksana=explode(",", (string) $this->uri->segment(5)); // segmen 5 (pelaksana) kosong saat dipanggil untuk info DPA (case 1)
 		$data['telaah_pelaksana'] = $this->m_pegawai->get($pelaksana[0]);
 		switch($this->uri->segment(3)){
 			case 1 : $this->load->view('anggaran',$data); break; 

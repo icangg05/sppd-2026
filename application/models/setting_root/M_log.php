@@ -14,7 +14,7 @@ class M_log extends CI_Model
 
 	public function data($id) {
 
-		$query  = $this->db->query("SELECT * FROM core_log WHERE id_user='$id'");
+		$query  = $this->db->query("SELECT * FROM core_log WHERE id_user='".$this->db->escape_str((string) $id)."'");
 
 		return $query->result();
 
@@ -24,7 +24,7 @@ class M_log extends CI_Model
 
 	public function getByUser($id) {
 
-		$query  = $this->db->query("SELECT * FROM core_log WHERE id_user='$id'");
+		$query  = $this->db->query("SELECT * FROM core_log WHERE id_user='".$this->db->escape_str((string) $id)."'");
 
 		return $query->result();
 
@@ -34,7 +34,7 @@ class M_log extends CI_Model
 
 	public function record_count($id) {
 
-		return $this->db->count_all("core_log WHERE id_user='$id'");
+		return $this->db->count_all("core_log WHERE id_user='".$this->db->escape_str((string) $id)."'");
 
 	}
 
@@ -42,7 +42,7 @@ class M_log extends CI_Model
 
 	public function record_count_search($column, $data, $id) {
 
-		return $this->db->count_all("core_log WHERE id_user='$id' AND $column like '%$data%'");
+		return $this->db->count_all("core_log WHERE id_user='".$this->db->escape_str((string) $id)."' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 
 	}
 

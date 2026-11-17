@@ -77,7 +77,7 @@
 											echo "Rp. ".number_format($v->pagu, 0, ',', '.');
 										} else {
 											$pagu = $this->m_walikota->total_anggaran_skpd($v->skpd_id);
-											echo "Rp. ".number_format($pagu[0]['total_anggaran_keseluruhan'], 0, ',', '.');
+											echo "Rp. ".number_format((float) $pagu[0]['total_anggaran_keseluruhan'], 0, ',', '.');
 										}
 									?>
   									<?php 
@@ -108,7 +108,7 @@
 											}
 										?>
 									</td>
-  									<td>Rp. <?php echo number_format($sisa_anggaran, 0, ',', '.'); ?></td>	
+  									<td>Rp. <?php echo number_format((float) $sisa_anggaran, 0, ',', '.'); ?></td>	
   									<td>
 									
 									<?php if($jenis_anggaran){ ?>

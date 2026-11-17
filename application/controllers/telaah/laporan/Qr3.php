@@ -5,6 +5,10 @@ class Qr3 extends qr_Controller {
 	{
 		parent::__construct();
 		error_reporting(0);
+		// selain halaman publik QR (sppd), semua method di sini (TTE, cetak, cek status) wajib login
+		if (strtolower($this->router->method) !== 'sppd' && !$this->ion_auth->logged_in()) {
+			redirect('login');
+		}
 		$this->load->model('telaah/m_esselon');
 		$this->load->model('telaah/m_dprd');
 		$this->load->model('telaah/m_sekda');

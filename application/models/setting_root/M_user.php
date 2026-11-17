@@ -8,7 +8,7 @@ class M_user extends CI_Model
 	}
 	
 	public function record_count_search($column, $data) {
-		return $this->db->count_all("users WHERE $column like '%$data%'");
+		return $this->db->count_all("users WHERE $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data($limit, $start) {
@@ -35,11 +35,11 @@ class M_user extends CI_Model
 	}
 	
 	public function record_count2($skpd_id) {
-		return $this->db->count_all("users WHERE skpd_id='$skpd_id'");
+		return $this->db->count_all("users WHERE skpd_id='".$this->db->escape_str((string) $skpd_id)."'");
 	}
 	
 	public function record_count_search2($column, $data, $skpd_id) {
-		return $this->db->count_all("users WHERE skpd_id='$skpd_id' AND $column like '%$data%'");
+		return $this->db->count_all("users WHERE skpd_id='".$this->db->escape_str((string) $skpd_id)."' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data2($limit, $start, $skpd_id) {
@@ -72,17 +72,17 @@ class M_user extends CI_Model
 		return $this->db->count_all("users 
 									LEFT JOIN users_groups_bagian 
 									ON users_groups_bagian.user_id = users.id
-									WHERE skpd_id='$skpd_id'
-									AND bagian_id='$bagian_id'");
+									WHERE skpd_id='".$this->db->escape_str((string) $skpd_id)."'
+									AND bagian_id='".$this->db->escape_str((string) $bagian_id)."'");
 	}
 	
 	public function record_count_search_setda($column, $data, $skpd_id, $bagian_id) {
 		return $this->db->count_all("users 
 									LEFT JOIN users_groups_bagian 
 									ON users_groups_bagian.user_id = users.id
-									WHERE skpd_id='$skpd_id' 
-									AND bagian_id='$bagian_id'
-									AND $column like '%$data%'");
+									WHERE skpd_id='".$this->db->escape_str((string) $skpd_id)."' 
+									AND bagian_id='".$this->db->escape_str((string) $bagian_id)."'
+									AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data_setda($limit, $start, $skpd_id, $bagian_id) {

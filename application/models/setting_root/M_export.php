@@ -128,7 +128,7 @@ class M_export extends CI_Model
 		$query2 = $this->db->get_compiled_select(); 
 
 		if($limit){
-			$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_id DESC LIMIT $start, $limit");
+			$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_id DESC LIMIT ".(int) $start.", ".(int) $limit."");
 			return $query->result();
 		} else {
 			$query = $this->db->query($query1." UNION ALL ".$query2."");
@@ -155,7 +155,7 @@ class M_export extends CI_Model
 		$query2 = $this->db->get_compiled_select(); 
 
 		if($limit){
-			$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_id DESC LIMIT $start, $limit");
+			$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_id DESC LIMIT ".(int) $start.", ".(int) $limit."");
 			return $query->result();
 		} else {
 			$query = $this->db->query($query1." UNION ALL ".$query2."");

@@ -43,6 +43,7 @@
 			</table>
 			
 			</div>
+			  <?php $tte_direset = ($spt[0]['telaah_reset_tte2'] == 1); // setelah Reset TTE tombol cetak nonaktif sampai di-TTE kembali ?>
 			  <?php if($spt[0]['telaah_reset_tte2']==0){ ?>
 					<a href="<?php echo base_url() ?>telaah/laporan/spt/reset_tte/<?php echo $this->input->get('telaah_id') ?>/<?php echo $this->uri->segment(5) ?>" class="btn btn-success btn-sm " onclick="return confirm('Anda Yakin ?');"><i class="fa fa-reload"></i> Reset TTE</a><br><br>
               <?php } else { ?>
@@ -65,8 +66,8 @@
 						<?php if($spt[0]['telaah_kategori']==2) { ?>
 						
 								<!-- KADIS -->
-								<?php if($spt[0]['telaah_tte2']=='') { ?>
-									<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+								<?php if($spt[0]['telaah_tte2']=='' || $tte_direset) { ?>
+									<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } else { ?>
 									<?php if($data[0]['telaah_domainperjalanan']==3 || $data[0]['telaah_domainperjalanan']==4 ) { ?>
 										<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spt[0]['telaah_tte2'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
@@ -77,8 +78,8 @@
 								
 						<?php } else { ?>
 								<!-- ESSELON -->
-								<?php if($spt[0]['telaah_tte2']=='') { ?>
-									<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+								<?php if($spt[0]['telaah_tte2']=='' || $tte_direset) { ?>
+									<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } else { ?>
 									<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spt[0]['telaah_tte2'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } ?>
@@ -93,24 +94,24 @@
 					
 						<!-- DPRD -->
 						<?php 	if($spt[0]['telaah_kategori']==3) { ?>
-								<?php if($spt[0]['telaah_tte2']=='') { ?>
-									<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+								<?php if($spt[0]['telaah_tte2']=='' || $tte_direset) { ?>
+									<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } else { ?>
 									<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spt[0]['telaah_tte2'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } ?>
 								
 						<!-- SEKWAN -->		
 						<?php }  else if($spt[0]['telaah_kategori']==10) { ?>
-								<?php if($spt[0]['telaah_tte2']=='') { ?>
-									<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+								<?php if($spt[0]['telaah_tte2']=='' || $tte_direset) { ?>
+									<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } else { ?>
 									<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spt[0]['telaah_tte2'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } ?>
 								
 						<!-- STAFF DPRD -->
 						<?php } else { ?>
-								<?php if($spt[0]['telaah_tte2']=='') { ?>
-									<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+								<?php if($spt[0]['telaah_tte2']=='' || $tte_direset) { ?>
+									<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } else { ?>
 									<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spt[0]['telaah_tte2'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } ?>
@@ -121,16 +122,16 @@
 
 						<!-- STAFF SEKDA -->		
 						<?php if($spt[0]['telaah_kategori']==9){ ?>
-								<?php if($spt[0]['telaah_tte2']=='') { ?>
-									<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+								<?php if($spt[0]['telaah_tte2']=='' || $tte_direset) { ?>
+									<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } else { ?>
 									<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spt[0]['telaah_tte2'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } ?>
 								
 						<!-- WALIKOTA, SEKDA -->						
 						<?php } else if($spt[0]['telaah_kategori']==4 || $spt[0]['telaah_kategori']==8){ ?>
-								<?php if($spt[0]['telaah_tte2']=='') { ?>
-									<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+								<?php if($spt[0]['telaah_tte2']=='' || $tte_direset) { ?>
+									<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } else { ?>
 									<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spt[0]['telaah_tte2'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } ?>
@@ -142,15 +143,15 @@
 						
 						<!-- CAMAT -->
 						<?php if($spt[0]['telaah_kategori']==5) { ?>	
-							<?php if($spt[0]['telaah_tte2']=='') { ?>
-								<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+							<?php if($spt[0]['telaah_tte2']=='' || $tte_direset) { ?>
+								<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 							<?php } else { ?>
 								<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spt[0]['telaah_tte2'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
 							<?php } ?>
 						
 						<?php } else if($spt[0]['telaah_kategori']==7){ ?>
-							<?php if($spt[0]['telaah_tte2']=='') { ?>
-								<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+							<?php if($spt[0]['telaah_tte2']=='' || $tte_direset) { ?>
+								<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 							<?php } else { ?>
 								<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spt[0]['telaah_tte2'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
 							<?php } ?>
@@ -161,15 +162,15 @@
 
 						<!-- PUSKESMAS -->
 						<?php if($spt[0]['telaah_kategori']==11) { ?>	
-							<?php if($spt[0]['telaah_tte2']=='') { ?>
-								<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+							<?php if($spt[0]['telaah_tte2']=='' || $tte_direset) { ?>
+								<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 							<?php } else { ?>
 								<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spt[0]['telaah_tte2'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
 							<?php } ?>
 						
 						<?php } else { ?>
-							<?php if($spt[0]['telaah_tte2']=='') { ?>
-								<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+							<?php if($spt[0]['telaah_tte2']=='' || $tte_direset) { ?>
+								<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 							<?php } else { ?>
 								<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spt[0]['telaah_tte2'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
 							<?php } ?>
@@ -180,15 +181,15 @@
 
 						<!-- PUSKESMAS -->
 						<?php if($spt[0]['telaah_kategori']==1) { ?>	
-							<?php if($spt[0]['telaah_tte2']=='') { ?>
-								<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+							<?php if($spt[0]['telaah_tte2']=='' || $tte_direset) { ?>
+								<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 							<?php } else { ?>
 								<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spt[0]['telaah_tte2'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
 							<?php } ?>
 						
 						<?php } else { ?>
-							<?php if($spt[0]['telaah_tte2']=='') { ?>
-								<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+							<?php if($spt[0]['telaah_tte2']=='' || $tte_direset) { ?>
+								<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 							<?php } else { ?>
 								<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spt[0]['telaah_tte2'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
 							<?php } ?>
@@ -211,8 +212,8 @@
 					<th style="width: 40px" colspan="2">
 					<?php if($spt[0]['jenis_skpd']== 1 ) { ?>
 						<?php if ($spt[0]['telaah_kategori']!=2) { ?>
-								<?php if($spt[0]['telaah_tte2']=='') { ?>
-									<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+								<?php if($spt[0]['telaah_tte2']=='' || $tte_direset) { ?>
+									<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } else { ?>
 									<a href="<?php echo base_url();?>telaah/laporan/laporan/cetak_spt/kadis/1?telaah_id=<?php echo $this->input->get('telaah_id');?>&&pegawai_id=<?php echo $pelaksana[0]['pegawai_id'] ?>&&pengikut_id=<?php echo $pengikut[$i]['pegawai_id'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } ?>
@@ -220,19 +221,19 @@
 						
 					<?php } else if($spt[0]['jenis_skpd'] == 2){ ?>
 							  <?php if(count($spt)==0) { ?>
-									<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+									<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 							  <?php } else { ?>
-									<?php if($spt[0]['telaah_ttdspt']) { ?>
+									<?php if($spt[0]['telaah_ttdspt'] && !$tte_direset) { ?>
 										<a href="<?php echo base_url();?>telaah/laporan/laporan_dprd/cetak_spt_dprd2?telaah_id=<?php echo $this->input->get('telaah_id');?>&&pegawai_id=<?php echo $pelaksana[0]['pegawai_id'] ?>&&pengikut_id=<?php echo $pengikut[$i]['pegawai_id'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
 									<?php } else { ?>
-										<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+										<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 									<?php } ?>
 							  <?php }  ?>
 						
 					<?php } else if($spt[0]['jenis_skpd'] == 3){ ?>
 							<?php if($spt[0]['telaah_kategori']!=9 || $spt[0]['telaah_kategori']!=8){ ?>
-								<?php if($spt[0]['telaah_tte2']=='') { ?>
-									<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPT</a>
+								<?php if($spt[0]['telaah_tte2']=='' || $tte_direset) { ?>
+									<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } else { ?>
 									<a href="<?php echo base_url();?>telaah/laporan/laporan/cetak_spt/sekda/1?telaah_id=<?php echo $this->input->get('telaah_id');?>&&pegawai_id=<?php echo $pelaksana[0]['pegawai_id'] ?>&&pengikut_id=<?php echo $pengikut[$i]['pegawai_id'] ?>" class="btn btn-primary btn-sm"><i class="fa fa-print"></i> Cetak SPT</a>
 								<?php } ?>
@@ -252,7 +253,7 @@
 			
 			$a = base_url().'upload/doc_TTE/'.$get_spt;
 			$file = file($a);
-			$endfile= trim($file[count($file) - 1]);
+			$endfile= $file ? trim($file[count($file) - 1]) : '';
 			$n="%%EOF";
 
 			if ($endfile === $n) {
@@ -260,7 +261,7 @@
 				$x = "corrupted";
 			}
 			
-			$a = count($x);
+			$a = isset($x) ? count((array) $x) : 0;
 			// if($a>0){
 				// if($spt[0]['telaah_reset_tte2']==0){
 					// echo '<a href="'.base_url().'telaah/laporan/spt/reset_tte/'.$this->input->get('telaah_id').'/'.$this->uri->segment(5).'" class="btn btn-success btn-sm "><i class="fa fa-reload"></i> Reset TTE</a><br><br>';

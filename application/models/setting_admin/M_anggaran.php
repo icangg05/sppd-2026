@@ -5,22 +5,22 @@ class M_anggaran extends CI_Model
 
 	public function record_count($skpd_id)
 	{
-		return $this->db->count_all("table_anggaran WHERE skpd_id = '$skpd_id'");
+		return $this->db->count_all("table_anggaran WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."'");
 	}
 
 	public function record_count_setda($skpd_id, $bagian_id)
 	{
 		return $this->db->count_all("table_anggaran 
-									 WHERE skpd_id = '$skpd_id'
-									 AND bagian_id = '$bagian_id'");
+									 WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."'
+									 AND bagian_id = '".$this->db->escape_str((string) $bagian_id)."'");
 	}
 
 	public function record_count_search($column, $data, $skpd_id, $tahun)
 	{
 		if ($column) {
-			return $this->db->count_all("table_anggaran WHERE skpd_id = '$skpd_id' AND tahun = '$tahun' AND $column like '%$data%'");
+			return $this->db->count_all("table_anggaran WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND tahun = '".$this->db->escape_str((string) $tahun)."' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 		} else {
-			return $this->db->count_all("table_anggaran WHERE skpd_id = '$skpd_id' AND tahun = '$tahun'");
+			return $this->db->count_all("table_anggaran WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND tahun = '".$this->db->escape_str((string) $tahun)."'");
 		}
 	}
 
@@ -29,15 +29,15 @@ class M_anggaran extends CI_Model
 
 		if ($column) {
 			return $this->db->count_all("table_anggaran 
-									WHERE skpd_id = '$skpd_id' 
-									AND bagian_id = '$bagian_id' 
-									AND tahun = '$tahun' 
-									AND $column like '%$data%'");
+									WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."' 
+									AND bagian_id = '".$this->db->escape_str((string) $bagian_id)."' 
+									AND tahun = '".$this->db->escape_str((string) $tahun)."' 
+									AND $column like '%".$this->db->escape_str((string) $data)."%'");
 		} else {
 			return $this->db->count_all("table_anggaran 
-									WHERE skpd_id = '$skpd_id' 
-									AND bagian_id = '$bagian_id' 
-									AND tahun = '$tahun' ");
+									WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."' 
+									AND bagian_id = '".$this->db->escape_str((string) $bagian_id)."' 
+									AND tahun = '".$this->db->escape_str((string) $tahun)."' ");
 		}
 	}
 
@@ -164,7 +164,7 @@ class M_anggaran extends CI_Model
 		$this->db->where('table_anggaran.id_anggaran', $id_anggaran);
 		$query3 = $this->db->get_compiled_select();
 
-		$query = $this->db->query($query1 . " UNION " . $query2 . " UNION " . $query3 . " ORDER BY telaah_waktuinput DESC LIMIT $start, $limit ");
+		$query = $this->db->query($query1 . " UNION " . $query2 . " UNION " . $query3 . " ORDER BY telaah_waktuinput DESC LIMIT ".(int) $start.", ".(int) $limit." ");
 		return $query->result();
 	}
 
@@ -208,7 +208,7 @@ class M_anggaran extends CI_Model
 		$query  = $this->db->query("SELECT (SELECT SUM(tarif*item) ) as jumlah  
 					FROM table_rincian_biaya a LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
 					LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran 
-					WHERE c.id_anggaran='$id_anggaran' ");
+					WHERE c.id_anggaran='".$this->db->escape_str((string) $id_anggaran)."' ");
 		return $query->result();
 	}
 
@@ -227,7 +227,7 @@ class M_anggaran extends CI_Model
 		$query  = $this->db->query("SELECT SUM(tarif) as jumlah, id_anggaran FROM table_pengeluaran_rill
 									JOIN table_telaah ON table_telaah.telaah_id = table_pengeluaran_rill.telaah_id
 									JOIN table_anggaran ON table_telaah.telaah_kegiatan = table_anggaran.id_anggaran
-									WHERE id_anggaran = '$id_anggaran' ");
+									WHERE id_anggaran = '".$this->db->escape_str((string) $id_anggaran)."' ");
 		return $query->result();
 	}
 

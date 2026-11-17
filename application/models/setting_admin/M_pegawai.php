@@ -4,19 +4,19 @@ class M_pegawai extends CI_Model
 {
 	
 	public function record_count($skpd_id) {
-		return $this->db->count_all("table_pegawai WHERE skpd_id = '$skpd_id'");
+		return $this->db->count_all("table_pegawai WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."'");
 	}
 	
 	public function record_count_setda($skpd_id, $bagian_id) {
-		return $this->db->count_all("table_pegawai WHERE skpd_id = '$skpd_id' AND bagian_id='$bagian_id'");
+		return $this->db->count_all("table_pegawai WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND bagian_id='".$this->db->escape_str((string) $bagian_id)."'");
 	}
 	
 	public function record_count_search($column, $data, $skpd_id) {
-		return $this->db->count_all("table_pegawai WHERE skpd_id = '$skpd_id' AND $column like '%$data%'");
+		return $this->db->count_all("table_pegawai WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function record_count_search_setda($column, $data, $skpd_id, $bagian_id) {
-		return $this->db->count_all("table_pegawai WHERE skpd_id = '$skpd_id' AND bagian_id='$bagian_id' AND $column like '%$data%'");
+		return $this->db->count_all("table_pegawai WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND bagian_id='".$this->db->escape_str((string) $bagian_id)."' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data($limit, $start, $skpd_id) {
@@ -46,8 +46,8 @@ class M_pegawai extends CI_Model
 			$query = $this->db->query($query1." UNION ALL ".$query2." limit ".$s." , ".$limit);
 			return $query->result();
 		} else {
-			$a = $this->db->count_all_results("table_pegawai WHERE skpd_id = '$skpd_id' AND status_delete = 0 "); 
-			$b = $this->db->count_all_results("table_pimpinan WHERE skpd_id = '$skpd_id' AND status_delete = 0 "); 
+			$a = $this->db->count_all_results("table_pegawai WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND status_delete = 0 "); 
+			$b = $this->db->count_all_results("table_pimpinan WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND status_delete = 0 "); 
 			return $a + $b;
 		}
 	}
@@ -100,8 +100,8 @@ class M_pegawai extends CI_Model
 			$query = $this->db->query($query1." UNION ALL ".$query2." limit ".$s." , ".$limit);
 			return $query->result();
 		} else {
-			$a = $this->db->count_all_results("table_pegawai WHERE skpd_id = '$skpd_id' AND status_delete = 0  AND $column like '%$value%'"); 
-			$b = $this->db->count_all_results("table_pimpinan WHERE skpd_id = '$skpd_id' AND status_delete = 0  AND $column like '%$value%'"); 
+			$a = $this->db->count_all_results("table_pegawai WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND status_delete = 0  AND $column like '%".$this->db->escape_str((string) $value)."%'"); 
+			$b = $this->db->count_all_results("table_pimpinan WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND status_delete = 0  AND $column like '%".$this->db->escape_str((string) $value)."%'"); 
 			return $a + $b;
 		}
 	}

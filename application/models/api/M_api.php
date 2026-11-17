@@ -62,7 +62,7 @@ class M_api extends CI_Model
     public function countByStatus($id1, $id2) {
         $query = $this->db->query("SELECT count(t.telaah_id) as jumlah
                                     FROM table_telaah t 
-                                    WHERE t.telaah_kategori = '$id1' AND t.telaah_status = '$id2'
+                                    WHERE t.telaah_kategori = '".$this->db->escape_str((string) $id1)."' AND t.telaah_status = '".$this->db->escape_str((string) $id2)."'
                                     ");
         return $query->result();
     }
@@ -70,7 +70,7 @@ class M_api extends CI_Model
 	public function countById2($id) {
         $query = $this->db->query("SELECT count(t.telaah_id) as jumlah
                                     FROM table_telaah t 
-                                    WHERE t.telaah_kategori = '$id'
+                                    WHERE t.telaah_kategori = '".$this->db->escape_str((string) $id)."'
                                     ");
         return $query->result_array();
     }
@@ -118,7 +118,7 @@ class M_api extends CI_Model
                                     WHERE t.telaah_domainperjalanan = 1
                                     AND t.telaah_status = 2
                                     AND (t.telaah_kategori = 2 OR t.telaah_kategori = 10 OR t.telaah_kategori = 5)
-                                    AND (t.telaah_tanggalberangkat<='$day' AND t.telaah_tanggalkembali>='$day')
+                                    AND (t.telaah_tanggalberangkat<='".$this->db->escape_str((string) $day)."' AND t.telaah_tanggalkembali>='".$this->db->escape_str((string) $day)."')
                                     GROUP BY provinsi_id
 									ORDER BY t.telaah_waktuinput ASC
 									");
@@ -176,7 +176,7 @@ class M_api extends CI_Model
 		$this->db->join('table_skpd','table_pegawai.skpd_id=table_skpd.skpd_id','left');
 		$this->db->where('table_telaah.telaah_status', 2);
 		$this->db->where('table_pegawai.skpd_id',$skpd_id);
-		$this->db->where("(telaah_tanggalberangkat<='$date' AND telaah_tanggalkembali>='$date')");
+		$this->db->where("(telaah_tanggalberangkat<='".$this->db->escape_str((string) $date)."' AND telaah_tanggalkembali>='".$this->db->escape_str((string) $date)."')");
 		if($key){
 			$this->db->group_start();
 			$this->db->like('pegawai_nama',$key);
@@ -252,7 +252,7 @@ class M_api extends CI_Model
                                     JOIN users_groups ON users.id = users_groups.user_id
                                     JOIN groups ON users_groups.group_id = groups.id
                                     JOIN table_skpd ON users.skpd_id = table_skpd.skpd_id
-                                    WHERE users.id='$id'");
+                                    WHERE users.id='".$this->db->escape_str((string) $id)."'");
 		return $query->result_array();
     }
 	
@@ -279,7 +279,7 @@ class M_api extends CI_Model
 			$query  = $this->db->query("SELECT (SELECT SUM(tarif*item) ) as jumlah_rincian_belanja_keseluruhan  FROM table_rincian_biaya a 
 									LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
 									LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran 
-									WHERE c.skpd_id='$skpd_id' ");
+									WHERE c.skpd_id='".$this->db->escape_str((string) $skpd_id)."' ");
 		} else {
 			$query  = $this->db->query("SELECT (SELECT SUM(tarif*item) ) as jumlah_rincian_belanja_keseluruhan FROM table_rincian_biaya a 
 									LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
@@ -293,7 +293,7 @@ class M_api extends CI_Model
 			$query  = $this->db->query("SELECT SUM(tarif) as jumlah_pengeluaran_rill_keseluruhan FROM table_pengeluaran_rill a
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
 										LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran
-										WHERE c.skpd_id='$skpd_id' ");
+										WHERE c.skpd_id='".$this->db->escape_str((string) $skpd_id)."' ");
 		} else {
 			$query  = $this->db->query("SELECT SUM(tarif) as jumlah_pengeluaran_rill_keseluruhan FROM table_pengeluaran_rill a
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
@@ -320,7 +320,7 @@ class M_api extends CI_Model
 			$query  = $this->db->query("SELECT (SELECT SUM(tarif*item) ) as jumlah_rincian_belanja_dalam_daerah FROM table_rincian_biaya a 
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
 										LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran 
-										WHERE c.skpd_id = '$skpd_id' AND c.jenis_anggaran=1");
+										WHERE c.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND c.jenis_anggaran=1");
 		} else {
 			$query  = $this->db->query("SELECT (SELECT SUM(tarif*item) ) as jumlah_rincian_belanja_dalam_daerah FROM table_rincian_biaya a 
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
@@ -335,7 +335,7 @@ class M_api extends CI_Model
 			$query  = $this->db->query("SELECT SUM(tarif) as jumlah_pengeluaran_rill_dalam_daerah FROM table_pengeluaran_rill a
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
 										LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran
-										WHERE c.skpd_id = '$skpd_id' AND c.jenis_anggaran=1");
+										WHERE c.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND c.jenis_anggaran=1");
 		} else {
 			$query  = $this->db->query("SELECT SUM(tarif) as jumlah_pengeluaran_rill_dalam_daerah FROM table_pengeluaran_rill a
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
@@ -362,7 +362,7 @@ class M_api extends CI_Model
 			$query  = $this->db->query("SELECT (SELECT SUM(tarif*item)) as jumlah_rincian_belanja_luar_daerah FROM table_rincian_biaya a 
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
 										LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran 
-										WHERE c.skpd_id = '$skpd_id' AND c.jenis_anggaran=2");
+										WHERE c.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND c.jenis_anggaran=2");
 		} else {
 			$query  = $this->db->query("SELECT (SELECT SUM(tarif*item)) as jumlah_rincian_belanja_luar_daerah FROM table_rincian_biaya a 
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
@@ -377,7 +377,7 @@ class M_api extends CI_Model
 			$query  = $this->db->query("SELECT SUM(tarif) as jumlah_pengeluaran_rill_luar_daerah FROM table_pengeluaran_rill a
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
 										LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran
-										WHERE c.skpd_id = '$skpd_id' AND c.jenis_anggaran=2");
+										WHERE c.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND c.jenis_anggaran=2");
 		} else {
 			$query  = $this->db->query("SELECT SUM(tarif) as jumlah_pengeluaran_rill_luar_daerah FROM table_pengeluaran_rill a
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
@@ -404,7 +404,7 @@ class M_api extends CI_Model
 			$query  = $this->db->query("SELECT (SELECT SUM(tarif*item)) as jumlah_rincian_belanja_bimtek FROM table_rincian_biaya a 
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
 										LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran 
-										WHERE c.skpd_id = '$skpd_id' AND c.jenis_anggaran=3");
+										WHERE c.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND c.jenis_anggaran=3");
 		} else {
 			$query  = $this->db->query("SELECT (SELECT SUM(tarif*item)) as jumlah_rincian_belanja_bimtek FROM table_rincian_biaya a 
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
@@ -419,7 +419,7 @@ class M_api extends CI_Model
 			$query  = $this->db->query("SELECT SUM(tarif) as jumlah_pengeluaran_rill_bimtek FROM table_pengeluaran_rill a
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
 										LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran
-										WHERE c.skpd_id = '$skpd_id' AND c.jenis_anggaran=3");
+										WHERE c.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND c.jenis_anggaran=3");
 		} else {
 			$query  = $this->db->query("SELECT SUM(tarif) as jumlah_pengeluaran_rill_bimtek FROM table_pengeluaran_rill a
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
@@ -515,7 +515,7 @@ class M_api extends CI_Model
 		$query  = $this->db->query("SELECT (SELECT SUM(tarif*item)) AS total_rincian FROM table_rincian_biaya a 
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
 										LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran 
-										WHERE b.telaah_kegiatan='$anggaran_id'");
+										WHERE b.telaah_kegiatan='".$this->db->escape_str((string) $anggaran_id)."'");
 	
 		return $query->result_array();
 	}
@@ -524,7 +524,7 @@ class M_api extends CI_Model
 		$query  = $this->db->query("SELECT SUM(tarif) as total_pengeluaran_rill FROM table_pengeluaran_rill a
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
 										LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran
-										WHERE b.telaah_kegiatan='$anggaran_id'");
+										WHERE b.telaah_kegiatan='".$this->db->escape_str((string) $anggaran_id)."'");
 	
 		return $query->result_array();
 	}
@@ -620,7 +620,7 @@ class M_api extends CI_Model
 		LEFT JOIN groups ON groups.id = users_groups.group_id
 		LEFT JOIN users_groups_bagian ON users_groups_bagian.user_id = users.id
 		LEFT JOIN users_groups_asisten ON users_groups_asisten.user_id = users.id
-		WHERE table_telaah.telaah_id = '$telaah_id'
+		WHERE table_telaah.telaah_id = '".$this->db->escape_str((string) $telaah_id)."'
 		AND CASE
 			WHEN table_timeline1.timeline_kabid_id=0 THEN groups.id=2 
 			WHEN table_timeline1.timeline_sekdis_id=0 THEN groups.id=3
@@ -1226,7 +1226,7 @@ class M_api extends CI_Model
 		$this->db->where("(table_telaah.telaah_kategori='5' OR table_telaah.telaah_kategori='7')");
 		$this->db->where("((table_timeline5.timeline_sekcam_id = '0') 
 			OR (table_timeline7.timeline_lurah_id = '1' AND table_timeline7.timeline_sekcam_id = '0'))");
-		$this->db->where("(table_pegawai.skpd_id = '$skpd_id' OR table_relasi_kelurahan.id_kecamatan = '$skpd_id' )");
+		$this->db->where("(table_pegawai.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' OR table_relasi_kelurahan.id_kecamatan = '".$this->db->escape_str((string) $skpd_id)."' )");
 		if($key){
 			$this->db->group_start();
 			$this->db->like('pegawai_nama',$key);
@@ -1255,7 +1255,7 @@ class M_api extends CI_Model
 		$this->db->where("(table_telaah.telaah_kategori='5' OR table_telaah.telaah_kategori='7')");
 		$this->db->where("((table_timeline5.timeline_sekcam_id = '1' AND table_timeline5.timeline_camat_id = '0') 
 			OR (table_timeline7.timeline_sekcam_id = '1' AND table_timeline7.timeline_camat_id = '0') OR(table_timeline5.timeline_camat_id = '5'))");
-		$this->db->where("(table_pegawai.skpd_id = '$skpd_id' OR table_relasi_kelurahan.id_kecamatan = '$skpd_id' )");
+		$this->db->where("(table_pegawai.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' OR table_relasi_kelurahan.id_kecamatan = '".$this->db->escape_str((string) $skpd_id)."' )");
 		if($key){
 			$this->db->group_start();
 			$this->db->like('pegawai_nama',$key);
@@ -1950,7 +1950,7 @@ class M_api extends CI_Model
 		$this->db->join('table_skpd','table_pegawai.skpd_id=table_skpd.skpd_id','left');
 		$this->db->where("(table_telaah.telaah_kategori='5' OR table_telaah.telaah_kategori='7')");
 		$this->db->where("(table_timeline5.timeline_sekcam_id = '1' OR table_timeline7.timeline_sekcam_id = '1')");
-		$this->db->where("(table_pegawai.skpd_id = '$skpd_id' OR table_relasi_kelurahan.id_kecamatan = '$skpd_id' )");
+		$this->db->where("(table_pegawai.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' OR table_relasi_kelurahan.id_kecamatan = '".$this->db->escape_str((string) $skpd_id)."' )");
 		if($key){
 			$this->db->group_start();
 			$this->db->like('pegawai_nama',$key);
@@ -1978,7 +1978,7 @@ class M_api extends CI_Model
 		$this->db->join('table_skpd','table_pegawai.skpd_id=table_skpd.skpd_id','left');
 		$this->db->where("(table_telaah.telaah_kategori='5' OR table_telaah.telaah_kategori='7')");
 		$this->db->where("(table_timeline5.timeline_camat_id = '1' OR table_timeline7.timeline_camat_id = '1')");
-		$this->db->where("(table_pegawai.skpd_id = '$skpd_id' OR table_relasi_kelurahan.id_kecamatan = '$skpd_id' )");
+		$this->db->where("(table_pegawai.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' OR table_relasi_kelurahan.id_kecamatan = '".$this->db->escape_str((string) $skpd_id)."' )");
 		if($key){
 			$this->db->group_start();
 			$this->db->like('pegawai_nama',$key);
@@ -2666,7 +2666,7 @@ class M_api extends CI_Model
 		$this->db->join('table_skpd','table_pegawai.skpd_id=table_skpd.skpd_id','left');
 		$this->db->where("(table_telaah.telaah_kategori='5' OR table_telaah.telaah_kategori='7')");
 		$this->db->where("(table_timeline5.timeline_sekcam_id = '2' OR table_timeline7.timeline_sekcam_id = '2')");
-		$this->db->where("(table_pegawai.skpd_id = '$skpd_id' OR table_relasi_kelurahan.id_kecamatan = '$skpd_id' )");
+		$this->db->where("(table_pegawai.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' OR table_relasi_kelurahan.id_kecamatan = '".$this->db->escape_str((string) $skpd_id)."' )");
 		if($key){
 			$this->db->group_start();
 			$this->db->like('pegawai_nama',$key);
@@ -2694,7 +2694,7 @@ class M_api extends CI_Model
 		$this->db->join('table_skpd','table_pegawai.skpd_id=table_skpd.skpd_id','left');
 		$this->db->where("(table_telaah.telaah_kategori='5' OR table_telaah.telaah_kategori='7')");
 		$this->db->where("(table_timeline5.timeline_camat_id = '2' OR table_timeline7.timeline_camat_id = '2')");
-		$this->db->where("(table_pegawai.skpd_id = '$skpd_id' OR table_relasi_kelurahan.id_kecamatan = '$skpd_id' )");
+		$this->db->where("(table_pegawai.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' OR table_relasi_kelurahan.id_kecamatan = '".$this->db->escape_str((string) $skpd_id)."' )");
 		if($key){
 			$this->db->group_start();
 			$this->db->like('pegawai_nama',$key);
@@ -3101,7 +3101,7 @@ class M_api extends CI_Model
 		$this->db->join('table_skpd','table_pegawai.skpd_id=table_skpd.skpd_id','left');
 		$this->db->where("(table_telaah.telaah_kategori='5' OR table_telaah.telaah_kategori='7')");
 		$this->db->where("(table_timeline5.timeline_sekcam_id = '1' OR table_timeline7.timeline_sekcam_id = '1' OR table_timeline5.timeline_sekcam_id = '2' OR table_timeline7.timeline_sekcam_id = '2')");
-		$this->db->where("(table_pegawai.skpd_id = '$skpd_id' OR table_relasi_kelurahan.id_kecamatan = '$skpd_id' )");
+		$this->db->where("(table_pegawai.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' OR table_relasi_kelurahan.id_kecamatan = '".$this->db->escape_str((string) $skpd_id)."' )");
 		$this->db->order_by('table_telaah.telaah_waktuinput','DESC');
 		$this->db->limit (5, 0);
 		$query = $this->db->get ();
@@ -3119,7 +3119,7 @@ class M_api extends CI_Model
 		$this->db->join('table_skpd','table_pegawai.skpd_id=table_skpd.skpd_id','left');
 		$this->db->where("(table_telaah.telaah_kategori='5' OR table_telaah.telaah_kategori='7')");
 		$this->db->where("(table_timeline5.timeline_camat_id = '1' OR table_timeline7.timeline_camat_id = '1' OR table_timeline5.timeline_camat_id = '2' OR table_timeline7.timeline_camat_id = '2')");
-		$this->db->where("(table_pegawai.skpd_id = '$skpd_id' OR table_relasi_kelurahan.id_kecamatan = '$skpd_id' )");
+		$this->db->where("(table_pegawai.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' OR table_relasi_kelurahan.id_kecamatan = '".$this->db->escape_str((string) $skpd_id)."' )");
 		$this->db->order_by('table_telaah.telaah_waktuinput','DESC');
 		$this->db->limit (5, 0);
 		$query = $this->db->get ();
@@ -3708,7 +3708,7 @@ class M_api extends CI_Model
 				LEFT JOIN groups ON groups.id = users_groups.group_id
 				LEFT JOIN users_groups_bagian ON users_groups_bagian.user_id = users.id
 				LEFT JOIN users_groups_asisten ON users_groups_asisten.user_id = users.id
-				WHERE table_telaah.telaah_id = '$telaah_id'
+				WHERE table_telaah.telaah_id = '".$this->db->escape_str((string) $telaah_id)."'
 				AND CASE
 					WHEN table_timeline1.timeline_kabid_id=0 THEN groups.id=2 
 					WHEN table_timeline1.timeline_sekdis_id=0 THEN groups.id=3

@@ -140,7 +140,7 @@
           } else if ($this->ion_auth->get_users_groups()->row()->id == 9 && $this->ion_auth->user()->row()->skpd_id != "") {
             echo "ADMINISTRATOR " . strtoupper($nama_skpd[0]['skpd_nama']);;
           } else {
-            echo strtoupper($nama_skpd[0]['skpd_nama']);
+            echo strtoupper($nama_skpd[0]['skpd_nama'] ?? '');
           }     ?> </h1>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -478,7 +478,7 @@
                     <div class="box-body">
                       <div class="form-group">
                         <div class="col-sm-12">
-                          <div id="kaopd"> <input type="checkbox" data-toggle="toggle" data-on="Hadir" data-off="Tidak Hadir" <?php if ($posisi_kaopd[0]['status'] == '1') echo 'checked'; ?> /> </div>
+                          <div id="kaopd"> <input type="checkbox" data-toggle="toggle" data-on="Hadir" data-off="Tidak Hadir" <?php if (($posisi_kaopd[0]['status'] ?? null) == '1') echo 'checked'; ?> /> </div>
                           <span class="uk-form-help-block">
                             <div id="resultKaopd"> </div>
                           </span>

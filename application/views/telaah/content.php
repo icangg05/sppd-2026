@@ -229,7 +229,7 @@
 									  }
 									  ?>
 									  <div class="modal-body">
-										<p>Apakah anda yakin ingin menghapus telaah <?php echo "<b>".$v->pegawai_nama."</b> dengan Perihal : <b>".$v->telaah_perihal."</b> ?"?>.</p>
+										<p>Apakah anda yakin ingin menghapus telaah <?php echo "<b>".($this->uri->segment(4)=="dprd" ? $v->anggotadprd_name : $v->pegawai_nama)."</b> dengan Perihal : <b>".$v->telaah_perihal."</b> ?"?>.</p>
 										<input type="text" name="telaah_id" value="<?php echo $v->telaah_id?>">
 										<input type="text" name="url" value="<?php echo $this->uri->segment(4)?>">
 									  </div>

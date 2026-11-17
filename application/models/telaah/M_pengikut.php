@@ -92,5 +92,19 @@ class M_pengikut extends CI_Model
 	public function delete($telaah_id) {
 		$this->db->delete('table_pengikut', array('telaah_id' => $telaah_id));
 	}
-	
+
+	// SPPD pengikut yang sudah di-TTE hanya ada di upload/doc_TTE/ (namanya di telaah_tte), tidak disalin ke
+	// doc_perjalanan seperti milik pelaksana. Pakai hasil TTE itu selama tidak lebih lama dari drafnya.
+	public function file_sppd($telaah_id, $pegawai_id) {
+		$draf = 'upload/doc_perjalanan/SPPD-'.$telaah_id.'-'.$pegawai_id.'.pdf';
+		$pengikut = $this->db->get_where('table_pengikut', array('telaah_id' => $telaah_id, 'pegawai_id' => $pegawai_id))->row_array();
+		if ($pengikut && $pengikut['telaah_tte'] != '') {
+			$tte = 'upload/doc_TTE/'.basename($pengikut['telaah_tte']);
+			if (is_file(FCPATH.$tte) && (!is_file(FCPATH.$draf) || filemtime(FCPATH.$tte) >= filemtime(FCPATH.$draf))) {
+				return $tte;
+			}
+		}
+		return $draf;
+	}
+
 }

@@ -113,7 +113,7 @@
 		  ?>
 	 <?php } ?> 
     
-    <!-- <option value="<?php echo $entry[0]['skpd_id'];?>"><?php echo $entry[0]['skpd_nama'];?></option> -->
+    <!-- <option value="<?php echo $entry[0]['skpd_id'];?>"><?php echo $entry[0]['skpd_nama'] ?? '';?></option> -->
   </select>
 </div>
 </div>

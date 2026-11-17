@@ -46,7 +46,7 @@
              $bagian_id = base64_encode($this->encrypt->encode($v->bagian_id, $this->session->userdata('encrypt_key')));	
              ?>
              <tr>
-              <!--td><?php// echo $v->skpd_kode;?></td-->
+              <!--td><?php // echo $v->skpd_kode;?></td-->
               <td><?php echo $v->nama_asisten;?></td>
               <td><?php echo $v->nama_bagian;?></td>
               <td><a href="<?php echo base_url();?>setting_root/bagian/update_view?bagian_id=<?php echo $bagian_id?>" class="btn btn-sm btn-flat btn-warning"><i class="fa fa-edit"></i> EDIT</a>

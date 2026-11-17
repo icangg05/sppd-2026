@@ -63,7 +63,7 @@ class M_staff_dprd extends CI_Model
 	public function record_count_search($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='3' AND $column like '%$data%'");
+			WHERE telaah_kategori='3' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data($limit, $start) {
@@ -91,13 +91,14 @@ class M_staff_dprd extends CI_Model
 	
 	public function data_search2($column, $value, $limit, $start) {
 		//$qs = implode('* ', explode(' ', $value)).'*'; 
-		$qs = implode('|', explode(' ', $value)).''; 
+		// tiap kata dicari sebagai teks biasa (bukan pola regex) dan di-escape agar aman dari SQL injection
+		$qs = implode('|', array_map('preg_quote', explode(' ', (string) $value)));
 		$this->db->select('*');
 		$this->db->from('table_telaah');
 		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana=table_pegawai.pegawai_id','left');
 		$this->db->where('table_telaah.telaah_kategori',6);
 		//$this->db->where("MATCH ($column) AGAINST ('$qs')", NULL, FALSE);
-		$this->db->where("$column REGEXP '$qs'");
+		$this->db->where("$column REGEXP ".$this->db->escape($qs), NULL, FALSE);
 		$this->db->order_by('telaah_waktuinput','DESC');
 		if($limit){
 			$this->db->limit ($limit, $start);

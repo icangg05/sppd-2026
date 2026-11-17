@@ -23,7 +23,7 @@
 			  <div class="small-box bg-aqua">
 				<div class="inner">                                        
 				  <p>TOTAL ANGGARAN</p>
-				  <h2>Rp. <?php  echo number_format($sum_all_anggaran_skpd, 0, ',', '.'); ?></h2>
+				  <h2>Rp. <?php  echo number_format((float) $sum_all_anggaran_skpd, 0, ',', '.'); ?></h2>
 				</div>
 			  </div>
 			 </a>

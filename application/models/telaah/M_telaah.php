@@ -261,7 +261,7 @@ class M_telaah extends CI_Model
 			$query2 = $this->db->get_compiled_select();
 
 			if($limit){
-				$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT $start, $limit");
+				$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT ".(int) $start.", ".(int) $limit."");
 				return $query->result();
 			} else {
 				$query = $this->db->query($query1." UNION ALL ".$query2."");
@@ -329,7 +329,7 @@ class M_telaah extends CI_Model
 			$query2 = $this->db->get_compiled_select();
 
 			if($limit){
-				$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT $start, $limit");
+				$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT ".(int) $start.", ".(int) $limit."");
 				return $query->result();
 			} else {
 				$query = $this->db->query($query1." UNION ALL ".$query2."");
@@ -387,7 +387,7 @@ class M_telaah extends CI_Model
 		$query2 = $this->db->get_compiled_select();
 
 		if($limit){
-			$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT $start, $limit");
+			$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT ".(int) $start.", ".(int) $limit."");
 			return $query->result();
 		} else {
 			$query = $this->db->query($query1." UNION ALL ".$query2."");
@@ -447,7 +447,7 @@ class M_telaah extends CI_Model
 		$query2 = $this->db->get_compiled_select();
 
 		if($limit){
-			$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT $start, $limit");
+			$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT ".(int) $start.", ".(int) $limit."");
 			return $query->result();
 		} else {
 			$query = $this->db->query($query1." UNION ALL ".$query2."");
@@ -645,7 +645,7 @@ class M_telaah extends CI_Model
 			$query2 = $this->db->get_compiled_select();
 
 			if($limit){
-				$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT $start, $limit");
+				$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT ".(int) $start.", ".(int) $limit."");
 				return $query->result();
 			} else {
 				$query = $this->db->query($query1." UNION ALL ".$query2."");
@@ -741,7 +741,7 @@ class M_telaah extends CI_Model
 			$query2 = $this->db->get_compiled_select();
 
 			if($limit){
-				$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT $start, $limit");
+				$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT ".(int) $start.", ".(int) $limit."");
 				return $query->result();
 			} else {
 				$query = $this->db->query($query1." UNION ALL ".$query2."");
@@ -795,7 +795,7 @@ class M_telaah extends CI_Model
 			$query2 = $this->db->get_compiled_select();
 
 			if($limit){
-				$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT $start, $limit");
+				$query = $this->db->query($query1." UNION ALL ".$query2." ORDER BY telaah_waktuinput DESC LIMIT ".(int) $start.", ".(int) $limit."");
 				return $query->result();
 			} else {
 				$query = $this->db->query($query1." UNION ALL ".$query2."");
@@ -869,7 +869,7 @@ class M_telaah extends CI_Model
 		$this->db->where("(table_telaah.telaah_kategori='5' OR table_telaah.telaah_kategori='7')");
 		$this->db->where("((table_timeline5.timeline_sekcam_id = '0') 
 			OR (table_timeline7.timeline_lurah_id = '1' AND table_timeline7.timeline_sekcam_id = '0'))");
-		$this->db->where("(table_pegawai.skpd_id = '$skpd_id' OR table_relasi_kelurahan.id_kecamatan = '$skpd_id' )");
+		$this->db->where("(table_pegawai.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' OR table_relasi_kelurahan.id_kecamatan = '".$this->db->escape_str((string) $skpd_id)."' )");
 		$this->db->order_by('table_telaah.telaah_waktuinput','DESC');
 		if($limit){
 			$this->db->limit ($limit, $start);
@@ -891,7 +891,7 @@ class M_telaah extends CI_Model
 		$this->db->where("(table_telaah.telaah_kategori='5' OR table_telaah.telaah_kategori='7')");
 		$this->db->where("((table_timeline5.timeline_sekcam_id = '0') 
 			OR (table_timeline7.timeline_lurah_id = '1' AND table_timeline7.timeline_sekcam_id = '0'))");
-		$this->db->where("(table_pegawai.skpd_id = '$skpd_id' OR table_relasi_kelurahan.id_kecamatan = '$skpd_id' )");
+		$this->db->where("(table_pegawai.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' OR table_relasi_kelurahan.id_kecamatan = '".$this->db->escape_str((string) $skpd_id)."' )");
 		$this->db->like($column,$value);
 		$this->db->order_by('table_telaah.telaah_waktuinput','DESC');
 		if($limit){
@@ -915,7 +915,7 @@ class M_telaah extends CI_Model
 		$this->db->where("(table_telaah.telaah_kategori='5' OR table_telaah.telaah_kategori='7')");
 		$this->db->where("((table_timeline5.timeline_sekcam_id = '1' AND table_timeline5.timeline_camat_id = '0') 
 			OR (table_timeline7.timeline_sekcam_id = '1' AND table_timeline7.timeline_camat_id = '0') OR(table_timeline5.timeline_camat_id = '5'))");
-		$this->db->where("(table_pegawai.skpd_id = '$skpd_id' OR table_relasi_kelurahan.id_kecamatan = '$skpd_id' )");
+		$this->db->where("(table_pegawai.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' OR table_relasi_kelurahan.id_kecamatan = '".$this->db->escape_str((string) $skpd_id)."' )");
 		$this->db->order_by('table_telaah.telaah_waktuinput','DESC');
 		if($limit){
 			$this->db->limit ($limit, $start);
@@ -937,7 +937,7 @@ class M_telaah extends CI_Model
 		$this->db->where("(table_telaah.telaah_kategori='5' OR table_telaah.telaah_kategori='7')");
 		$this->db->where("((table_timeline5.timeline_sekcam_id = '1' AND table_timeline5.timeline_camat_id = '0') 
 			OR (table_timeline7.timeline_sekcam_id = '1' AND table_timeline7.timeline_camat_id = '0') OR(table_timeline5.timeline_camat_id = '5'))");
-		$this->db->where("(table_pegawai.skpd_id = '$skpd_id' OR table_relasi_kelurahan.id_kecamatan = '$skpd_id' )");
+		$this->db->where("(table_pegawai.skpd_id = '".$this->db->escape_str((string) $skpd_id)."' OR table_relasi_kelurahan.id_kecamatan = '".$this->db->escape_str((string) $skpd_id)."' )");
 		$this->db->like($column,$value);
 		$this->db->order_by('table_telaah.telaah_waktuinput','DESC');
 		if($limit){

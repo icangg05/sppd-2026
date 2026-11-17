@@ -46,6 +46,7 @@
 			</table>
 			
 			</div>
+			  <?php $tte_direset = ($spd[0]['telaah_reset_tte'] == 1); // setelah Reset TTE tombol cetak nonaktif sampai di-TTE kembali ?>
 			  <?php if($spd[0]['telaah_reset_tte']==0){ ?>
 					<a href="<?php echo base_url() ?>telaah/laporan/spd/reset_tte/<?php echo $this->input->get('telaah_id') ?>/<?php echo $this->uri->segment(5) ?>" class="btn btn-success btn-sm " onclick="return confirm('Anda Yakin ?');"><i class="fa fa-reload"></i> Reset TTE</a><br><br>
 			  <?php } else { ?>
@@ -64,8 +65,8 @@
 		<th style="width: 40px" colspan="2">
           <?php if($spd[0]['telaah_kategori']==8) { ?>
 		  
-				<?php if($spd[0]['telaah_tte']=="") { ?>
-					<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPPD</a>
+				<?php if($spd[0]['telaah_tte']=="" || $tte_direset) { ?>
+					<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPPD</a>
 				<?php } else { ?>
 					<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spd[0]['telaah_tte'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPPD</a>
 				<?php } ?>
@@ -73,8 +74,8 @@
 		  <?php  } else if($spd[0]['telaah_kategori']==3) { ?>
           
 				<!-- DPRD -->
-				<?php if($spd[0]['telaah_tte']=="") { ?>
-					<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPPD</a>
+				<?php if($spd[0]['telaah_tte']=="" || $tte_direset) { ?>
+					<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPPD</a>
 				<?php } else { ?>
 					<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spd[0]['telaah_tte'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPPD</a>
 				<?php } ?>
@@ -83,8 +84,8 @@
           <?php }  else { ?>
 		  
 				<!-- ESSELON, SEKDA -->
-				<?php if($spd[0]['telaah_tte']=="") { ?>
-					<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPPD</a>
+				<?php if($spd[0]['telaah_tte']=="" || $tte_direset) { ?>
+					<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPPD</a>
 				<?php } else { ?>
 					<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo $spd[0]['telaah_tte'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPPD</a>
 				<?php } ?>
@@ -98,7 +99,7 @@
 			$get_spd = str_replace(" ","%20",$spd[0]['telaah_tte']);
 			$a = base_url().'upload/doc_TTE/'.$get_spd;
 			$file = file($a);
-			$endfile= trim($file[count($file) - 1]);
+			$endfile= $file ? trim($file[count($file) - 1]) : '';
 			$n="%%EOF";
 
 			if ($endfile === $n) {
@@ -121,8 +122,8 @@
 						<!-- DPRD -->
 						<?php if($spd[0]['telaah_kategori']==3){ ?>
 						<th style="width: 40px" colspan="2">
-							<?php if($pengikut[$i]['telaah_tte']=="") { ?>
-								<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPPD</a>
+							<?php if($pengikut[$i]['telaah_tte']=="" || $tte_direset) { ?>
+								<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPPD</a>
 							<?php } else { ?>
 								<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo  $pengikut[$i]['telaah_tte'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPPD</a>
 							<?php } ?>	 
@@ -131,8 +132,8 @@
 						<!-- ESSELON -->
 						<?php } else { ?>
 						<th style="width: 40px" colspan="2">
-							<?php if($pengikut[$i]['telaah_tte']=="") { ?>
-								<a href="#" class="btn btn-default btn-sm "><i class="fa fa-print"></i> Cetak SPPD</a>
+							<?php if($pengikut[$i]['telaah_tte']=="" || $tte_direset) { ?>
+								<a href="#" class="btn btn-default btn-sm disabled" aria-disabled="true"><i class="fa fa-print"></i> Cetak SPPD</a>
 							<?php } else { ?>
 								<a href="<?php echo base_url();?>upload/doc_TTE/<?php echo  $pengikut[$i]['telaah_tte'] ?>" class="btn btn-primary btn-sm "><i class="fa fa-print"></i> Cetak SPPD</a>
 							<?php } ?>
@@ -143,7 +144,7 @@
 						$get_spd = str_replace(" ","%20",$pengikut[$i]['telaah_tte']);
 						$a = base_url().'upload/doc_TTE/'.$get_spd;
 						$file = file($a);
-						$endfile= trim($file[count($file) - 1]);
+						$endfile= $file ? trim($file[count($file) - 1]) : '';
 						$n="%%EOF";
 
 						if ($endfile === $n) {
@@ -156,8 +157,8 @@
 			<?php
 				}
 				
-						$a = count($x);
-						$b = count($x2);
+						$a = isset($x) ? count((array) $x) : 0;
+						$b = isset($x2) ? count($x2) : 0;
 						$c = $a+$b;
 						// if($c>0){
 							// if($spd[0]['telaah_reset_tte']==0){

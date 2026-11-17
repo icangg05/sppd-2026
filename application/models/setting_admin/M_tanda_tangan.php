@@ -4,24 +4,24 @@ class M_tanda_tangan extends CI_Model
 {
 	
 	public function record_count($skpd_id) {
-		return $this->db->count_all("table_tanda_tangan WHERE skpd_id = '$skpd_id'");
+		return $this->db->count_all("table_tanda_tangan WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."'");
 	}
 	
 	public function record_count_setda($skpd_id, $bagian_id) {
 		return $this->db->count_all("table_tanda_tangan 
-									 WHERE skpd_id = '$skpd_id'
-									 AND bagian_id = '$bagian_id'");
+									 WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."'
+									 AND bagian_id = '".$this->db->escape_str((string) $bagian_id)."'");
 	}
 	
 	public function record_count_search($column, $data, $skpd_id) {
-		return $this->db->count_all("table_tanda_tangan WHERE skpd_id = '$skpd_id' AND $column like '%$data%'");
+		return $this->db->count_all("table_tanda_tangan WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."' AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function record_count_search_setda($column, $data, $skpd_id, $bagian_id) {
 		return $this->db->count_all("table_tanda_tangan 
-									WHERE skpd_id = '$skpd_id' 
-									AND bagian_id = '$bagian_id' 
-									AND $column like '%$data%'");
+									WHERE skpd_id = '".$this->db->escape_str((string) $skpd_id)."' 
+									AND bagian_id = '".$this->db->escape_str((string) $bagian_id)."' 
+									AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data($limit, $start, $skpd_id) {

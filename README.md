@@ -21,7 +21,7 @@ Ubah isi cetakan SPPD di `List_telaah::cetak_spd` (draf) dan `Qr_new::cetak_spd`
 | File | Keterangan |
 |---|---|
 | `controllers/telaah/laporan/Qr.php`, `Qr2.php`, `Qr3.php` | Versi lama `Qr_new.php` |
-| `controllers/api/Api.php`, `Api_tte.php`, `Api_tte_old.php` | API mobile, tidak dipakai (terbuka tanpa login, sebaiknya dinonaktifkan) |
+| `controllers/api/Api.php`, `Api_tte.php`, `Api_tte_old.php` | API mobile, tidak dipakai, dinonaktifkan dengan `show_404()` di constructor (hapus baris itu untuk mengaktifkan lagi). Model `api/M_api` tetap dipakai dashboard Walikota di Beranda |
 | `controllers/telaah/Tte.php` | Menu TTE lama, sudah dimatikan |
 | `controllers/telaah/list_telaah/*.php` | Tertutup oleh `List_telaah.php` |
 | `controllers/telaah/laporan/Laporan_walikota.php` | Tidak ada link |

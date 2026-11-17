@@ -15,7 +15,7 @@
 		<input type="hidden" name="skpd_id" value="<?php echo $entry[0]['skpd']?>">
 		<input type="hidden" name="jenis_skpd" value="<?php echo $entry[0]['jenis_skpd']?>">
 		Masukkan Password
-		<input type="password" name="passphrase" id="inputPassword6" class="form-control mx-sm-3" aria-describedby="passwordHelpInline">
+		<input type="password" name="passphrase" id="inputPassword6" required class="form-control mx-sm-3" aria-describedby="passwordHelpInline">
 		<small id="passwordHelpInline" class="text-muted">
 		  Must be 6-8 characters long.
 		</small>
@@ -97,3 +97,5 @@ function myFunction() {
   }
 }
 </script>
+
+<?php $this->load->view('telaah/tte_tombol_loading'); ?>

@@ -35,6 +35,7 @@ $GLOBALS['_OLE_INSTANCES'] = array();
 * @category   PHPExcel
 * @package    PHPExcel_Shared_OLE
 */
+#[AllowDynamicProperties]
 class PHPExcel_Shared_OLE
 {
     const OLE_PPS_TYPE_ROOT   =      5;
@@ -481,12 +482,12 @@ class PHPExcel_Shared_OLE
         $res = '';
 
         for ($i = 0; $i < 4; ++$i) {
-            $hex = $low_part % 0x100;
+            $hex = (int) $low_part % 0x100;
             $res .= pack('c', $hex);
             $low_part /= 0x100;
         }
         for ($i = 0; $i < 4; ++$i) {
-            $hex = $high_part % 0x100;
+            $hex = (int) $high_part % 0x100;
             $res .= pack('c', $hex);
             $high_part /= 0x100;
         }

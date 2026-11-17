@@ -6,21 +6,21 @@ class M_log extends CI_Model
 		parent::__construct();
 	}
 	public function data($id) {
-		$query  = $this->db->query("SELECT * FROM core_log WHERE id_user='$id'");
+		$query  = $this->db->query("SELECT * FROM core_log WHERE id_user='".$this->db->escape_str((string) $id)."'");
 		return $query->result();
 	}
 	
 	public function getByUser($id) {
-		$query  = $this->db->query("SELECT * FROM core_log WHERE id_user='$id'");
+		$query  = $this->db->query("SELECT * FROM core_log WHERE id_user='".$this->db->escape_str((string) $id)."'");
 		return $query->result();
 	}
 	
 	public function record_count($id) {
-		return $this->db->count_all("core_log WHERE id_user='$id'");
+		return $this->db->count_all("core_log WHERE id_user='".$this->db->escape_str((string) $id)."'");
 	}
 	
 	public function record_count_search($column, $data) {
-		return $this->db->count_all("core_log WHERE $column like '%$data%'");
+		return $this->db->count_all("core_log WHERE $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data_log($limit, $start, $id) {
@@ -76,28 +76,34 @@ class M_log extends CI_Model
 	
 	public function create_tte($data) {
         //get data
-		$this2->telaah_id = $data['telaah_id'];
-		$this2->pegawai_id = $data['pegawai_id'];
-		$this2->action = $data['action'];
-		$this2->id_user = $this->ion_auth->user()->row()->id;
-		$this2->date = date("Y-m-d");
-		$this2->time = date("h:i:s");
-		$this2->ip_address = $this->input->ip_address();
+		// array biasa: $this2 tidak pernah dibuat (PHP 8: "Attempt to assign property on null")
+		$log = array(
+			'telaah_id' => $data['telaah_id'],
+			'pegawai_id' => $data['pegawai_id'],
+			'action' => $data['action'],
+			'id_user' => $this->ion_auth->user()->row()->id,
+			'date' => date("Y-m-d"),
+			'time' => date("h:i:s"),
+			'ip_address' => $this->input->ip_address(),
+		);
         //insert data
-		$this->db->insert('core_log_tte', $this2);
+		$this->db->insert('core_log_tte', $log);
 	}
 	
 	public function create_tte2($data) {
         //get data
-		$this2->telaah_id = $data['telaah_id'];
-		$this2->pegawai_id = $data['pegawai_id'];
-		$this2->action = $data['action'];
-		$this2->id_user = $data['id_user'];
-		$this2->date = date("Y-m-d");
-		$this2->time = date("h:i:s");
-		$this2->ip_address = $this->input->ip_address();
+		// array biasa: $this2 tidak pernah dibuat (PHP 8: "Attempt to assign property on null")
+		$log = array(
+			'telaah_id' => $data['telaah_id'],
+			'pegawai_id' => $data['pegawai_id'],
+			'action' => $data['action'],
+			'id_user' => $data['id_user'],
+			'date' => date("Y-m-d"),
+			'time' => date("h:i:s"),
+			'ip_address' => $this->input->ip_address(),
+		);
         //insert data
-		$this->db->insert('core_log_tte', $this2);
+		$this->db->insert('core_log_tte', $log);
 	}
 	
 	public function update($data) {

@@ -8,7 +8,7 @@ class M_provinsi extends CI_Model
 	}
 	
 	public function record_count_search($column, $data) {
-		return $this->db->count_all("table_provinsi WHERE $column like '%$data%'");
+		return $this->db->count_all("table_provinsi WHERE $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data($limit, $start) {

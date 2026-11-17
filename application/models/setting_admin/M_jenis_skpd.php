@@ -8,7 +8,7 @@ class M_jenis_skpd extends CI_Model
 	}
 	
 	public function record_count_search($column, $data) {
-		return $this->db->count_all("table_jenis_skpd WHERE $column like '%$data%'");
+		return $this->db->count_all("table_jenis_skpd WHERE $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data($limit, $start) {

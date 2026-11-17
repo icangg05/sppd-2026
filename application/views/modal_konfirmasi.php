@@ -6,7 +6,7 @@ if(!isset($pagu[0]) || $pagu[0] == ""){
 	$rincian_biaya =  $this->m_anggaran->cek_sisa_anggaran_skpd($id_anggaran);
 	$pengeluaran_rill =  $this->m_anggaran->cek_pengeluaran_rill_skpd($id_anggaran);
 	$rincian = $rincian_biaya[0]->jumlah + $pengeluaran_rill[0]->jumlah;
-	$total = round(($rincian/$pagu[0]['pagu'])*100,2);
+	$total = $pagu[0]['pagu'] > 0 ? round(($rincian/$pagu[0]['pagu'])*100,2) : ($rincian > 0 ? 100 : 0);
 		
 	if($total >= 0 && $total <= 50){
 		$warna = "success";

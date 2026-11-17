@@ -226,9 +226,9 @@
 													}
 													
 													$lokasi_tujuan = $this->m_lokasi_tujuan->get($entry[0]['telaah_id']);
-													foreach($lokasi_tujuan as $v){
-														echo "Provinsi : ".$v->provinsi."<br>";
-														echo "Kab/Kota : ".$v->kabupaten_kota."<br><br>";
+													foreach($lokasi_tujuan as $lt){
+														echo "Provinsi : ".$lt->provinsi."<br>";
+														echo "Kab/Kota : ".$lt->kabupaten_kota."<br><br>";
 														
 													} ?>
 												</td>

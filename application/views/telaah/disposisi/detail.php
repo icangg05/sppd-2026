@@ -32,7 +32,7 @@
 						<div class="inner">                                      
 						  <p>REALISASI ANGGARAN 
 						  <b><?php 
-						  $hasil = ($sisa_anggaran[0]->tes/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100;
+						  $hasil = $total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] > 0 ? ($sisa_anggaran[0]->tes/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100 : 0;
 						  echo " (".round($hasil,1)."%)";?></p></b>
 						  <h2><p>Rp. <?php echo number_format($sisa_anggaran[0]->tes, 0, ',', '.');?></p></h2>
 						</div>
@@ -44,7 +44,7 @@
 						<div class="inner">                                       
 						  <p>SISA ANGGARAN
 						  <b><?php 
-						  $hasil = (($total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] - $sisa_anggaran[0]->tes)/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100;
+						  $hasil = $total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] > 0 ? (($total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] - $sisa_anggaran[0]->tes)/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100 : 0;
 						  echo " (".round($hasil,1)."%)";?></b>
 						  </p>
 						  <h2><p>Rp. <?php echo number_format($total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] - $sisa_anggaran[0]->tes, 0, ',', '.');?></p></h2>
@@ -480,7 +480,7 @@
 				data: [{
 					name: 'Sisa Anggaran',
 					y: 	<?php 
-						  $hasil = (($total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] - $sisa_anggaran[0]->tes)/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100;
+						  $hasil = $total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] > 0 ? (($total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] - $sisa_anggaran[0]->tes)/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100 : 0;
 						  echo round($hasil,2);?>,
 					color: '#00a65a',
 					sliced: true,
@@ -488,7 +488,7 @@
 				}, {
 					name: 'Anggaran terpakai',
 					y: <?php 
-						  $hasil = ($sisa_anggaran[0]->tes/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100;
+						  $hasil = $total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan'] > 0 ? ($sisa_anggaran[0]->tes/$total_anggaran_keseluruhan[0]['total_anggaran_keseluruhan']) * 100 : 0;
 						  echo round($hasil,2);?>,
 					color: '#dd4b39',
 				}]

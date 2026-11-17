@@ -86,7 +86,7 @@ class Anggaran extends public_Controller
 
 		if ($this->input->post('submit')) {
 			$tahun = $this->input->post('tahun');
-			$column = $this->input->post('column');
+			$column = kolom_aman($this->input->post('column'));
 			$query = $this->input->post('data');
 
 			$option = array(
@@ -98,7 +98,7 @@ class Anggaran extends public_Controller
 		} else {
 			$tahun = $this->uri->segment(4);
 			$query = $this->uri->segment(5);
-			$column = $this->uri->segment(6);
+			$column = kolom_aman($this->uri->segment(6));
 		}
 
 		$staff_sekda = false;

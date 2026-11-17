@@ -71,7 +71,7 @@ class Bagian extends public_Controller {
 				$this->session->set_userdata($option);
 		}else{
 		   $query = $this->uri->segment ( 4 );
-		   $column = $this->uri->segment ( 5 );
+		   $column = kolom_aman($this->uri->segment ( 5 ));
 		}
 			
 		$config = array ();

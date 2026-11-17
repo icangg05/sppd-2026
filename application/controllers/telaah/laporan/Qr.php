@@ -5,6 +5,10 @@ class Qr extends qr_Controller {
 	{
 		parent::__construct();
 		error_reporting(0);
+		// selain halaman publik QR (sppd), semua method di sini (TTE, cetak, cek status) wajib login
+		if (strtolower($this->router->method) !== 'sppd' && !$this->ion_auth->logged_in()) {
+			redirect('login');
+		}
 		$this->load->model('telaah/m_esselon');
 		$this->load->model('telaah/m_dprd');
 		$this->load->model('telaah/m_sekda');
@@ -3204,7 +3208,13 @@ class Qr extends qr_Controller {
 									break;
 		}
 		$nik = $pegawai_nik[0]['pegawai_nik'];
-		
+
+		// passphrase kosong tidak perlu dikirim ke server TTE
+		if((string) $this->input->post('passphrase') === ''){
+			$this->session->set_flashdata('notif','Passphrase TTE Wajib Diisi !!!');
+			redirect('telaah/disposisi/lihat_laporan/'.$this->input->post('posisi').'/'.$this->input->post('telaah_kategori').'?telaah_id='.$telaah_id);
+		}
+
 		if($nik==""){
 			$this->session->set_flashdata('notif','NIK Pegawai Belum Diinput !!!');
 			redirect('telaah/disposisi/lihat_laporan/'.$this->input->post('posisi').'/'.$this->input->post('telaah_kategori').'?telaah_id='.$telaah_id);
@@ -4311,6 +4321,8 @@ class Qr extends qr_Controller {
     function downloadDokumenById($id_signed, $filename, $token )
 	{
 		$path = './upload/doc_TTE/'.$filename.'.pdf';
+        // hanya simpan bila respon benar-benar PDF (respon error tidak boleh menimpa dokumen); coba maksimal 3 kali
+        for ($coba = 1; $coba <= 3; $coba++) {
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -4331,13 +4343,24 @@ class Qr extends qr_Controller {
         ));
 
         $response = curl_exec($curl);
+        $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         
         $data = json_decode($response);
         $err = curl_error($curl);
 
         curl_close($curl);
 
-		file_put_contents($path, $response);
+		if ($id_signed && $http_code == 200 && is_string($response) && strncmp($response, '%PDF', 4) === 0) {
+			file_put_contents($path . '.tmp', $response);
+			rename($path . '.tmp', $path);
+			return TRUE;
+		}
+		if (!$id_signed) {
+			return FALSE;
+		}
+		sleep(1);
+        }
+		return FALSE;
     }
 
 	function cek()

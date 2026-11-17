@@ -1,19 +1,17 @@
-FROM php:7.4-apache
+# PHP 8.3.36 (Debian 13 trixie): includes the critical security fixes released in 8.3.36
+FROM php:8.3.36-apache-trixie
 
-# Debian 11 (bullseye) is EOL, packages moved to archive.debian.org
-RUN printf "deb http://archive.debian.org/debian bullseye main\ndeb http://archive.debian.org/debian-security bullseye-security main\n" > /etc/apt/sources.list
-
-# Install dependencies
+# Install dependencies (curl is already compiled into the official PHP image)
 RUN apt-get update && apt-get install -y \
     libpng-dev \
-    libjpeg-dev \
+    libjpeg62-turbo-dev \
     libwebp-dev \
-    libfreetype6-dev \
+    libfreetype-dev \
     libzip-dev \
-    libcurl4-openssl-dev \
     unzip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install -j$(nproc) mysqli gd zip curl
+    && docker-php-ext-install -j$(nproc) mysqli gd zip \
+    && rm -rf /var/lib/apt/lists/*
 
 # Enable mod_rewrite
 RUN a2enmod rewrite

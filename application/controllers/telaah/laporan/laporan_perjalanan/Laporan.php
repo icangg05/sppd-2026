@@ -2,7 +2,6 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
   
-require_once APPPATH.'vendor/autoload.php';
 use PhpOffice\PhpWord\PhpWord;
 class Laporan extends public_Controller {
   
@@ -205,7 +204,11 @@ class Laporan extends public_Controller {
 	}
 
 	public function cetak(){
-		 //library
+		 //library (PhpWord via composer, hanya dibutuhkan untuk cetak)
+		if ( ! file_exists(APPPATH.'vendor/autoload.php')) {
+			show_error('Library PhpWord belum terpasang (application/vendor/autoload.php tidak ditemukan).', 500);
+		}
+		require_once APPPATH.'vendor/autoload.php';
 		$phpWord = new \PhpOffice\PhpWord\PhpWord();
 
 		//Panggilan Database

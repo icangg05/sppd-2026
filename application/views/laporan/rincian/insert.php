@@ -108,7 +108,7 @@
 					</tr>
 					<tr>
 					  <th class="col-md-3">Foto</th>
-					  <td><input type="file" class="form-control" name="userfile"></td>
+					  <td><input type="file" class="form-control" name="userfile" data-maks-mb="2" accept="image/png,image/jpeg,image/gif"></td>
 					</tr>
 				</table>
               </div>

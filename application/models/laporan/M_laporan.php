@@ -377,7 +377,7 @@ class M_laporan extends CI_Model
 
 		$this->db->join('table_golongan', 'table_golongan.golongan=table_pegawai.pegawai_golongan', 'LEFT');
 
-		$this->db->where('jabatan_id', 3);
+		$this->db->where('table_pegawai.pegawai_jabatan', '3'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 
 		$this->db->order_by('pegawai_id', 'DESC');
 
@@ -403,7 +403,7 @@ class M_laporan extends CI_Model
 
 		$this->db->where('skpd_id', $skpd_id);
 
-		$this->db->where('jabatan_id', 4);
+		$this->db->where('table_pegawai.pegawai_jabatan', '4'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 
 		$this->db->order_by('pegawai_id', 'DESC');
 

@@ -41,7 +41,8 @@
           </div>        
           <!-- /.box-header -->        
           <div class="table-responsive box-body">         
-            <?php         $message = $this->session->flashdata('notif');         if($message){           echo '<p class="alert alert-info text-center"><b>'.$message .'</b></p>';         }         ?>         
+            <?php         $message = $this->session->flashdata('notif');         if($message){           echo '<p class="alert alert-info text-center"><b>'.$message .'</b></p>';         }         ?>
+            <?php if ($pesan_error = $this->session->flashdata('error')) { echo '<p class="alert alert-danger text-center"><b>' . html_escape($pesan_error) . '</b></p>'; } ?>         
             <table class="table table-bordered table-striped table-hover">          
               <tr class='info'>            
                 <th style="width: 100px">Nama pegawai
@@ -71,11 +72,22 @@
                   <?php echo $v->pegawai_namajabatan;?>
                 </td>           
                 <td>
-                  <?php echo $v->pangkat;?>
-                </td>  
+                  <?php
+                  // Pangkat - Golongan, mis. "Penata Tingkat I - III/d" atau "PPPK - X"
+                  $gol_pegawai = trim((string) $v->pegawai_golongan);
+                  $pangkat_pegawai = trim((string) $v->pangkat);
+                  if ($pangkat_pegawai !== '' && $gol_pegawai !== '') {
+                    echo html_escape($pangkat_pegawai . ' - ' . $gol_pegawai);
+                  } elseif ($gol_pegawai !== '') {
+                    echo html_escape($gol_pegawai);
+                  } else {
+                    echo '-';
+                  }
+                  ?>
+                </td>
 				<td>
 					<?php if($v->pegawai_tandatangan){?>
-						<img src="<?php echo base_url();?>upload/tanda_tangan/<?php echo $v->pegawai_tandatangan;?>" width="100" height="80">
+						<img src="<?php echo base_url('setting_admin/berkas_ttd/lihat/' . rawurlencode((string) $v->pegawai_tandatangan)); ?>" width="100" height="80">
 					<?php }?>
 				</td>
 				<td>
@@ -101,6 +113,7 @@
                 </td>           
               </tr>           
               <?php } ?>         
+            <?php if (empty($pegawai)) { echo baris_data_kosong(6); } ?>
             </table>       
           </div>       
           <!-- /.box-body -->       

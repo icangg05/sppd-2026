@@ -45,7 +45,7 @@
               </tr>
               <tr>
                 <th class="col-md-3">Foto/File</th>
-                <td><input type="file" class="form-control" name="userfile" multiple>
+                <td><input type="file" class="form-control" name="userfile" data-maks-mb="10" multiple>
                   <br><a href="<?php echo base_url();?>upload/laporan_perjalanan/<?php echo $entry[0]['laporanperjalanan_file']?>"><?php echo $entry[0]['laporanperjalanan_file']?></a>
                 </td>
               </tr>

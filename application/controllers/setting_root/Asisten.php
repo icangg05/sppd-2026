@@ -7,10 +7,7 @@ class Asisten extends public_Controller {
 		$this->load->model('setting_root/m_asisten');
 		$this->load->model('setting/m_log');
 		
-		if((!$this->ion_auth->get_users_groups()->row()->id == 9) || (!$this->ion_auth->get_users_groups()->row()->id == 100))
-		{
-			redirect('login');
-		}
+		$this->wajib_super_admin();
 	}
 	
 	//View All Data

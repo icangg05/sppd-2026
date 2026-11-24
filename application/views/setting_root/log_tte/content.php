@@ -42,8 +42,9 @@
 			<th style="width: 150px">Perihal (Maksud Perjalanan Dinas)</th>
 			<th style="width: 200px">Pelaksana</th>
 			<?php 
+				$kolom_tambahan = 0;
 				if($this->ion_auth->user()->row()->id==1){
-					echo '<th style="width: 200px">OPD</th>';
+					echo '<th style="width: 200px">OPD</th>'; $kolom_tambahan = 1;
 				} 
 			?>
 			<th style="width: 40px">Aksi</th>
@@ -71,6 +72,7 @@
 			<td> <a href="<?php echo base_url();?>setting_root/log_tte/list_log_tte/<?php echo $v->telaah_id?>" class="btn btn-primary btn-sm btn-flat">Lihat Log TTE</a></td>
           </tr>
           <?php } ?>
+        <?php if (empty($data)) { echo baris_data_kosong(5 + $kolom_tambahan); } ?>
         </table>
       </div>
       <!-- /.box-body -->

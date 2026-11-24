@@ -53,6 +53,7 @@
                <a href="<?php echo base_url();?>setting_root/bagian/delete?bagian_id=<?php echo $bagian_id?>" class="btn btn-sm btn-flat btn-danger" onclick="return confirm('Anda Yakin ?');"><i class="fa fa-trash"></i> HAPUS</a>
              </tr>
              <?php } ?>
+           <?php if (empty($bagian)) { echo baris_data_kosong(3); } ?>
            </table>
          </div>
          <!-- /.box-body -->

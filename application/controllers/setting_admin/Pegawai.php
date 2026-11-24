@@ -17,6 +17,21 @@ class Pegawai extends public_Controller
 		$this->load->model('telaah/M_relasi_sekda', 'm_relasi_sekda');
 		$this->load->model('setting_admin/m_anggota');
 		$this->load->model('setting/m_log');
+
+		// get_pelaksana/get_pengikut dipakai form telaah (semua user login);
+		// selebihnya (CRUD/import pegawai) hanya untuk admin
+		$method = strtolower((string) $this->router->fetch_method());
+		if (!in_array($method, array('get_pelaksana', 'get_pengikut'), TRUE)) {
+			$this->wajib_admin();
+		}
+
+		// Admin OPD hanya boleh membuka/mengubah/menghapus pegawai di SKPD-nya sendiri
+		// (dulu pegawai SKPD lain bisa diubah lewat pegawai_id, termasuk NIK & tanda tangan pejabat)
+		if (in_array($method, array('update_view', 'delete'), TRUE)) {
+			$this->wajib_milik_skpd('table_pegawai', 'pegawai_id', $this->id_dari_get('pegawai_id'), 'setting_admin/pegawai');
+		} elseif ($method === 'update') {
+			$this->wajib_milik_skpd('table_pegawai', 'pegawai_id', $this->input->post('pegawai_id'), 'setting_admin/pegawai');
+		}
 	}
 	//View All Data
 	public function index()
@@ -168,7 +183,7 @@ class Pegawai extends public_Controller
 	public function create()
 	{
 		$this->form_validation->set_rules('pegawai_nip', 'NIP', 'required|integer');
-		$this->form_validation->set_rules('pegawai_nik', 'NIK', 'required|integer');
+		$this->form_validation->set_rules('pegawai_nik', 'NIK', 'trim|integer'); // opsional, tapi bila diisi harus angka
 		$this->form_validation->set_rules('pegawai_nama', 'Nama Pegawai', 'required|max_length[255]');
 
 		if ($this->form_validation->run() == FALSE) {
@@ -189,13 +204,18 @@ class Pegawai extends public_Controller
 			$filename = $this->input->post('pegawai_nip');
 			$config['upload_path'] = './upload/tanda_tangan/';
 			$config['allowed_types'] = "png";
-			$config['overwrite'] = "true";
-			$config['max_size'] = "20000000";
+			$config['overwrite'] = FALSE;
+			$config['max_size'] = MAKS_UPLOAD_GAMBAR_KB;
 			$config['max_width'] = "10000";
 			$config['max_height'] = "10000";
-			$config['file_name'] = '' . $filename;
+			$config['file_name'] = nama_file_unggah($filename);
 			$this->upload->initialize($config);
-			if (!$this->upload->do_upload()) {
+			$ttd_terunggah = $this->upload->do_upload();
+			if (!$ttd_terunggah && !empty($_FILES['userfile']['name'])) {
+				// file dipilih tapi ditolak: data pegawai tetap disimpan, user diberi tahu tanda tangannya gagal
+				$this->session->set_flashdata('error', 'Tanda tangan tidak diunggah: ' . $this->upload->display_errors('', '') . ' Tanda tangan harus berupa file PNG, maks. 2 MB. Data pegawai lainnya tetap disimpan.');
+			}
+			if (!$ttd_terunggah) {
 
 				$data['pegawai_nip'] = $this->input->post('pegawai_nip');
 				$data['pegawai_nik'] = $this->input->post('pegawai_nik');
@@ -289,7 +309,7 @@ class Pegawai extends public_Controller
 	public function update()
 	{
 		$this->form_validation->set_rules('pegawai_nip', 'NIP', 'required|integer');
-		$this->form_validation->set_rules('pegawai_nik', 'NIK', 'required|integer');
+		$this->form_validation->set_rules('pegawai_nik', 'NIK', 'trim|integer'); // opsional, tapi bila diisi harus angka
 		$this->form_validation->set_rules('pegawai_nama', 'Nama Pegawai', 'required|max_length[255]');
 
 		if ($this->form_validation->run() == FALSE) {
@@ -313,16 +333,22 @@ class Pegawai extends public_Controller
 				$this->render('setting_admin/pegawai/update');
 			}
 		} else {
+			$pegawai_id = base64_encode($this->encrypt->encode($this->input->post('pegawai_id'), $this->session->userdata('encrypt_key')));
 			$filename = $this->input->post('pegawai_nip');
 			$config['upload_path'] = './upload/tanda_tangan/';
 			$config['allowed_types'] = "png";
-			$config['overwrite'] = "true";
-			$config['max_size'] = "20000000";
+			$config['overwrite'] = FALSE;
+			$config['max_size'] = MAKS_UPLOAD_GAMBAR_KB;
 			$config['max_width'] = "10000";
 			$config['max_height'] = "10000";
-			$config['file_name'] = '' . $filename;
+			$config['file_name'] = nama_file_unggah($filename);
 			$this->upload->initialize($config);
-			if (!$this->upload->do_upload()) {
+			$ttd_terunggah = $this->upload->do_upload();
+			if (!$ttd_terunggah && !empty($_FILES['userfile']['name'])) {
+				// file dipilih tapi ditolak: data pegawai tetap disimpan, user diberi tahu tanda tangannya gagal
+				$this->session->set_flashdata('error', 'Tanda tangan tidak diunggah: ' . $this->upload->display_errors('', '') . ' Tanda tangan harus berupa file PNG, maks. 2 MB. Data pegawai lainnya tetap disimpan.');
+			}
+			if (!$ttd_terunggah) {
 
 				if ($this->input->post('pegawai_nip') == $this->input->post('pegawai_nip2')) {
 
@@ -396,7 +422,7 @@ class Pegawai extends public_Controller
 						$row = $image->row();
 						$file_gambar = $row->pegawai_tandatangan;
 						$path_file = './upload/tanda_tangan/';
-						unlink($path_file . $file_gambar);
+						hapus_file_unggah($path_file, $file_gambar);
 					}
 
 					$dat = $this->upload->data();
@@ -491,28 +517,59 @@ class Pegawai extends public_Controller
 
 	public function import()
 	{
-		//if($this->input->post('submit')){
-
-		$seq = 1;
-		$skpd_id = $this->ion_auth->user()->row()->skpd_id;;
-		$handle = fopen($_FILES['filename']['tmp_name'], "r"); //Membuka file dan membacanya
-		while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
-
-			$import = "
-					INSERT INTO table_pegawai (pegawai_nip, pegawai_nama, pegawai_golongan, pegawai_jabatan, pegawai_namajabatan, skpd_id) 
-					VALUES ('$data[0]','$data[1]','$data[2]', '$data[3]', '$data[4]', $skpd_id) 
-				";
-
-			//data array sesuaikan dengan jumlah kolom pada CSV anda mulai dari “0” bukan “1”
-			$this->db->query($import);
-
-
-			$seq++;
+		// Dulu isi CSV disisipkan langsung ke query SQL (SQL injection). Sekarang lewat query builder
+		// (nilai di-escape), dan pegawai selalu masuk ke SKPD milik admin yang mengimpor.
+		$f = isset($_FILES['filename']) ? $_FILES['filename'] : NULL;
+		if (!$f || !is_string($f['name']) || $f['error'] !== UPLOAD_ERR_OK || !is_uploaded_file($f['tmp_name'])) {
+			$this->session->set_flashdata('notif', 'Pilih satu berkas CSV yang akan diimpor.');
+			redirect('setting_admin/pegawai/import_view', 'refresh');
 		}
-		fclose($handle); //Menutup CSV file
+		if (strtolower(pathinfo($f['name'], PATHINFO_EXTENSION)) !== 'csv' || $f['size'] > 2 * 1024 * 1024) {
+			$this->session->set_flashdata('notif', 'Berkas harus berformat .csv dan maksimal 2 MB.');
+			redirect('setting_admin/pegawai/import_view', 'refresh');
+		}
+		$skpd_id = $this->skpd_id_login();
+		if ($skpd_id <= 0) {
+			$this->session->set_flashdata('notif', 'Akun Anda tidak terhubung ke SKPD, import dibatalkan.');
+			redirect('setting_admin/pegawai', 'refresh');
+		}
 
-		$this->session->set_flashdata('notif', 'Data CSV Berhasil Disimpan !');
+		$teks = function ($v, $maks) {
+			$v = trim(preg_replace('/[\x00-\x1F\x7F]/u', '', (string) $v));
+			return mb_substr($v, 0, $maks, 'UTF-8');
+		};
+		$masuk = 0;
+		$lewat = 0;
+		$handle = fopen($f['tmp_name'], 'r');
+		$this->db->trans_start();
+		while (($data = fgetcsv($handle, 1000, ';')) !== FALSE) {
+			$nip  = $teks(isset($data[0]) ? $data[0] : '', 30);
+			$nama = $teks(isset($data[1]) ? $data[1] : '', 255);
+			// baris kosong / baris judul kolom dilewati
+			if ($nama === '' || strtolower($nip) === 'nip' || strtolower($nama) === 'nama') {
+				$lewat++;
+				continue;
+			}
+			$this->db->insert('table_pegawai', array(
+				'pegawai_nip'         => $nip,
+				'pegawai_nama'        => $nama,
+				'pegawai_golongan'    => $teks(isset($data[2]) ? $data[2] : '', 50),
+				'pegawai_jabatan'     => $teks(isset($data[3]) ? $data[3] : '', 50),
+				'pegawai_namajabatan' => $teks(isset($data[4]) ? $data[4] : '', 255),
+				'skpd_id'             => $skpd_id,
+			));
+			$masuk++;
+		}
+		fclose($handle);
+		$this->db->trans_complete();
 
+		$log['kode_log_action'] = "53";
+		$log['action'] = "IMPORT CSV " . $masuk . " pegawai";
+		$log['kode_log_action_table'] = "8";
+		$log['action_table'] = "TABLE PEGAWAI";
+		$this->m_log->create($log);
+
+		$this->session->set_flashdata('notif', $masuk . ' data pegawai berhasil diimpor' . ($lewat ? ' (' . $lewat . ' baris dilewati)' : '') . '.');
 		redirect('setting_admin/pegawai', 'refresh');
 	}
 

@@ -1040,6 +1040,19 @@ class Ion_auth_model extends CI_Model
 			return FALSE;
 		}
 
+		// Pembatasan percobaan login (lihat M_login_lockout): dicek sebelum password,
+		// jadi selama dikunci/diblokir password yang benar pun ditolak.
+		$this->load->model('setting/m_login_lockout');
+		$status_kunci = $this->m_login_lockout->status($identity);
+		if ($status_kunci['diblokir'] || $status_kunci['sisa_detik'] > 0)
+		{
+			$this->hash_password($password);
+			$this->trigger_events('post_login_unsuccessful');
+			$this->set_error('login_timeout');
+
+			return FALSE;
+		}
+
 		if ($query->num_rows() === 1)
 		{
 			$user = $query->row();
@@ -1061,6 +1074,7 @@ class Ion_auth_model extends CI_Model
 				$this->update_last_login($user->id);
 
 				$this->clear_login_attempts($identity);
+				$this->m_login_lockout->reset($identity);
 
 				if ($remember && $this->config->item('remember_users', 'ion_auth'))
 				{
@@ -1078,6 +1092,8 @@ class Ion_auth_model extends CI_Model
 		$this->hash_password($password);
 
 		$this->increase_login_attempts($identity);
+		// super admin tidak diblokir, hanya dikunci 60 detik tiap 3 kali gagal
+		$this->m_login_lockout->catat_gagal($identity, $this->m_login_lockout->kebal_blokir($identity));
 
 		$this->trigger_events('post_login_unsuccessful');
 		$this->set_error('login_unsuccessful');

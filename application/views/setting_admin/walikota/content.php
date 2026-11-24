@@ -77,6 +77,7 @@
                 </td>           
               </tr>           
               <?php } ?>         
+            <?php if (empty($walikota)) { echo baris_data_kosong(4); } ?>
             </table>       
           </div>       
           <!-- /.box-body -->       

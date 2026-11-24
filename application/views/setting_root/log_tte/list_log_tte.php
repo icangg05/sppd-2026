@@ -41,6 +41,7 @@
             <td><?php echo $v->action;?></td>
           </tr>
           <?php } ?>
+        <?php if (empty($data)) { echo baris_data_kosong(4); } ?>
         </table>
       </div>
       <!-- /.box-body -->

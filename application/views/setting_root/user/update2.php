@@ -13,16 +13,20 @@
           <!-- Profile Image -->
           <div class="box box-primary">
             <div class="box-body box-profile">
-             <?php if($entry[0]['photo']==""){?>
-             <img class="profile-user-img img-responsive img-circle" src="<?php echo base_url();?>assets2/dist/img/avatar5.png" alt="User profile picture">
-             <?php } else {?>
-             <img class="profile-user-img img-responsive img-circle" src="<?php echo base_url();?>upload/profil/<?php echo $entry[0]['photo']?>" alt="User profile picture">
-             <?php } ?>
+             <?php
+             // Foto kosong atau file tidak ditemukan -> pakai logo SPPD (sama dengan ikon di sidebar/topbar)
+             $foto_profil = basename(trim((string) $entry[0]['photo']));
+             $logo_aplikasi = 'assets2/dist/img/user.png';
+             $src_foto = cek_file($foto_profil !== '' ? 'upload/profil/' . $foto_profil : '', $logo_aplikasi);
+             $pakai_logo = ($src_foto === base_url($logo_aplikasi));
+             ?>
+             <img class="profile-user-img img-responsive img-circle" src="<?php echo $src_foto; ?>" alt="Foto profil"<?php echo $pakai_logo ? ' style="object-fit: contain; background: #fff;"' : ''; ?>>
              
              <h3 class="profile-username text-center"><?php echo $entry[0]['first_name']?> <?php echo $entry[0]['last_name']?></h3>
              <?php echo form_open_multipart('setting_root/user/update3'); ?>
+             <?php if ($pesan_error = $this->session->flashdata('error')) { echo '<p class="alert alert-danger text-center"><b>' . html_escape($pesan_error) . '</b></p>'; } ?>
              <input type="hidden" class="form-control" name="id" value="<?php echo $entry[0]['id']?>">
-             <input type="file" class="form-control" name="userfile">
+             <input type="file" class="form-control" name="userfile" data-maks-mb="2" accept="image/png,image/jpeg,image/gif">
              <button type="submit" class="btn btn-primary btn-flat btn-block">Simpan</button>
              <?php echo form_close(); ?>
            </div>
@@ -85,13 +89,14 @@
      <div class="form-group">
       <label for="inputSkills" class="col-sm-2 control-label">Password</label>
       <div class="col-sm-10">
-       <input type="password" class="form-control" name="password" >
+       <input type="password" class="form-control" name="password" autocomplete="new-password">
+       <span class="help-block">Kosongkan jika tidak ingin mengganti password (minimal 6 karakter bila diisi).</span>
      </div>
    </div>
    <div class="form-group">
     <label for="inputSkills" class="col-sm-2 control-label">Ulangi Password</label>
     <div class="col-sm-10">
-     <input type="password" class="form-control" name="password_confirm">
+     <input type="password" class="form-control" name="password_confirm" autocomplete="new-password">
    </div>
  </div>
  <div class="form-group">
@@ -102,6 +107,7 @@
 	<?php if($this->ion_auth->get_users_groups()->row()->id == 9 && $this->ion_auth->user()->row()->skpd_id=="") { ?>
 		<option value="0">Administrator</option>
 	 <?php } else { ?>
+		<option value="">- Pilih SKPD -</option>
 		  <?php
 			foreach ($skpd as $s) {
 				if	($s->skpd_id==$entry[0]['skpd_id']){

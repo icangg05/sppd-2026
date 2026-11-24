@@ -45,7 +45,7 @@
               </tr>
               <tr>
                 <th class="col-md-4">Document</th>
-                <td><input type="file" class="form-control" name="userfile" multiple="multiple"></td>
+                <td><input type="file" class="form-control" name="userfile" data-maks-mb="10" multiple="multiple"></td>
               </tr>
             </table>
           </div>

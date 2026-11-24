@@ -402,7 +402,7 @@
 															if (form_error('telaah_kantortujuan')) {
 																echo form_error('telaah_kantortujuan');
 															} else {
-																echo "<label> Tempat Tujuan(Contoh : Kantor, Gedung, Hotel, Dll)</label>";
+																echo "<label> Tempat Tujuan (Contoh : Kantor, Gedung, Hotel, Dll)</label>";
 															}
 															?>
 															<label></label>
@@ -505,9 +505,9 @@
 								<?php echo form_error('userfile');
 								if ($entry[0]['telaah_dokumenpendukung']) {
 								?>
-									<td><input type="file" name="userfile"><a href="<?php echo base_url('upload/telaah/' . $entry[0]['telaah_dokumenpendukung']); ?>" target="_blank">Lihat File</a>
+									<td><input type="file" name="userfile" data-maks-mb="10" accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx,.ppt,.pptx"><a href="<?php echo base_url('upload/telaah/' . $entry[0]['telaah_dokumenpendukung']); ?>" target="_blank">Lihat File</a>
 								<?php } else { ?>
-									<td><input type="file" name="userfile">
+									<td><input type="file" name="userfile" data-maks-mb="10" accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
 								<?php } ?>
 									<?php if ($dokumen_sementara) { ?>
 										<p class="help-block"><i class="fa fa-paperclip"></i> File baru yang sudah dipilih tetap tersimpan: <b><?php echo html_escape($dokumen_sementara['nama']); ?></b>. Pilih file lain hanya jika ingin menggantinya.</p>

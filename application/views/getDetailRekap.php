@@ -16,6 +16,8 @@
             $label="CAMAT & LURAH";
           }elseif($this->uri->segment(4)==8){
             $label="WALIKOTA & WAKIL";
+          }else{
+            $label="-";
           }
         ?>
         <h2>Rekap Data SPPD Kendari : <?php echo $label?></h2>
@@ -82,6 +84,7 @@
                   $no++;
                 } 
                 ?>
+              <?php if (empty($rekap)) { echo baris_data_kosong(7); } ?>
               </table>
 
           </div>

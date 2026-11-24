@@ -151,21 +151,22 @@
   									<th style="width: 200px">Pelaksana</th>
   									<th style="width: 40px">Status</th>
   									<?php
+										$kolom_tambahan = 0;
 										switch ($this->uri->segment(4)) {
 											case "puskesmas":
-												echo "<th style='width: 40px'>OPD</th>";
+												echo "<th style='width: 40px'>OPD</th>"; $kolom_tambahan = 1;
 												break;
 											case "dprd":
-												echo "<th style='width: 40px'>Kategori</th>";
+												echo "<th style='width: 40px'>Kategori</th>"; $kolom_tambahan = 1;
 												break;
 											case "staff_lurah":
-												echo "<th style='width: 40px'>Kategori</th>";
+												echo "<th style='width: 40px'>Kategori</th>"; $kolom_tambahan = 1;
 												break;
 											case "staff_camat":
-												echo "<th style='width: 40px'>Kategori</th>";
+												echo "<th style='width: 40px'>Kategori</th>"; $kolom_tambahan = 1;
 												break;
 											case "staff_setda":
-												echo "<th style='width: 40px'>Sub Bagian</th>";
+												echo "<th style='width: 40px'>Sub Bagian</th>"; $kolom_tambahan = 1;
 												break;
 										}
 										?>
@@ -452,11 +453,7 @@
   													<h4 class="modal-title">Hapus Telaah</h4>
   												</div>
   												<?php
-													if ($this->ion_auth->user()->row()->id == 1) {
-														echo form_open("admin/delete_telaah");
-													} else {
-														echo form_open("telaah/list_telaah/delete_telaah");
-													}
+													echo form_open("telaah/list_telaah/delete_telaah");
 													?>
   												<div class="modal-body">
   													<p>
@@ -487,6 +484,7 @@
 										$number++;
 									}
 									?>
+  							<?php if (empty($data)) { echo baris_data_kosong(7 + $kolom_tambahan); } ?>
   							</table>
   						</div>
   					</div>

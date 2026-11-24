@@ -95,11 +95,11 @@ class Rincian extends public_Controller {
 			$filename = $this->input->post('telaah_id').$this->input->post('pegawai_id');
 			$config['upload_path'] = './upload/bukti/';
 			$config['allowed_types'] = "gif|jpg|jpeg|png";
-			$config['overwrite']="true";
-			$config['max_size']="20000000";
+			$config['overwrite']=FALSE;
+			$config['max_size']=MAKS_UPLOAD_GAMBAR_KB;
 			$config['max_width']="10000";
 			$config['max_height']="10000";
-			$config['file_name'] = ''.$filename;
+			$config['file_name'] = nama_file_unggah($filename);
 			$this->upload->initialize($config);
 			if(!$this->upload->do_upload()){
 				$telaah_id = base64_encode($this->encrypt->encode($this->input->post('telaah_id'), $this->session->userdata('encrypt_key')));	
@@ -218,11 +218,11 @@ class Rincian extends public_Controller {
 				$filename = $this->input->post('telaah_id').$this->input->post('pegawai_id');
 				$config['upload_path'] = './upload/bukti/';
 				$config['allowed_types'] = "gif|jpg|jpeg|png";
-				$config['overwrite']="true";
-				$config['max_size']="20000000";
+				$config['overwrite']=FALSE;
+				$config['max_size']=MAKS_UPLOAD_GAMBAR_KB;
 				$config['max_width']="10000";
 				$config['max_height']="10000";
-				$config['file_name'] = ''.$filename;
+				$config['file_name'] = nama_file_unggah($filename);
 				$this->upload->initialize($config);
 				if(!$this->upload->do_upload()){
 					echo  $this->upload->display_errors();
@@ -234,7 +234,7 @@ class Rincian extends public_Controller {
 						$row = $image->row();			
 						$file_gambar = $row->foto;
 						$path_file = './upload/bukti/';
-						unlink($path_file.$file_gambar);
+						hapus_file_unggah($path_file, $file_gambar);
 					}					
 				
 					$dat = $this->upload->data();
@@ -278,7 +278,7 @@ class Rincian extends public_Controller {
 			$row = $image->row();			
 			$file_gambar = $row->foto;
 			$path_file = './upload/bukti/';
-			unlink($path_file.$file_gambar);
+			hapus_file_unggah($path_file, $file_gambar);
 		}			
 		
         $this->m_rincian->delete($rincian_biaya_id);

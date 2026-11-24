@@ -135,6 +135,7 @@
   								$number++;
   							} 
   							?>
+  						<?php if (empty($telaah_staf)) { echo baris_data_kosong(7); } ?>
   						</table>
   					</div>
   					<!-- /.box-body -->

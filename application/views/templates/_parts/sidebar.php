@@ -376,29 +376,36 @@
 
 				<!----------------------- Walikota --------------------------->
 			<?php } else if ($this->ion_auth->get_users_groups()->row()->id == 8) { ?>
-				<li class="<?php if ($this->uri->segment(1) == "beranda") {
-											echo "active";
-										} ?>"><a href="<?php echo base_url(); ?>beranda"><i class="fa fa-home text-blue"></i> <span>Beranda</span></a></li>
-				<li class="<?php if ($this->uri->segment(3) == "index") {
-											echo "active";
-										} ?>"><a href="<?php echo base_url(); ?>telaah/disposisi/index/walikota"><i class="fa fa-list text-yellow"></i> <span>Permohonan Telaah Staffa</span></i></a></li>
-				<li class="<?php if ($this->uri->segment(3) == "telaah_disetujui") {
-											echo "active";
-										} ?>"><a href="<?php echo base_url(); ?>telaah/disposisi/telaah_disetujui/walikota"><i class="fa fa-check text-green"></i> <span>Telaah Staff Disetujui</span></i></a></li>
-				<li class="<?php if ($this->uri->segment(3) == "telaah_ditolak") {
-											echo "active";
-										} ?>"><a href="<?php echo base_url(); ?>telaah/disposisi/telaah_ditolak/walikota"><i class="fa fa-times text-red"></i> <span>Telaah Staff Ditolak</span></i></a></li>
+				<?php
+				// Menu aktif Walikota: dicocokkan per halaman, termasuk halaman detail yang dibuka dari tiap daftar
+				// (dulu "Permohonan" ikut aktif di semua URL ber-segmen "index", "Walikota" & "Report" tidak pernah aktif)
+				$wk_s1 = $this->uri->segment(1);
+				$wk_s2 = $this->uri->segment(2);
+				$wk_s3 = $this->uri->segment(3);
+				$wk_s4 = $this->uri->segment(4);
+				$wk_disposisi = ($wk_s1 == 'telaah' && $wk_s2 == 'disposisi');
+				$wk_detail_setuju = ($wk_s3 == 'lihat_laporan' && $this->input->get('telaah_disetujui'));
+				$wk_detail_tolak = ($wk_s3 == 'lihat_laporan' && $this->input->get('telaah_ditolak'));
+				$wk_aktif = array(
+					'beranda'    => $wk_s1 == 'beranda',
+					'permohonan' => ($wk_disposisi && $wk_s4 == 'walikota' && in_array($wk_s3, array('index', 'lihat_laporan'), TRUE) && !$wk_detail_setuju && !$wk_detail_tolak)
+					                || ($wk_s1 == 'telaah' && $wk_s2 == 'detail_anggaran'),
+					'disetujui'  => $wk_disposisi && $wk_s4 == 'walikota' && ($wk_s3 == 'telaah_disetujui' || $wk_detail_setuju),
+					'ditolak'    => $wk_disposisi && $wk_s4 == 'walikota' && ($wk_s3 == 'telaah_ditolak' || $wk_detail_tolak),
+					'walikota'   => $wk_disposisi && $wk_s4 == 'walikota2',
+					'report'     => $wk_s1 == 'telaah' && $wk_s2 == 'list_telaah' && in_array($wk_s3, array('rekap_data', 'detail_rekap_data', 'getDataBySKPD'), TRUE),
+					'laporan'    => $wk_s1 == 'telaah' && $wk_s2 == 'verifikasi',
+				);
+				?>
+				<li class="<?php echo $wk_aktif['beranda'] ? 'active' : ''; ?>"><a href="<?php echo base_url(); ?>beranda"><i class="fa fa-home text-blue"></i> <span>Beranda</span></a></li>
+				<li class="<?php echo $wk_aktif['permohonan'] ? 'active' : ''; ?>"><a href="<?php echo base_url(); ?>telaah/disposisi/index/walikota"><i class="fa fa-list text-yellow"></i> <span>Permohonan Telaah Staff</span></a></li>
+				<li class="<?php echo $wk_aktif['disetujui'] ? 'active' : ''; ?>"><a href="<?php echo base_url(); ?>telaah/disposisi/telaah_disetujui/walikota"><i class="fa fa-check text-green"></i> <span>Telaah Staff Disetujui</span></a></li>
+				<li class="<?php echo $wk_aktif['ditolak'] ? 'active' : ''; ?>"><a href="<?php echo base_url(); ?>telaah/disposisi/telaah_ditolak/walikota"><i class="fa fa-times text-red"></i> <span>Telaah Staff Ditolak</span></a></li>
 
 				<!-- walikota -->
-				<li class="<?php if ($this->uri->segment(2) == "sekda") {
-											echo "active";
-										} ?>"><a href="<?php echo base_url(); ?>telaah/disposisi/index/walikota2"><i class="fa fa-dot-circle"></i> Walikota</a></li>
-				<li class="<?php if ($this->uri->segment(2) == "sekda") {
-											echo "active";
-										} ?>"><a href="<?php echo base_url(); ?>telaah/list_telaah/rekap_data"><i class="fa fa-dot-circle"></i> Report</a></li>
-				<li class="<?php if ($this->uri->segment(2) == "verifikasi") {
-											echo "active";
-										} ?>"><a href="<?php echo base_url(); ?>telaah/verifikasi/index/walikota"><i class="fa fa-file-alt text-green"></i> <span>Laporan Perjalanan Dinas</span></i></a></li>
+				<li class="<?php echo $wk_aktif['walikota'] ? 'active' : ''; ?>"><a href="<?php echo base_url(); ?>telaah/disposisi/index/walikota2"><i class="fa fa-dot-circle"></i> <span>Walikota</span></a></li>
+				<li class="<?php echo $wk_aktif['report'] ? 'active' : ''; ?>"><a href="<?php echo base_url(); ?>telaah/list_telaah/rekap_data"><i class="fa fa-dot-circle"></i> <span>Report</span></a></li>
+				<li class="<?php echo $wk_aktif['laporan'] ? 'active' : ''; ?>"><a href="<?php echo base_url(); ?>telaah/verifikasi/index/walikota"><i class="fa fa-file-alt text-green"></i> <span>Laporan Perjalanan Dinas</span></a></li>
 
 				<!----------------------- Inspektorat --------------------------->
 			<?php } else if ($this->ion_auth->get_users_groups()->row()->id == 17) { ?>
@@ -615,20 +622,9 @@
 					</ul>
 				</li>
 				<li class="header">PENGATURAN</li>
-				<li class="<?php if (
-											$this->uri->segment(2) == "log"
-											|| $this->uri->segment(2) == "log_tte"
-											|| $this->uri->segment(2) == "user"
-											|| $this->uri->segment(2) == "skpd"
-											|| $this->uri->segment(2) == "asisten"
-											|| $this->uri->segment(2) == "bagian"
-											|| $this->uri->segment(2) == "sub_bagian"
-											|| $this->uri->segment(2) == "provinsi"
-											|| $this->uri->segment(2) == "kabupaten"
-											|| $this->uri->segment(2) == "utilitas"
-										) {
-											echo "active";
-										} ?>" class="treeview">
+				<?php // semua halaman di submenu Setting super admin membuat menu ini aktif/terbuka
+				$menu_setting_super = array("log", "log_tte", "user", "skpd", "asisten", "bagian", "sub_bagian", "provinsi", "kabupaten", "dokumen", "utilitas", "login_blokir"); ?>
+				<li class="treeview<?php echo in_array($this->uri->segment(2), $menu_setting_super, TRUE) ? ' active menu-open' : ''; ?>">
 					<a href="#">
 						<i class="fa fa-cogs"></i> <span>Setting</span>
 						<span class="pull-right-container">
@@ -690,6 +686,17 @@
 						<li class="<?php if ($this->uri->segment(2) == "utilitas") {
 													echo "active";
 												} ?>"><a href="<?php echo base_url(); ?>setting_root/utilitas"><i class="fa fa-dot-circle"></i> Back Up dan Restore</a></li>
+						<li class="<?php echo $this->uri->segment(2) == "dokumen" ? "active" : ""; ?>"><a href="<?php echo base_url(); ?>setting_admin/dokumen"><i class="fa fa-dot-circle"></i> Cek Dokumen</a></li>
+						<?php
+						// di view, $this adalah Loader; model yang dimuat ada di instance controller
+						$CI =& get_instance();
+						$CI->load->model('setting/m_login_lockout');
+						$jumlah_login_diblokir = $CI->m_login_lockout->jumlah_diblokir();
+						?>
+						<li class="<?php if ($this->uri->segment(2) == "login_blokir") {
+													echo "active";
+												} ?>"><a href="<?php echo base_url(); ?>setting_root/login_blokir"><i class="fa fa-dot-circle"></i> Login Diblokir
+								<?php if ($jumlah_login_diblokir > 0) { ?><span class="pull-right-container"><small class="label pull-right bg-red"><?php echo (int) $jumlah_login_diblokir; ?></small></span><?php } ?></a></li>
 					</ul>
 				</li>
 
@@ -834,17 +841,9 @@
 													echo "active";
 												} ?>"><a href="<?php echo base_url(); ?>log"><i class="fa fa-list "></i> Status Log</a></li> -->
 				<li class="header">PENGATURAN</li>
-				<li class="<?php if (
-											$this->uri->segment(2) == "log"
-											|| $this->uri->segment(2) == "log_tte"
-											|| $this->uri->segment(2) == "export"
-											|| $this->uri->segment(2) == "user"
-											|| $this->uri->segment(2) == "pegawai"
-											|| $this->uri->segment(2) == "skpd"
-											|| $this->uri->segment(2) == "anggaran"
-										) {
-											echo "active";
-										} ?>" class="treeview">
+				<?php // semua halaman di submenu Setting admin OPD (termasuk Cek Dokumen) membuat menu ini aktif/terbuka
+				$menu_setting_opd = array("log", "log_tte", "export", "user", "walikota", "setuju_bayar", "pegawai", "anggaran", "skpd", "dokumen", "anggota"); ?>
+				<li class="treeview<?php echo in_array($this->uri->segment(2), $menu_setting_opd, TRUE) ? ' active menu-open' : ''; ?>">
 					<a href="#">
 						<i class="fa fa-cogs"></i> <span>Setting</span>
 						<span class="pull-right-container">
@@ -853,9 +852,7 @@
 					</a>
 					<ul class="treeview-menu">
 						<?php $skpd_id = base64_encode($this->encrypt->encode($this->ion_auth->user()->row()->skpd_id, $this->session->userdata('encrypt_key')));	?>
-						<li class="<?php if ($this->uri->segment(2) == "log" || $this->uri->segment(2) == "log_tte") {
-													echo "active";
-												} ?>" class="treeview">
+						<li class="treeview<?php echo in_array($this->uri->segment(2), array("log", "log_tte"), TRUE) ? ' active menu-open' : ''; ?>">
 							<a href="#">
 								<i class="fa fa-dot-circle"></i> <span>Log</span>
 								<span class="pull-right-container">

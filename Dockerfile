@@ -16,6 +16,10 @@ RUN apt-get update && apt-get install -y \
 # Enable mod_rewrite
 RUN a2enmod rewrite
 
+# Matikan eksekusi PHP/skrip di folder upload
+COPY docker/apache/upload-noexec.conf /etc/apache2/conf-available/upload-noexec.conf
+RUN a2enconf upload-noexec
+
 # Set working directory
 WORKDIR /var/www/html
 

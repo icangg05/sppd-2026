@@ -9,6 +9,8 @@ class Log extends public_Controller {
 		if(!($this->ion_auth->user()->row()->id)){
 			redirect('login');
 		}
+
+		$this->wajib_admin();
 	}
 	
 	//View All Data Log
@@ -116,6 +118,13 @@ class Log extends public_Controller {
 	//View All Status Log
 	public function status_log()
 	{
+		// log aktivitas user lain: hanya untuk user yang boleh dikelola (super admin: semua;
+		// admin OPD: user SKPD sendiri, bukan super admin / akun bergrup khusus)
+		if (!$this->boleh_kelola_user($this->uri->segment(4))) {
+			$this->session->set_flashdata('notif', 'Anda tidak berhak melihat log aktivitas user ini.');
+			redirect('setting_root/user');
+		}
+
 		
 		$config = array ();
 		$config ["base_url"] = base_url () . "setting_root/log/status_log/".$this->uri->segment(4);
@@ -161,6 +170,13 @@ class Log extends public_Controller {
 	//View Data Search Status Log
 	public function search_status_log()
 	{
+		// log aktivitas user lain: hanya untuk user yang boleh dikelola (super admin: semua;
+		// admin OPD: user SKPD sendiri, bukan super admin / akun bergrup khusus)
+		if (!$this->boleh_kelola_user($this->uri->segment(4))) {
+			$this->session->set_flashdata('notif', 'Anda tidak berhak melihat log aktivitas user ini.');
+			redirect('setting_root/user');
+		}
+
 		if($this->input->post('submit')){
 			$column = kolom_aman($this->input->post('column'));
 			$query = $this->input->post('data');

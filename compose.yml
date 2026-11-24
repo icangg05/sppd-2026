@@ -29,12 +29,12 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: sppd_phpmyadmin
+    # Hanya bisa diakses dari mesin ini (di server: lewat SSH tunnel), dan wajib login.
+    # Jangan kembalikan PMA_USER/PMA_PASSWORD: itu membuat phpMyAdmin auto-login sebagai root.
     ports:
-      - "8087:80"
+      - "127.0.0.1:8087:80"
     environment:
       - PMA_HOST=db
-      - PMA_USER=root
-      - PMA_PASSWORD=root
     depends_on:
       - db
     networks:

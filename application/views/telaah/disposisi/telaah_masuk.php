@@ -311,11 +311,12 @@
   								<th style="width: 200px">Pelaksana Perjalanan Dinas</th>
   								<th style="width: 300px">Jabatan</th>
   								<th style="width: 300px">Perihal (Maksud Perjalanan Dinas)</th>
+								<?php $kolom_tambahan = 0; ?>
 								<?php if(($this->ion_auth->get_users_groups()->row()->id == 2 && $this->ion_auth->user()->row()->jenis_skpd == 3 && $this->uri->segment(4)!='walikota2') 
 									|| $this->uri->segment(4)=='asisten' 
 									|| ($this->uri->segment(4)=='sekdis' && $this->ion_auth->user()->row()->jenis_skpd != 10)
 									|| ($this->uri->segment(4)=='kadis' && $this->ion_auth->user()->row()->jenis_skpd != 10)){
-									echo "<th style='width: 40px'>Bagian</th>";
+									echo "<th style='width: 40px'>Bagian</th>"; $kolom_tambahan++;
 								} if($this->uri->segment(4)=='walikota' 
 									|| $this->uri->segment(4)=='sekda' 
 									|| $this->uri->segment(4)=='sekcam' 
@@ -323,7 +324,7 @@
 									|| ($this->uri->segment(4)=='kabid' && $this->ion_auth->user()->row()->jenis_skpd == 10)
 									|| ($this->uri->segment(4)=='sekdis' && $this->ion_auth->user()->row()->jenis_skpd == 10)
 									|| ($this->uri->segment(4)=='kadis' && $this->ion_auth->user()->row()->jenis_skpd == 10)){
-									echo "<th style='width: 40px'>OPD</th>";
+									echo "<th style='width: 40px'>OPD</th>"; $kolom_tambahan++;
 								}?>
   								<th style="width: 100px">Status</th>
   								<th style="width: 20px">Aksi</th>
@@ -450,6 +451,7 @@
   								$number++;
   							} 
   							?>
+  						<?php if (empty($telaah_staf)) { echo baris_data_kosong(7 + $kolom_tambahan); } ?>
   						</table>
   					</div>
   					<!-- /.box-body -->

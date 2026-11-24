@@ -7,10 +7,23 @@
   /* Set the size of the div element that contains the map */
   #map {
     height: 400px;
-    /* The height is 400 pixels */
     width: 100%;
-    /* The width is the width of the web page */
+    position: relative;
+    z-index: 0; /* panel peta Leaflet tidak menutupi navbar/dropdown */
+    border-radius: 6px;
   }
+
+  .peta-kosong {
+    position: absolute; left: 50%; top: 12px; transform: translateX(-50%); max-width: 80%;
+    z-index: 500; padding: 10px 16px; border-radius: 6px;
+    background: rgba(255, 255, 255, .92); box-shadow: 0 1px 6px rgba(0, 0, 0, .15);
+    color: #555; font-size: 14px; text-align: center; pointer-events: none;
+  }
+
+  .peta-popup b { display: block; margin-bottom: 4px; color: #2c3e50; }
+  .peta-popup ul { margin: 0; padding-left: 16px; max-height: 180px; overflow-y: auto; }
+  .peta-popup li { margin-bottom: 3px; }
+  .peta-popup small { color: #777; }
 
   /* Modern UI Enhancements */
   .content-wrapper {
@@ -1474,6 +1487,7 @@
                         <div class="box box-warning">
                           <div class="box-header with-border">
                             <h3 class="box-title"><b>PERSEBARAN SPPD</b> </h3>
+                            <small class="text-muted" style="margin-left: 6px;">Perjalanan dinas luar provinsi yang sedang berlangsung hari ini</small>
                           </div>
                           <!-- /.box-header -->
                           <div class="box-body">
@@ -1564,6 +1578,7 @@
                                       $no++;
                                     }
                                 ?>
+                              <?php if (empty($dataMap)) { echo baris_data_kosong(6); } ?>
                               </table>
                             </div>
                           </div>
@@ -1609,6 +1624,7 @@
                                       $no++;
                                     }
                                 ?>
+                              <?php if (empty($dataTelaah)) { echo baris_data_kosong(6); } ?>
                               </table>
                             </div>
                           </div>
@@ -1817,70 +1833,95 @@
   <?php } ?>
 <?php } ?>
 <?php if (isset($dataMap)) { ?>
+  <?php
+  // Titik peta: satu entri per pelaksana; koordinat dari provinsi tujuan
+  $titik_peta = array();
+  foreach ($dataMap as $d) {
+    if (!is_numeric($d->latitude) || !is_numeric($d->longitude)) {
+      continue;
+    }
+    $titik_peta[] = array(
+      'nama'   => (string) $d->pegawai_nama,
+      'opd'    => (string) $d->skpd_nama,
+      'lokasi' => (string) $d->provinsi,
+      'lat'    => (float) $d->latitude,
+      'lng'    => (float) $d->longitude,
+    );
+  }
+  ?>
+  <!-- Peta: Leaflet + OpenStreetMap (tanpa API key). Dulu Google Maps, tetapi project API key-nya
+       sudah dihapus (DeletedApiProjectMapError) sehingga peta selalu gagal dimuat. -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
-    // Initialize and add the map
-    function initMap() {
-      var locations = [
-        <?php
-        foreach ($dataMap as $d) {
-          echo "['$d->pegawai_nama','$d->skpd_nama', '$d->latitude', '$d->longitude', '$d->provinsi'],";
-        }
-
-
-        //echo "['','', NULL, NULL, '']";
-        ?>
-        // ['Walikota','Jawa Tengah', -7.146486, 111.517846],
-        // ['BPKAD','Jambi', -2.180481, 102.310901],
-        // ['DPRD','Bali', -8.269607, 115.395621]
-      ];
-
-      /*Map Dasar Kendari*/
-      var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 5,
-        center: new google.maps.LatLng(-4.0294360, 122.4979070),
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      });
-
-
-      var infowindow = new google.maps.InfoWindow();
-      var marker, i, iconbase, news;
-
-
-      /*Looping Location*/
-      for (i = 0; i < locations.length; i++) {
-        /*Load Semua Lokasi Deteksi*/
-        marker = new google.maps.Marker({
-          position: new google.maps.LatLng(locations[i][2], locations[i][3]),
-          icon: iconbase,
-          title: 'SPPD ' + locations[i][0],
-          map: map
-        });
-
-        /**/
-        /*marker.setAnimation(google.maps.Animation.BOUNCE);*/
-        infowindow.setContent("<b>" + locations[i][0] + "<br>" + locations[i][1] + "<br>Lokasi : " + locations[i][4] + "</b>");
-        infowindow.open(map, marker);
-
-        /*Tampilkan Info Ketika Marker di klik*/
-        google.maps.event.addListener(marker, 'click', (function(marker, i) {
-          marker.setAnimation(google.maps.Animation.BOUNCE);
-          return function() {
-
-            infowindow.setContent("<b>" + locations[i][0] + "<br>" + locations[i][1] + "<br>Lokasi : " + locations[i][4] + "</b>");
-            infowindow.open(map, marker);
-          }
-        })(marker, i));
+    (function () {
+      var el = document.getElementById('map');
+      if (!el) return;
+      if (typeof L === 'undefined') {
+        el.innerHTML = '<div class="peta-kosong">Peta tidak dapat dimuat. Periksa koneksi internet.</div>';
+        return;
       }
 
+      var KENDARI = [-3.9985, 122.5127];
+      var titik = <?php echo json_encode($titik_peta, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 
+      var peta = L.map(el, { scrollWheelZoom: false }).setView([-2.5, 118], 5);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
+      }).addTo(peta);
 
-    }
-  </script>
-  <!--Load the API from the specified URL
-    * The async attribute allows the browser to render the page while the API loads
-    * The key parameter will contain your own API key (which is not needed for this tutorial)
-    * The callback parameter executes the initMap() function
-    -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8aB4MpC1orBp300KQQAiVEnWdpry4OPg&callback=initMap">
+      // titik asal: Kota Kendari
+      L.circleMarker(KENDARI, { radius: 7, color: '#c0392b', weight: 2, fillColor: '#e74c3c', fillOpacity: .9 })
+        .addTo(peta).bindTooltip('Kota Kendari');
+
+      // satu marker per lokasi tujuan, berisi daftar pelaksana di lokasi itu
+      var lokasi = {};
+      titik.forEach(function (t) {
+        var k = t.lat + ',' + t.lng;
+        (lokasi[k] = lokasi[k] || { lat: t.lat, lng: t.lng, nama: t.lokasi, orang: [] }).orang.push(t);
+      });
+
+      var batas = [KENDARI];
+      Object.keys(lokasi).forEach(function (k) {
+        var g = lokasi[k];
+        // isi popup disusun lewat DOM (textContent) agar nama dari database tidak bisa menyisipkan HTML
+        var isi = document.createElement('div');
+        isi.className = 'peta-popup';
+        var judul = document.createElement('b');
+        judul.textContent = g.nama + ' (' + g.orang.length + ' orang)';
+        isi.appendChild(judul);
+        var ul = document.createElement('ul');
+        g.orang.forEach(function (o) {
+          var li = document.createElement('li');
+          li.appendChild(document.createTextNode(o.nama));
+          if (o.opd) {
+            li.appendChild(document.createElement('br'));
+            var opd = document.createElement('small');
+            opd.textContent = o.opd;
+            li.appendChild(opd);
+          }
+          ul.appendChild(li);
+        });
+        isi.appendChild(ul);
+
+        L.polyline([KENDARI, [g.lat, g.lng]], { color: '#f39c12', weight: 2, opacity: .7, dashArray: '6 6' }).addTo(peta);
+        L.marker([g.lat, g.lng], { title: g.nama }).addTo(peta).bindPopup(isi);
+        batas.push([g.lat, g.lng]);
+      });
+
+      if (batas.length > 1) {
+        peta.fitBounds(batas, { padding: [40, 40], maxZoom: 7 });
+      } else {
+        var kosong = document.createElement('div');
+        kosong.className = 'peta-kosong';
+        kosong.innerHTML = '<i class="fa fa-info-circle"></i> Tidak ada perjalanan dinas luar provinsi yang sedang berlangsung hari ini.';
+        el.appendChild(kosong);
+      }
+
+      // ukuran peta dihitung ulang bila lebar kolom berubah (sidebar dibuka/tutup)
+      $(window).on('resize', function () { peta.invalidateSize(); });
+      $(document).on('expanded.pushMenu collapsed.pushMenu', function () { setTimeout(function () { peta.invalidateSize(); }, 350); });
+    })();
   </script>
 <?php } ?>

@@ -7,6 +7,13 @@ class Walikota extends public_Controller {
 		error_reporting(0);
 		$this->load->model('setting_admin/m_walikota');
 		$this->load->model('setting/m_log');
+
+		$this->wajib_admin();
+
+		// Data Walikota/Wawali (termasuk NIK untuk TTE) hanya untuk super admin & admin Setda (SKPD 3)
+		if (!$this->is_super_admin() && $this->skpd_id_login() !== 3) {
+			redirect('beranda', 'refresh');
+		}
 	}
 
 	//View All Data

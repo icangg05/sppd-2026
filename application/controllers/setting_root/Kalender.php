@@ -22,10 +22,7 @@ class Kalender extends public_Controller {
 		$this->load->model('telaah/m_timeline');
 		$this->load->model('telaah/m_telaah');
 		$this->load->model('telaah/m_relasi_sekda');
-		if((!$this->ion_auth->get_users_groups()->row()->id == 9) || (!$this->ion_auth->get_users_groups()->row()->id == 100))
-		{
-			redirect('login');
-		}
+		// login sudah diwajibkan oleh Public_Controller (kalender dipakai semua grup)
     }
     
     //View All Data

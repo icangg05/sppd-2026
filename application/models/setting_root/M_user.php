@@ -3,43 +3,75 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class M_user extends CI_Model
 {
 	
-	public function record_count() {
-		return $this->db->count_all('users');
+	// $grup > 0: hanya akun dengan role tersebut (filter role di daftar user super admin)
+	public function record_count($grup = 0) {
+		if ((int) $grup <= 0) {
+			return $this->db->count_all('users');
+		}
+		return $this->db->from('users')
+			->join('users_groups', 'users.id = users_groups.user_id')
+			->where('users_groups.group_id', (int) $grup)
+			->count_all_results();
 	}
 	
-	public function record_count_search($column, $data) {
-		return $this->db->count_all("users WHERE $column like '%".$this->db->escape_str((string) $data)."%'");
+	public function record_count_search($column, $data, $grup = 0) {
+		if ((int) $grup <= 0) {
+			return $this->db->count_all("users WHERE $column like '%".$this->db->escape_str((string) $data)."%'");
+		}
+		return $this->db->from('users')
+			->join('users_groups', 'users.id = users_groups.user_id')
+			->where('users_groups.group_id', (int) $grup)
+			->like($column, (string) $data)
+			->count_all_results();
+	}
+
+	// Jumlah akun per role (semua & aktif) untuk pilihan filter
+	public function rekap_grup() {
+		return $this->db->select('groups.id, groups.name, COUNT(users.id) AS total, SUM(users.active = 1) AS aktif', FALSE)
+			->from('groups')
+			->join('users_groups', 'users_groups.group_id = groups.id', 'left')
+			->join('users', 'users.id = users_groups.user_id', 'left')
+			->group_by('groups.id, groups.name')
+			->order_by('groups.id')
+			->get()->result();
 	}
 	
-	public function data($limit, $start) {
+	public function data($limit, $start, $grup = 0) {
 		$this->db->select('users.*, groups.id as group_id, groups.bgcolor, groups.name, skpd_nama');
 		$this->db->from('users');
 		$this->db->join('users_groups', 'users.id = users_groups.user_id' );
 		$this->db->join('groups', 'users_groups.group_id = groups.id' );
 		$this->db->join('table_skpd', 'users.skpd_id = table_skpd.skpd_id','LEFT' );
+		if ((int) $grup > 0) {
+			$this->db->where('users_groups.group_id', (int) $grup);
+		}
 		$this->db->limit ($limit, $start);
 		$query = $this->db->get ();
 		return $query->result();
 	}
 	
-	public function data_search($column, $value, $limit, $start) {
+	public function data_search($column, $value, $limit, $start, $grup = 0) {
 		$this->db->select('users.*, groups.id as group_id, groups.bgcolor, groups.name, skpd_nama');
 		$this->db->from('users');
 		$this->db->join('users_groups', 'users.id = users_groups.user_id' );
 		$this->db->join('groups', 'users_groups.group_id = groups.id' );
 		$this->db->join('table_skpd', 'users.skpd_id = table_skpd.skpd_id','LEFT' );
 		$this->db->like($column,$value);
+		if ((int) $grup > 0) {
+			$this->db->where('users_groups.group_id', (int) $grup);
+		}
 		$this->db->limit ($limit, $start);
 		$query = $this->db->get ();
 		return $query->result();
 	}
 	
+	// Daftar user untuk admin OPD (SKPD sendiri): akun super admin tidak ditampilkan
 	public function record_count2($skpd_id) {
-		return $this->db->count_all("users WHERE skpd_id='".$this->db->escape_str((string) $skpd_id)."'");
+		return $this->db->count_all("users WHERE skpd_id='".$this->db->escape_str((string) $skpd_id)."' AND id <> 1 AND id NOT IN (SELECT user_id FROM users_groups WHERE group_id = 100)");
 	}
 	
 	public function record_count_search2($column, $data, $skpd_id) {
-		return $this->db->count_all("users WHERE skpd_id='".$this->db->escape_str((string) $skpd_id)."' AND $column like '%".$this->db->escape_str((string) $data)."%'");
+		return $this->db->count_all("users WHERE skpd_id='".$this->db->escape_str((string) $skpd_id)."' AND id <> 1 AND id NOT IN (SELECT user_id FROM users_groups WHERE group_id = 100) AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data2($limit, $start, $skpd_id) {
@@ -49,6 +81,8 @@ class M_user extends CI_Model
 		$this->db->join('groups', 'users_groups.group_id = groups.id' );
 		$this->db->join('table_skpd', 'users.skpd_id = table_skpd.skpd_id','LEFT' );
 		$this->db->where('users.skpd_id',$skpd_id);
+		$this->db->where('users.id <>', 1);
+		$this->db->where('users.id NOT IN (SELECT user_id FROM users_groups WHERE group_id = 100)', NULL, FALSE);
 		$this->db->limit ($limit, $start);
 		$query = $this->db->get ();
 		return $query->result();
@@ -61,6 +95,8 @@ class M_user extends CI_Model
 		$this->db->join('groups', 'users_groups.group_id = groups.id' );
 		$this->db->join('table_skpd', 'users.skpd_id = table_skpd.skpd_id','LEFT' );
 		$this->db->where('users.skpd_id',$skpd_id);
+		$this->db->where('users.id <>', 1);
+		$this->db->where('users.id NOT IN (SELECT user_id FROM users_groups WHERE group_id = 100)', NULL, FALSE);
 		$this->db->like($column,$value);
 		$this->db->limit ($limit, $start);
 		$query = $this->db->get ();

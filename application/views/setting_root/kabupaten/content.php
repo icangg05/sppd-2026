@@ -59,6 +59,7 @@
              <a href="<?php echo base_url();?>setting_root/kabupaten/delete?kabkot_id=<?php echo $kabkot_id?>" class="btn btn-sm btn-flat btn-danger" onclick="return confirm('Anda Yakin ?');"><i class="fa fa-trash"></i> HAPUS</a></td>
            </tr>
            <?php } ?>
+         <?php if (empty($kabupaten)) { echo baris_data_kosong(4); } ?>
          </table>
        </div>
        <!-- /.box-body -->

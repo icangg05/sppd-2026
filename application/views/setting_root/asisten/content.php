@@ -51,6 +51,7 @@
                <a href="<?php echo base_url();?>setting_root/asisten/delete?asisten_id=<?php echo $asisten_id?>" class="btn btn-sm btn-flat btn-danger" onclick="return confirm('Anda Yakin ?');"><i class="fa fa-trash"></i> HAPUS</a>
              </tr>
              <?php } ?>
+           <?php if (empty($asisten)) { echo baris_data_kosong(2); } ?>
            </table>
          </div>
          <!-- /.box-body -->

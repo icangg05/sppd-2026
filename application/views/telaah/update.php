@@ -290,7 +290,7 @@
  							</tr>
  							<tr>
  								<th class="col-md-3">Dokumen Pendukung</th>
- 								<td><input type="file" name="userfile"><a href="<?php echo base_url('upload/telaah/'.$entry[0]['telaah_dokumenpendukung']); ?>" target="_blank">Lihat File</a></td>
+ 								<td><input type="file" name="userfile" data-maks-mb="10"><a href="<?php echo base_url('upload/telaah/'.$entry[0]['telaah_dokumenpendukung']); ?>" target="_blank">Lihat File</a></td>
  							</tr>
  							<tr>
  								<th class="col-md-3">Pelaksana Perjalanan Dinas</th>

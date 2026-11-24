@@ -356,14 +356,16 @@ class M_telaah extends CI_Model
 		$this->db->join('table_skpd','table_pegawai.skpd_id=table_skpd.skpd_id','left');
 		$this->db->where("(table_telaah.telaah_kategori='2' OR table_telaah.telaah_kategori='4' 
 		OR table_telaah.telaah_kategori='5' OR table_telaah.telaah_kategori='10')");
-		$this->db->where("(table_timeline2.timeline_sekda_id = '1' AND table_timeline2.timeline_walikota_id = '0')
+		// seluruh kondisi OR dibungkus kurung: tanpa itu filter kategori (dan kata kunci pencarian) hanya
+		// berlaku untuk kondisi pertama, dan MySQL memindai semua telaah (~1 detik per query)
+		$this->db->where("((table_timeline2.timeline_sekda_id = '1' AND table_timeline2.timeline_walikota_id = '0')
 			OR (table_timeline2.timeline_sekda_id = '1' AND table_timeline2.timeline_walikota_id = '5')
 			OR (table_timeline4.timeline_sekda_id = '1' AND table_timeline4.timeline_walikota_id = '0')
 			OR (table_timeline4.timeline_sekda_id = '1' AND table_timeline4.timeline_walikota_id = '5')
 			OR (table_timeline5.timeline_sekda_id = '1' AND table_timeline5.timeline_walikota_id = '0')
 			OR (table_timeline5.timeline_sekda_id = '1' AND table_timeline5.timeline_walikota_id = '5')
 			OR (table_timeline10.timeline_sekda_id = '1' AND table_timeline10.timeline_walikota_id = '0')
-			OR (table_timeline10.timeline_sekda_id = '1' AND table_timeline10.timeline_walikota_id = '5')");
+			OR (table_timeline10.timeline_sekda_id = '1' AND table_timeline10.timeline_walikota_id = '5'))");
 		
 		$query1 = $this->db->get_compiled_select(); 
 		
@@ -414,14 +416,16 @@ class M_telaah extends CI_Model
 		$this->db->join('table_skpd','table_pegawai.skpd_id=table_skpd.skpd_id','left');
 		$this->db->where("(table_telaah.telaah_kategori='2' OR table_telaah.telaah_kategori='4' 
 		OR table_telaah.telaah_kategori='5' OR table_telaah.telaah_kategori='10')");
-		$this->db->where("(table_timeline2.timeline_sekda_id = '1' AND table_timeline2.timeline_walikota_id = '0')
+		// seluruh kondisi OR dibungkus kurung: tanpa itu filter kategori (dan kata kunci pencarian) hanya
+		// berlaku untuk kondisi pertama, dan MySQL memindai semua telaah (~1 detik per query)
+		$this->db->where("((table_timeline2.timeline_sekda_id = '1' AND table_timeline2.timeline_walikota_id = '0')
 			OR (table_timeline2.timeline_sekda_id = '1' AND table_timeline2.timeline_walikota_id = '5')
 			OR (table_timeline4.timeline_sekda_id = '1' AND table_timeline4.timeline_walikota_id = '0')
 			OR (table_timeline4.timeline_sekda_id = '1' AND table_timeline4.timeline_walikota_id = '5')
 			OR (table_timeline5.timeline_sekda_id = '1' AND table_timeline5.timeline_walikota_id = '0')
 			OR (table_timeline5.timeline_sekda_id = '1' AND table_timeline5.timeline_walikota_id = '5')
 			OR (table_timeline10.timeline_sekda_id = '1' AND table_timeline10.timeline_walikota_id = '0')
-			OR (table_timeline10.timeline_sekda_id = '1' AND table_timeline10.timeline_walikota_id = '5')");
+			OR (table_timeline10.timeline_sekda_id = '1' AND table_timeline10.timeline_walikota_id = '5'))");
 		$this->db->like($column,$value);
 		
 		$query1 = $this->db->get_compiled_select(); 

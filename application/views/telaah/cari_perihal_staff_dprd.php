@@ -91,6 +91,7 @@
   							$number++;
   						} 
   						?>
+  					<?php if (empty($staff_dprd)) { echo baris_data_kosong(5); } ?>
   					</table>
   				</div>
   				<!-- /.box-body -->

@@ -63,6 +63,7 @@
                 $no++;				
               } 
               ?>
+            <?php if (empty($laporan_perjalanan)) { echo baris_data_kosong(5); } ?>
             </table>
           </div>
           

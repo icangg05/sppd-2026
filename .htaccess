@@ -2,7 +2,28 @@
 Options -Indexes +FollowSymLinks
 
 # file skrip di folder upload tidak boleh dijalankan/diakses
-RedirectMatch 403 (?i)/upload/.*\.(php\d?|phtml|phar)$
+# (termasuk bentuk /upload/x.php/sesuatu yang tetap menjalankan x.php)
+RedirectMatch 403 (?i)/upload/.*\.(php\d?|phtml|pht|phps|phar|cgi|pl|py|sh|shtml|htaccess)(/|$)
+RedirectMatch 403 (?i)/upload/.*\.user\.ini$
+
+# Berkas & folder internal tidak boleh diakses lewat web (dijawab 404).
+# .git berisi seluruh riwayat repo (termasuk dump database lama); application/ & system/ berisi
+# kode, konfigurasi, log, dan skrip contoh pustaka pihak ketiga yang bisa dijalankan langsung.
+RedirectMatch 404 (?i)^/(\.git|\.svn|\.hg|\.vscode|\.idea|\.claude|application|system|docker|tests|user_guide|referensi_sppd|graphify-out|db|db_backup|temp-backup|_OLD_APP_BACKUP)(/|$)
+# dump database, backup, dokumentasi & konfigurasi di folder utama
+RedirectMatch 404 (?i)^/(?!robots\.txt$)[^/]+\.(sql|gz|zip|rar|7z|tar|bak|old|orig|swp|log|md|yml|yaml|env|ini|lock|sh|json|txt|conf|dist|xml)$
+RedirectMatch 404 (?i)^/(Dockerfile|\.dockerignore|\.gitignore|\.gitattributes|\.htpasswd|\.env.*)$
+# berkas dump/backup di folder mana pun
+RedirectMatch 404 (?i)\.(sql|sql\.gz|bak|swp|env)$
+# daftar isi folder tidak boleh tampil, walau Options -Indexes tidak berlaku di server
+RedirectMatch 403 (?i)^/(upload|uploads|assets|assets2|kop_surat)(/.*)?/$
+# tanda tangan pejabat & data JSON internal hanya dibaca aplikasi dari disk
+# (pratinjau tanda tangan di halaman admin lewat setting_admin/berkas_ttd/lihat/...)
+RedirectMatch 404 (?i)^/upload/(tanda_tangan|json)(/|$)
+# skrip PHP di folder aset (mis. tutorial fpdf) tidak boleh dijalankan
+RedirectMatch 403 (?i)^/(assets|assets2|kop_surat)/.*\.(php\d?|phtml|phar|pht)(/|$)
+# API aplikasi mobile sudah tidak dipakai (controller api/* juga memanggil show_404)
+RedirectMatch 404 (?i)^/(index\.php/)?api(/|$)
 
 <IfModule mod_rewrite.c>
 	RewriteEngine on

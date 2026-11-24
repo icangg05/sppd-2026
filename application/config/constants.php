@@ -83,3 +83,25 @@ defined('EXIT_USER_INPUT')     OR define('EXIT_USER_INPUT', 7); // invalid user 
 defined('EXIT_DATABASE')       OR define('EXIT_DATABASE', 8); // database error
 defined('EXIT__AUTO_MIN')      OR define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
+
+/*
+| Batas ukuran upload (KB), dicek aplikasi (CI Upload max_size).
+| Catatan: upload_max_filesize / post_max_size di php.ini server harus >= batas ini,
+| kalau lebih kecil PHP menolak file lebih dulu.
+*/
+defined('MAKS_UPLOAD_GAMBAR_KB')  OR define('MAKS_UPLOAD_GAMBAR_KB', 2048);   // 2 MB: foto profil, kop surat, tanda tangan, bukti
+defined('MAKS_UPLOAD_DOKUMEN_KB') OR define('MAKS_UPLOAD_DOKUMEN_KB', 10240); // 10 MB: dokumen pendukung, laporan, cek dokumen
+
+/*
+| Grup tingkat kota (bisa melihat perjalanan semua OPD) + super admin.
+| Hanya super admin yang boleh memberikan grup ini dan mengelola akun yang memilikinya.
+| 5 ASISTEN, 6 SEKDA, 7 PIMPINAN DPRD, 8 WALIKOTA / WAKIL WALIKOTA, 17 INSPEKTORAT, 100 SUPER ADMIN
+*/
+defined('GRUP_KHUSUS_SUPER_ADMIN') OR define('GRUP_KHUSUS_SUPER_ADMIN', array(5, 6, 7, 8, 17, 100));
+
+/*
+| Kuota akun AKTIF per grup tingkat kota (grup_id => maksimal). Grup tidak bisa diberikan ke akun lain
+| bila kuotanya sudah penuh (akun pemegang lama harus dinonaktifkan / diganti role-nya dulu).
+| 5 ASISTEN (I, II, III), 6 SEKDA, 7 PIMPINAN DPRD, 8 WALIKOTA / WAKIL WALIKOTA, 17 INSPEKTORAT
+*/
+defined('KUOTA_GRUP_KHUSUS') OR define('KUOTA_GRUP_KHUSUS', array(5 => 3, 6 => 1, 7 => 2, 8 => 2, 17 => 1));

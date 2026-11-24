@@ -122,6 +122,7 @@
 
           <?php } ?>
 
+        <?php if (empty($log)) { echo baris_data_kosong(5); } ?>
         </table>
 
       </div>

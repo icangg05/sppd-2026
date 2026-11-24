@@ -52,9 +52,23 @@ class List_telaah extends public_Controller
 		}
 	}
 
+	// Halaman list telaah semua OPD (index_admin / search_admin / result_admin) khusus super admin.
+	// Kategori di segmen 4 wajib salah satu yang dikenal, selain itu 404.
+	private function kategori_admin()
+	{
+		$this->wajib_super_admin();
+		$kategori = (string) $this->uri->segment(4);
+		$dikenal = array('esselon', 'kadis', 'dprd', 'sekda', 'camat', 'lurah', 'staff_dprd', 'staff_camat', 'staff_lurah', 'walikota', 'staff_setda', 'sekwan', 'kapus');
+		if (!in_array($kategori, $dikenal, TRUE)) {
+			show_404();
+		}
+		return $kategori;
+	}
+
 	### Tampilan Semua Data Permohonan SPPD Administrator
 	public function index_admin()
 	{
+		$this->kategori_admin();
 
 		$config = array();
 		$config["base_url"] = base_url() . "telaah/list_telaah/index_admin/" . $this->uri->segment(4);
@@ -182,6 +196,7 @@ class List_telaah extends public_Controller
 	### Tampilan Semua Data Search Permohonan SPPD Administrator
 	public function search_admin()
 	{
+		$this->kategori_admin();
 		if ($this->input->post('submit')) {
 			$column = 'pegawai_nama';
 			$query = $this->input->post('data');
@@ -302,7 +317,7 @@ class List_telaah extends public_Controller
 				break;
 			case "staff_lurah":
 				$this->data['data'] = $this->m_admin->data_search_stafflurah($column, $query, $config["per_page"], $page);
-				$break;
+				break;
 			case "walikota":
 				$this->data['data'] = $this->m_admin->data_search_walikota($column, $query, $config["per_page"], $page);
 				break;
@@ -322,6 +337,7 @@ class List_telaah extends public_Controller
 	### Tampilan Semua Data Result Permohonan SPPD Full Administrator
 	public function result_admin()
 	{
+		$this->kategori_admin();
 		$column = 'table_telaah.telaah_status';
 		$query = $this->uri->segment(5);
 
@@ -2071,7 +2087,7 @@ class List_telaah extends public_Controller
 
 		$config['upload_path'] = $folder;
 		$config['allowed_types'] = "gif|jpg|jpeg|png|pdf|doc|docx|xls|xlsx|ppt|pptx";
-		$config['max_size'] = "20000000";
+		$config['max_size'] = MAKS_UPLOAD_DOKUMEN_KB;
 		$config['max_width'] = "10000";
 		$config['max_height'] = "10000";
 		$config['file_name'] = bin2hex(random_bytes(8)) . '_' . $_FILES['userfile']['name'];
@@ -2090,7 +2106,8 @@ class List_telaah extends public_Controller
 		if (!$tmp) {
 			return FALSE;
 		}
-		$nama = ($nama_file === NULL) ? substr($tmp['file'], 17) : $nama_file . $tmp['ext'];
+		// nama tetap unik (rename() akan menimpa file lain yang bernama sama)
+		$nama = ($nama_file === NULL) ? $tmp['file'] : nama_file_unggah($nama_file) . $tmp['ext'];
 		if (!rename($this->folder_dokumen_sementara() . $tmp['file'], './upload/telaah/' . $nama)) {
 			return FALSE;
 		}
@@ -2128,11 +2145,7 @@ class List_telaah extends public_Controller
 		$this->form_validation->set_rules('telaah_kegiatan', 'Kegiatan', 'required|callback_kegiatan_check');
 		$this->form_validation->set_rules('telaah_kategoriperjalanan', 'Kategori Perjalanan', 'required');
 		$form_dokumen = 'create/' . $this->uri->segment(4) . '/' . $this->uri->segment(5);
-		if ($this->input->post('telaah_kategoriperjalanan') == 1) {
-			if (empty($_FILES['userfile']['name']) && !$this->dokumen_sementara($form_dokumen)) {
-				$this->form_validation->set_rules('userfile', 'Dokumen Pendukung', 'required');
-			}
-		}
+		// Dokumen pendukung bersifat opsional (dulu wajib untuk kategori Undangan)
 		$this->form_validation->set_rules('telaah_kecepatan', 'Telaah Kecepatan', 'required');
 		$this->form_validation->set_rules('telaah_tanggalspd', 'Tanggal SPPD', 'required');
 		$this->form_validation->set_rules('telaah_tanggalspt', 'Tanggal SPT', 'required');
@@ -2184,13 +2197,22 @@ class List_telaah extends public_Controller
 			$filename = $this->input->post('userfile');
 			$config['upload_path'] = './upload/telaah/';
 			$config['allowed_types'] = "gif|jpg|jpeg|png|pdf|doc|docx|xls|xlsx|ppt|pptx";
-			$config['overwrite'] = "true";
-			$config['max_size'] = "20000000";
+			$config['overwrite'] = FALSE;
+			$config['max_size'] = MAKS_UPLOAD_DOKUMEN_KB;
 			$config['max_width'] = "10000";
 			$config['max_height'] = "10000";
-			$config['file_name'] = '' . $filename;
+			$config['file_name'] = nama_file_unggah($filename);
 			$this->upload->initialize($config);
-			$dokumen = $this->upload->do_upload() ? $this->upload->data() : $this->pakai_dokumen_sementara($form_dokumen);
+			$dokumen = $this->upload->do_upload() ? $this->upload->data() : FALSE;
+			if (!$dokumen && !empty($_FILES['userfile']['name'])) {
+				// file dipilih tapi ditolak (jenis/ukuran): tampilkan ulang form, jangan simpan tanpa dokumen diam-diam
+				$this->form_validation->tambah_error('userfile', 'Dokumen Pendukung gagal diunggah: ' . $this->upload->display_errors('', '') . ' (PDF, gambar, Word, Excel, PowerPoint; maks. 10 MB)');
+				$this->create_view();
+				return;
+			}
+			if (!$dokumen) {
+				$dokumen = $this->pakai_dokumen_sementara($form_dokumen);
+			}
 			if ($dokumen && $this->dokumen_sementara($form_dokumen)) {
 				$this->hapus_dokumen_sementara(); // diganti file baru
 			}
@@ -3085,13 +3107,22 @@ class List_telaah extends public_Controller
 			$filename = $this->input->post('telaah_id');
 			$config['upload_path'] = './upload/telaah/';
 			$config['allowed_types'] = "gif|jpg|jpeg|png|pdf|doc|docx|xls|xlsx|ppt|pptx";
-			$config['overwrite'] = "true";
-			$config['max_size'] = "20000000";
+			$config['overwrite'] = FALSE;
+			$config['max_size'] = MAKS_UPLOAD_DOKUMEN_KB;
 			$config['max_width'] = "10000";
 			$config['max_height'] = "10000";
-			$config['file_name'] = '' . $filename;
+			$config['file_name'] = nama_file_unggah($filename);
 			$this->upload->initialize($config);
-			$dokumen = $this->upload->do_upload() ? $this->upload->data() : $this->pakai_dokumen_sementara('update/' . $filename, $filename);
+			$dokumen = $this->upload->do_upload() ? $this->upload->data() : FALSE;
+			if (!$dokumen && !empty($_FILES['userfile']['name'])) {
+				// file dipilih tapi ditolak (jenis/ukuran): tampilkan ulang form, jangan simpan tanpa dokumen diam-diam
+				$this->form_validation->tambah_error('userfile', 'Dokumen Pendukung gagal diunggah: ' . $this->upload->display_errors('', '') . ' (PDF, gambar, Word, Excel, PowerPoint; maks. 10 MB)');
+				$this->form_update($this->input->post('telaah_id'), TRUE);
+				return;
+			}
+			if (!$dokumen) {
+				$dokumen = $this->pakai_dokumen_sementara('update/' . $filename, $filename);
+			}
 			if ($dokumen && $this->dokumen_sementara('update/' . $filename)) {
 				$this->hapus_dokumen_sementara(); // diganti file baru
 			}
@@ -3375,7 +3406,17 @@ class List_telaah extends public_Controller
 				$data['user_id'] = $this->ion_auth->user()->row()->user_id;
 				$data['telaah_dokumenpendukung'] = $dat['file_name'];
 
+				$telaah_lama = $this->db->select('telaah_dokumenpendukung')->where('telaah_id', (int) $this->input->post('telaah_id'))->get('table_telaah')->row();
+				$dokumen_lama = $telaah_lama ? basename((string) $telaah_lama->telaah_dokumenpendukung) : '';
+
 				$this->m_telaah->update($data);
+
+				// dokumen lama yang diganti dihapus, kecuali masih dipakai perjalanan lain
+				// (data lama menyimpan dokumen dengan nama asli file sehingga bisa dipakai bersama)
+				if ($dokumen_lama !== '' && $dokumen_lama !== $dat['file_name']
+					&& $this->db->where('telaah_dokumenpendukung', $dokumen_lama)->count_all_results('table_telaah') == 0) {
+					hapus_file_unggah('./upload/telaah/', $dokumen_lama);
+				}
 
 				## Form edit tidak menyediakan field jabatan perjalanan (khusus Inspektorat),
 				## jadi nilai lama disimpan dulu agar tidak hilang saat baris dibuat ulang.
@@ -4400,33 +4441,45 @@ class List_telaah extends public_Controller
 	// Delete Telaah
 	public function delete_telaah()
 	{
-		// sama dengan syarat tombol "Hapus Telaah" di view: hanya user id 1 / Administrator (grup 9)
-		if (!($this->ion_auth->user()->row()->id == 1 || $this->ion_auth->get_users_groups()->row()->id == 9) || $this->input->post('telaah_id') == '') {
+		// kembali ke daftar asal: super admin -> index_admin, admin OPD -> index
+		$kategori = preg_replace('/[^a-z_]/', '', strtolower((string) $this->input->post('url')));
+		$kembali = ($this->is_super_admin() ? 'telaah/list_telaah/index_admin/' : 'telaah/list_telaah/index/') . $kategori;
+
+		// super admin: semua telaah. Admin OPD (grup 9): hanya telaah milik SKPD-nya sendiri.
+		$telaah_id = (int) $this->input->post('telaah_id');
+		$boleh = FALSE;
+		if ($telaah_id > 0 && $this->is_super_admin()) {
+			$boleh = TRUE;
+		} elseif ($telaah_id > 0 && $this->is_admin()) {
+			$telaah = $this->db->select('telaah_skpd_id')->where('telaah_id', $telaah_id)->get('table_telaah')->row();
+			$boleh = $telaah && $this->skpd_id_login() > 0 && (int) $telaah->telaah_skpd_id === $this->skpd_id_login();
+		}
+		if (!$boleh) {
 			$this->session->set_flashdata('notif', 'Anda tidak berhak menghapus telaah ini !');
-			redirect('telaah/list_telaah/index/' . $this->input->post('url'));
+			redirect($kembali);
 		}
 
 		$arrayTable = array('table_telaah', 'table_timeline1', 'table_timeline2', 'table_timeline3', 'table_timeline4', 'table_timeline5', 'table_timeline6', 'table_timeline7', 'table_timeline8', 'table_timeline9', 'table_timeline10', 'table_timeline11', 'table_pengikut', 'table_pengeluaran_rill', 'table_kuitansi_panjar', 'table_laporanperjalanan', 'table_lokasi_tujuan', 'table_rincian_biaya', 'table_tanggal_perjalanan', 'table_relasi_sekda');
 
 		// daftar file fisik diambil sebelum datanya dihapus, filenya dihapus setelah data terhapus
-		$file = $this->m_telaah->file_perjalanan($this->input->post('telaah_id'));
+		$file = $this->m_telaah->file_perjalanan($telaah_id);
 
 		// semua tabel terhapus atau tidak sama sekali
 		$this->db->trans_start();
 		for ($i = 0; $i < count($arrayTable); $i++) {
-			$this->m_kadis->delete_telaah($this->input->post('telaah_id'), $arrayTable[$i]);
+			$this->m_kadis->delete_telaah($telaah_id, $arrayTable[$i]);
 		}
 		$this->db->trans_complete();
 
 		if ($this->db->trans_status() === FALSE) {
 			$this->session->set_flashdata('notif', 'Data Telaah Gagal Di Hapus !');
-			redirect('telaah/list_telaah/index/' . $this->input->post('url'));
+			redirect($kembali);
 		}
 
 		$this->m_telaah->hapus_file($file);
 
 		$this->session->set_flashdata('notif', 'Data Telaah Staf Di Hapus !');
-		redirect('telaah/list_telaah/index/' . $this->input->post('url'));
+		redirect($kembali);
 	}
 
 	public function rekap_data()

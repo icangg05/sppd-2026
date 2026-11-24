@@ -4142,131 +4142,15 @@ class Qr extends qr_Controller {
 
 	
 	function cek(){
-		$cekDokumen = $this->cekDokumen();
-		$cekDokumen  = json_decode($cekDokumen , TRUE);
-		echo $cekDokumen['SUMMARY']; 
-		$this->data['hasil'] = $cekDokumen['SUMMARY']; 
-		$this->render('setting_admin/dokumen/content');
+		// Dinonaktifkan: versi lama menyimpan PDF permanen di upload/cek dokumen dengan nama dari input
+		// pengguna (bisa menimpa file). Gunakan halaman Cek Dokumen yang baru.
+		redirect('setting_admin/dokumen');
 	}
 	
 	function cekDokumen(){
-		
-        // $curl = curl_init();
-        // $file1 	= file_get_contents($_FILES["userfile"]["name"]);
-		//$file1 	= $_SERVER['DOCUMENT_ROOT'].'/sppd-dev/upload/doc_TTE/72d47683142b43f19c86e4113a640887.pdf';
-        
-        // $filenames = array($file1);
-
-        // foreach ($filenames as $f){
-            // $files[$f] = file_get_contents($f);
-        // }
-
-		// $boundary = uniqid();
-        // $delimiter = '-------------' . $boundary;
-        // $post_data = $this->build_data_files2($boundary, $files);
-
-		// curl_setopt_array($curl, array(
-          
-		  // CURLOPT_URL => "https://esign-dev.bssn.go.id/api/v2/entity/verify/",
-		  // CURLOPT_RETURNTRANSFER => true,
-		  // CURLOPT_ENCODING => "",
-		  // CURLOPT_MAXREDIRS => 10,
-		  // CURLOPT_TIMEOUT => 30,
-		  // CURLOPT_SSL_VERIFYPEER => false,
-          // CURLOPT_SSL_VERIFYHOST => false,
-		  // CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  // CURLOPT_CUSTOMREQUEST => "POST",
-		  // CURLOPT_POSTFIELDS => $post_data,
-		  // CURLOPT_HTTPHEADER => array(
-              // "Authorization: Bearer 5adf074e-c995-450b-af5f-009c137b80e5",
-              // "cache-control:no-cache",
-              // "Content-Type: multipart/form-data; boundary=" . $delimiter,
-              // "Content-Length: " . strlen($post_data)
-          // ),
-		// ));
-
-		// $response = curl_exec($curl);
-        // $err = curl_error($curl);
-
-        // curl_close($curl);
-
-		// if ($err) {
-		  // echo "cURL Error #:" . $err;
-		// } else {
-		  // echo $response;
-		// }
-		
-		$filename = $this->input->post('userfile');
-		$config['upload_path'] = './upload/cek dokumen/';
-		$config['allowed_types'] = "pdf";
-		$config['overwrite']="true";
-		$config['max_size']="20000000";
-		$config['max_width']="10000";
-		$config['max_height']="10000";
-		$config['file_name'] = ''.$filename;
-		$this->upload->initialize($config);
-
-		if(!$this->upload->do_upload()){
-			echo  $this->upload->display_errors();
-
-		}else {
-			//$filename = $dat['file_name'];
-			$filename = $dat['file_name'];
-			$path_file = './upload/cek dokumen';
-			unlink($path_file.$filename);
-			
-			$dat = $this->upload->data();
-			
-			$data['file'] = $dat['file_name'];
-			
-			$curl = curl_init();
-			$file1 	= file_get_contents($_FILES["userfile"]["name"]);
-			$file1 	= $_SERVER['DOCUMENT_ROOT'].'/sppd-dev/upload/cek dokumen/'.$data['file'];
-			
-			$filenames = array($file1);
-
-			foreach ($filenames as $f){
-				$files[$f] = file_get_contents($f);
-			}
-
-			$boundary = uniqid();
-			$delimiter = '-------------' . $boundary;
-			$post_data = $this->build_data_files2($boundary, $files);
-
-			curl_setopt_array($curl, array(
-			  
-			  CURLOPT_URL => "https://esign-bsre.bssn.go.id/api/v2/entity/verify/",
-			  CURLOPT_RETURNTRANSFER => true,
-			  CURLOPT_ENCODING => "",
-			  CURLOPT_MAXREDIRS => 10,
-			  CURLOPT_TIMEOUT => 30,
-			  CURLOPT_SSL_VERIFYPEER => false,
-			  CURLOPT_SSL_VERIFYHOST => false,
-			  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-			  CURLOPT_CUSTOMREQUEST => "POST",
-			  CURLOPT_POSTFIELDS => $post_data,
-			  CURLOPT_HTTPHEADER => array(
-				  "Authorization: Bearer 5adf074e-c995-450b-af5f-009c137b80e5",
-				  "cache-control:no-cache",
-				  "Content-Type: multipart/form-data; boundary=" . $delimiter,
-				  "Content-Length: " . strlen($post_data)
-			  ),
-			));
-
-			$response = curl_exec($curl);
-			$err = curl_error($curl);
-
-			curl_close($curl);
-
-			// if ($err) {
-			  // echo "cURL Error #:" . $err;
-			// } else {
-			  // echo $response;
-			// }
-			
-			return $response;
-			
-		}
+		// Dinonaktifkan: versi lama menyimpan PDF permanen di upload/cek dokumen dengan nama dari input
+		// pengguna (bisa menimpa file). Gunakan halaman Cek Dokumen yang baru.
+		redirect('setting_admin/dokumen');
 	}
 	/*END API BSSN*/
 	

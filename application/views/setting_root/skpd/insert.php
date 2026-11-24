@@ -65,7 +65,7 @@ $is_superadmin = ($this->ion_auth->get_users_groups()->row()->id == 100 || ($thi
  						<div class="col-md-6">
  							<div class="form-group">
  								<label>KOP Surat</label>
- 								<input type="file" class="form-control" name="userfile">
+ 								<input type="file" class="form-control" name="userfile" data-maks-mb="2" accept="image/png,image/jpeg,image/gif,image/webp">
  							</div>
  						</div>
  						<div class="col-md-6">

@@ -509,7 +509,9 @@ class CI_Pagination {
 				$this->uri_segment = count($this->CI->uri->segment_array());
 			}
 
-			$this->cur_page = $this->CI->uri->segment($this->uri_segment);
+			// (string): di halaman pertama segmen = NULL; str_replace(NULL) di bawah memicu
+			// "Deprecated: Passing null to parameter #3" pada PHP 8.1+ bila ada suffix (reuse_query_string)
+			$this->cur_page = (string) $this->CI->uri->segment($this->uri_segment);
 
 			// Remove any specified prefix/suffix from the segment.
 			if ($this->prefix !== '' OR $this->suffix !== '')

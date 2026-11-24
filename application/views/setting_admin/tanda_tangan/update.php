@@ -28,6 +28,7 @@
 							Data Belum Lengkap !!!
  						</div>
  						<?php } ?>
+ 						<?php if ($pesan_error = $this->session->flashdata('error')) { echo '<p class="alert alert-danger text-center"><b>' . html_escape($pesan_error) . '</b></p>'; } ?>
 				<input type="hidden" class="form-control" name="tanda_tangan_id" value="<?php echo $entry[0]['tanda_tangan_id']?>">
 				<div class="col-md-6">
 					<div class="form-group">
@@ -53,9 +54,9 @@
 				<div class="col-md-6">
 					<div class="form-group">
 						<label>Tanda Tangan</label>
-						<input type="file" class="form-control" name="userfile" value="<?php echo $entry[0]['tanda_tangan']?>">
+						<input type="file" class="form-control" name="userfile" data-maks-mb="2" accept="image/png,image/jpeg,image/gif" value="<?php echo $entry[0]['tanda_tangan']?>">
 						<?php if ($entry[0]['tanda_tangan']) { ?>
-						<img src="<?php echo base_url();?>upload/tanda_tangan/<?php echo $entry[0]['tanda_tangan']?>" width="100" height="80">
+						<img src="<?php echo base_url('setting_admin/berkas_ttd/lihat/' . rawurlencode((string) $entry[0]['tanda_tangan'])); ?>" width="100" height="80">
 						<?php } ?>
 					</div>
 				</div> 

@@ -48,7 +48,7 @@
              ?>
              <tr>
               <td><?php echo $v->nama_jabatan;?></td>
-              <td><img src="<?php echo base_url();?>upload/tanda_tangan/<?php echo $v->tanda_tangan;?>" width="100" height="80"></td>
+              <td><img src="<?php echo base_url('setting_admin/berkas_ttd/lihat/' . rawurlencode((string) $v->tanda_tangan)); ?>" width="100" height="80"></td>
               <td><?php
 					if($v->status==0) {
 						echo '<span class="label label-danger">Tidak Aktif</span></td>';
@@ -61,6 +61,7 @@
                <a href="<?php echo base_url();?>setting_admin/tanda_tangan/delete?tanda_tangan_id=<?php echo $tanda_tangan_id?>" class="btn btn-sm btn-flat btn-danger" onclick="return confirm('Anda Yakin ?');"><i class="fa fa-trash"></i> HAPUS</a>
              </tr>
              <?php } ?>
+           <?php if (empty($tanda_tangan)) { echo baris_data_kosong(4); } ?>
            </table>
          </div>
          <!-- /.box-body -->

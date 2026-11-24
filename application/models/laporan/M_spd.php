@@ -61,7 +61,7 @@ class M_spd extends CI_Model
 		$this->db->select('*');
 		$this->db->from('table_pimpinan');
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pimpinan.pegawai_jabatan','LEFT');
-		$this->db->where('jabatan_id',1);
+		$this->db->where('jabatan_id',1); // table_pimpinan hanya ~10 baris, tidak perlu indeks
 		$this->db->where('status_delete',0);
         $this->db->order_by('pegawai_id','DESC');
         $this->db->limit (1, 0);
@@ -73,7 +73,7 @@ class M_spd extends CI_Model
 		$this->db->select('*');
 		$this->db->from('table_pimpinan');
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pimpinan.pegawai_jabatan','LEFT');
-		$this->db->where('jabatan_id',14);
+		$this->db->where('jabatan_id',14); // table_pimpinan hanya ~10 baris, tidak perlu indeks
 		$this->db->where('status_delete',0);
         $this->db->order_by('pegawai_id','DESC');
         $this->db->limit (1, 0);
@@ -86,7 +86,7 @@ class M_spd extends CI_Model
 		$this->db->from('table_pegawai');
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
 		$this->db->join('table_skpd','table_skpd.skpd_id = table_pegawai.skpd_id','LEFT');
-		$this->db->where('jabatan_id',3);
+		$this->db->where('table_pegawai.pegawai_jabatan', '3'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 		$this->db->where('status_delete',0);
         $this->db->order_by('pegawai_id','DESC');
         $this->db->limit (1, 0);
@@ -98,7 +98,7 @@ class M_spd extends CI_Model
 		$this->db->select('*');
 		$this->db->from('table_pegawai');
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
-		$this->db->where('jabatan_id',2);
+		$this->db->where('table_pegawai.pegawai_jabatan', '2'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 		$this->db->where('status_delete',0);
         $this->db->order_by('pegawai_id','DESC');
         $this->db->limit (1, 0);
@@ -110,7 +110,7 @@ class M_spd extends CI_Model
 		$this->db->select('*');
 		$this->db->from('table_pegawai');
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
-		$this->db->where('jabatan_id',17);
+		$this->db->where('table_pegawai.pegawai_jabatan', '17'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 		$this->db->where('status_delete',0);
         $this->db->order_by('pegawai_id','DESC');
         $this->db->limit (1, 0);
@@ -122,7 +122,7 @@ class M_spd extends CI_Model
 		$this->db->select('*');
 		$this->db->from('table_pegawai');
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
-		$this->db->where('jabatan_id',18);
+		$this->db->where('table_pegawai.pegawai_jabatan', '18'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 		$this->db->where('status_delete',0);
         $this->db->order_by('pegawai_id','DESC');
         $this->db->limit (1, 0);
@@ -134,7 +134,7 @@ class M_spd extends CI_Model
 		$this->db->select('*');
 		$this->db->from('table_pegawai');
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
-		$this->db->where('jabatan_id',5);
+		$this->db->where('table_pegawai.pegawai_jabatan', '5'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 		$this->db->where('status_delete',0);
         $this->db->order_by('pegawai_id','DESC');
         $this->db->limit (1, 0);
@@ -146,7 +146,7 @@ class M_spd extends CI_Model
 		$this->db->select('*');
 		$this->db->from('table_pegawai');
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
-		$this->db->where('jabatan_id',20);
+		$this->db->where('table_pegawai.pegawai_jabatan', '20'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 		$this->db->where('status_delete',0);
         $this->db->order_by('pegawai_id','DESC');
         $this->db->limit (1, 0);
@@ -159,7 +159,7 @@ class M_spd extends CI_Model
 		$this->db->from('table_pegawai');
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
 		$this->db->where('skpd_id',$skpd_id);
-		$this->db->where('jabatan_id',4);
+		$this->db->where('table_pegawai.pegawai_jabatan', '4'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 		$this->db->where('status_delete',0);
         $this->db->order_by('pegawai_id','DESC');
         $this->db->limit (1, 0);
@@ -171,7 +171,7 @@ class M_spd extends CI_Model
 		$this->db->select('*');
 		$this->db->from('table_pegawai');
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
-		$this->db->where('jabatan_id',9);
+		$this->db->where('table_pegawai.pegawai_jabatan', '9'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 		$this->db->where('status_delete',0);
         $this->db->order_by('pegawai_id','DESC');
         $this->db->limit (1, 0);
@@ -184,7 +184,7 @@ class M_spd extends CI_Model
 		$this->db->from('table_pegawai');
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
 		$this->db->where('skpd_id',$skpd_id);
-		$this->db->where('jabatan_id',6);
+		$this->db->where('table_pegawai.pegawai_jabatan', '6'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 		$this->db->where('status_delete',0);
 		$this->db->order_by('pegawai_id','DESC');
 		$this->db->limit (1, 0);
@@ -197,7 +197,7 @@ class M_spd extends CI_Model
 		$this->db->from('table_pegawai');
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
 		$this->db->where('skpd_id',$skpd_id);
-		$this->db->where('jabatan_id',7);
+		$this->db->where('table_pegawai.pegawai_jabatan', '7'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 		$this->db->where('status_delete',0);
 		$query = $this->db->get ();
 		return $query->result();
@@ -209,7 +209,7 @@ class M_spd extends CI_Model
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
 		$this->db->where('skpd_id',36);
 		$this->db->where('status_delete',0);
-		$this->db->where('jabatan_id',7);
+		$this->db->where('table_pegawai.pegawai_jabatan', '7'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
         $this->db->order_by('pegawai_id','DESC');
 		$query = $this->db->get ();
 		return $query->result();
@@ -229,7 +229,7 @@ class M_spd extends CI_Model
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
 		$this->db->join('table_skpd','table_skpd.skpd_id = table_pegawai.skpd_id','LEFT');
 		$this->db->where('table_pegawai.skpd_id',$skpd_id);
-		$this->db->where('jabatan_id',10);
+		$this->db->where('table_pegawai.pegawai_jabatan', '10'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 		$this->db->where('status_delete',0);
         $this->db->order_by('pegawai_id','DESC');
         $this->db->limit (1, 0);
@@ -242,7 +242,7 @@ class M_spd extends CI_Model
 		$this->db->from('table_pegawai');
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
 		$this->db->where('skpd_id',$skpd_id);
-		$this->db->where('jabatan_id',11);
+		$this->db->where('table_pegawai.pegawai_jabatan', '11'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 		$this->db->where('status_delete',0);
         $this->db->order_by('pegawai_id','DESC');
         $this->db->limit (1, 0);
@@ -255,7 +255,7 @@ class M_spd extends CI_Model
 		$this->db->from('table_pegawai');
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
 		$this->db->where('skpd_id',$skpd_id);
-		$this->db->where('jabatan_id',12);
+		$this->db->where('table_pegawai.pegawai_jabatan', '12'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 		$this->db->where('status_delete',0);
         $this->db->order_by('pegawai_id','DESC');
         $this->db->limit (1, 0);
@@ -268,7 +268,7 @@ class M_spd extends CI_Model
 		$this->db->from('table_pegawai');
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
 		$this->db->where('skpd_id',$skpd_id);
-		$this->db->where('jabatan_id',19);
+		$this->db->where('table_pegawai.pegawai_jabatan', '19'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 		$this->db->where('status_delete',0);
         $this->db->order_by('pegawai_id','DESC');
         $this->db->limit (1, 0);
@@ -282,7 +282,7 @@ class M_spd extends CI_Model
 		$this->db->join('table_jabatan','table_jabatan.jabatan_id = table_pegawai.pegawai_jabatan','LEFT');
 		$this->db->where('skpd_id',$skpd_id);
 		$this->db->where('status_delete',0);
-		$this->db->where('jabatan_id',13);
+		$this->db->where('table_pegawai.pegawai_jabatan', '13'); // dibandingkan sebagai teks (kolom varchar) agar indeks terpakai
 		$query = $this->db->get ();
 		return $query->result();
 	}

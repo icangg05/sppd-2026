@@ -91,6 +91,7 @@
 				$no++;				
 				} 
 				?>
+			  <?php if (empty($rincian_pelaksana)) { echo baris_data_kosong(8); } ?>
 			  </table>
             </div>
 			<?php
@@ -153,6 +154,7 @@
 				$no++;				
 				} 
 				?>
+			  <?php if (empty($rincian_pengikut)) { echo baris_data_kosong(8); } ?>
 			  </table>
             </div>
 			<?php

@@ -27,6 +27,7 @@
 						   echo '<p class="alert alert-info text-center"><b>'.$message .'</b></p>';
 						 }
 						?>
+						<?php if ($pesan_error = $this->session->flashdata('error')) { echo '<p class="alert alert-danger text-center"><b>' . html_escape($pesan_error) . '</b></p>'; } ?>
  						<input type="hidden" class="form-control" name="pegawai_id" value="<?php echo $entry[0]['pegawai_id'];?>">
  						<table class="table table-bordered table-striped">
  							<tr class="info">
@@ -39,7 +40,7 @@
  								<input type="hidden" class="form-control" name="pegawai_id" value="<?php echo $entry[0]['pegawai_id'];?>">
  							</tr>
  							<tr>
- 								<th class="col-md-3">NIK</th>
+ 								<th class="col-md-3">NIK <span style="color:#999;font-weight:400;font-size:12px">(opsional)</span></th>
  								<td><input type="text" class="form-control" name="pegawai_nik" value="<?php echo $entry[0]['pegawai_nik'];?>"></td>
  							</tr>
  							<tr>
@@ -51,21 +52,25 @@
 					</tr>
 					<tr>
 						<th class="col-md-3">Golongan</th>
-						<td><select class="form-control" name="pegawai_golongan">
+						<td><select class="form-control pilih-select2" name="pegawai_golongan" style="width:100%">
 							<option value="">- Pilih Golongan -</option>
-							<?php foreach($golongan as $v){
-								if($entry[0]['pegawai_golongan']== $v->golongan){
-									echo "<option value='$v->golongan' selected>$v->golongan</option>" ;
-								} else {
-									echo "<option value='$v->golongan'>$v->golongan</option>" ;  
-								}
-							}?>
+							<?php
+							// dikelompokkan PNS / PPPK agar golongan PPPK langsung terlihat
+							$kelompok_gol = array('PNS' => array(), 'PPPK' => array());
+							foreach ($golongan as $v) { $kelompok_gol[$v->pangkat === 'PPPK' ? 'PPPK' : 'PNS'][] = $v; }
+							foreach ($kelompok_gol as $label => $daftar) { if (!$daftar) continue; ?>
+							<optgroup label="<?php echo $label; ?>">
+								<?php foreach ($daftar as $v) { ?>
+								<option value="<?php echo html_escape($v->golongan); ?>" <?php echo $entry[0]['pegawai_golongan'] == $v->golongan ? 'selected' : ''; ?>><?php echo html_escape($v->golongan . ($v->pangkat === 'PPPK' ? ' (PPPK)' : ' - ' . $v->pangkat)); ?></option>
+								<?php } ?>
+							</optgroup>
+							<?php } ?>
 						</select>
 					</td>
 				</tr>
 				<tr>
 					<th class="col-md-3">Jabatan</th>
-					<td><select class="form-control" name="pegawai_jabatan">
+					<td><select class="form-control pilih-select2" name="pegawai_jabatan" style="width:100%">
 						<option value="">- Pilih Jabatan -</option>
 						<?php foreach($jabatan as $v){
 							if($entry[0]['pegawai_jabatan']== $v->jabatan_id){
@@ -83,7 +88,7 @@
 				<?php  if ($this->ion_auth->user()->row()->jenis_skpd == 3) { ?> 
 					<tr>
 					  <th class="col-md-3">Bagian</th>
-					  <td><select class="form-control" name="bagian_id">
+					  <td><select class="form-control pilih-select2" name="bagian_id" style="width:100%">
 							<?php  if ($staff_sekda) { ?> 
 							  <?php foreach($bagian as $v){
 									echo "<option value='$v->bagian_id'>$v->nama_bagian</option>" ;
@@ -113,14 +118,17 @@
 					</tr-->
 					<tr>
 					  <th class="col-md-3">Tanda Tangan</th>
-					  <td><input type="file" class="form-control" name="userfile" ><br>
-						  <img src="<?php echo base_url();?>upload/tanda_tangan/<?php echo $entry[0]['pegawai_tandatangan'];?>" width="100" height="80">
+					  <td><input type="file" class="form-control" name="userfile" data-maks-mb="2" accept=".png,image/png">
+						  <p class="help-block">Format PNG (disarankan latar transparan). Kosongkan bila tidak ingin mengganti.</p>
+						  <?php if (!empty($entry[0]['pegawai_tandatangan'])) { ?>
+						  <img src="<?php echo base_url('setting_admin/berkas_ttd/lihat/' . rawurlencode((string) $entry[0]['pegawai_tandatangan'])); ?>" width="100" height="80">
+						  <?php } ?>
 					  </td>
 					</tr>	
 					  <tr>
 						<th class="col-md-3">Status Tanda Tangan</th>
 						<td>
-							<select class="form-control" name="status_tandatangan">
+							<select class="form-control pilih-select2-kecil" name="status_tandatangan" style="width:100%">
 								<option value="1" <?php if ($entry[0]['status_tandatangan']==1) { echo "selected"; } ?> >Aktif</option>
 								<option value="0" <?php if ($entry[0]['status_tandatangan']==0) { echo "selected"; } ?> >Tidak Aktif</option>
 							</select>
@@ -135,7 +143,7 @@
 									$isEnabled = in_array($entry[0]['pegawai_jabatan'], $enableJabatanId);
 								?>
 								<!-- Select input status perjalanan -->
-								<select class="form-control" name="status">
+								<select class="form-control pilih-select2-kecil" name="status" style="width:100%">
 									<option value="1" <?php if ($entry[0]['status']==1) { echo "selected"; } ?> >Dalam Perjalanan</option>
 									<option value="0" <?php if ($entry[0]['status']==0) { echo "selected"; } ?> >Tidak Dalam Perjalanan</option>
 								</select>
@@ -164,7 +172,7 @@
 </div>
 <!-- /.content-wrapper -->
 <script>
-	var ckeditor = CKEDITOR.replace('ckeditor');
+	if (document.getElementById('ckeditor')) { var ckeditor = CKEDITOR.replace('ckeditor'); }
 </script>
 <script type="text/javascript">
 	$(function() {
@@ -173,4 +181,11 @@
 			autoclose: true
 		});
 	});
+</script>
+<script type="text/javascript">
+  // Select2 untuk semua pilihan di form pegawai (popup native select di halaman ini bisa langsung menutup)
+  $(function () {
+    $('.pilih-select2').select2({ width: '100%' });
+    $('.pilih-select2-kecil').select2({ width: '100%', minimumResultsForSearch: Infinity });
+  });
 </script>

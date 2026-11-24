@@ -245,11 +245,11 @@ class Esselon extends public_Controller {
 			$filename = $this->input->post('telaah_perihal');
 			$config['upload_path'] = './upload/telaah/';
 			$config['allowed_types'] = "gif|jpg|jpeg|png|pdf|doc|docx|xls|xlsx|ppt|pptx";
-			$config['overwrite']="true";
-			$config['max_size']="20000000";
+			$config['overwrite']=FALSE;
+			$config['max_size']=MAKS_UPLOAD_DOKUMEN_KB;
 			$config['max_width']="10000";
 			$config['max_height']="10000";
-			$config['file_name'] = ''.$filename;
+			$config['file_name'] = nama_file_unggah($filename);
 			$this->upload->initialize($config);
 			if(!$this->upload->do_upload()){
 				

@@ -73,6 +73,7 @@
                   $no++;
                 } 
                 ?>
+              <?php if (empty($rekap)) { echo baris_data_kosong(7); } ?>
               </table>
 
           </div>

@@ -36,7 +36,7 @@
                 </td> 							
               </tr> 							
               <tr> 								
-                <th class="col-md-3">NIK
+                <th class="col-md-3">NIK <span style="color:#999;font-weight:400;font-size:12px">(opsional)</span>
                 </th> 								
                 <td>
                   <input type="text" class="form-control" name="pegawai_nik">
@@ -59,11 +59,19 @@
                 <th class="col-md-3">Golongan
                 </th>								
                 <td>
-                  <select class="form-control" name="pegawai_golongan">									
-                    <option value="">- Pilih Golongan -
-                    </option>									
-                    <?php foreach($golongan as $v){										
-						echo "<option value='$v->golongan'>$v->golongan</option>" ;									}?>									
+                  <select class="form-control pilih-select2" name="pegawai_golongan" style="width:100%">
+                    <option value="">- Pilih Golongan -</option>
+                    <?php
+                    // dikelompokkan PNS / PPPK agar golongan PPPK langsung terlihat
+                    $kelompok_gol = array('PNS' => array(), 'PPPK' => array());
+                    foreach ($golongan as $v) { $kelompok_gol[$v->pangkat === 'PPPK' ? 'PPPK' : 'PNS'][] = $v; }
+                    foreach ($kelompok_gol as $label => $daftar) { if (!$daftar) continue; ?>
+                    <optgroup label="<?php echo $label; ?>">
+                      <?php foreach ($daftar as $v) { ?>
+                      <option value="<?php echo html_escape($v->golongan); ?>" <?php echo set_select('pegawai_golongan', $v->golongan); ?>><?php echo html_escape($v->golongan . ($v->pangkat === 'PPPK' ? ' (PPPK)' : ' - ' . $v->pangkat)); ?></option>
+                      <?php } ?>
+                    </optgroup>
+                    <?php } ?>
                   </select>								
                 </td>							
               </tr>							
@@ -71,7 +79,7 @@
                 <th class="col-md-3">Jabatan
                 </th>								
                 <td>
-                  <select class="form-control" name="pegawai_jabatan">									
+                  <select class="form-control pilih-select2" name="pegawai_jabatan" style="width:100%">									
                     <option value="">- Pilih Jabatan -
                     </option>									
                     <?php foreach($jabatan as $v){										
@@ -92,7 +100,7 @@
                 <th class="col-md-3">Bagian
                 </th>							  
                 <td>
-                  <select class="form-control" name="bagian_id">									
+                  <select class="form-control pilih-select2" name="bagian_id" style="width:100%">									
                     <?php  if ($staff_sekda) { ?> 									  
                     <?php foreach($bagian as $v){											
 						echo "<option value='$v->bagian_id'>$v->nama_bagian</option>" ;
@@ -112,13 +120,14 @@
                 <th class="col-md-3">Tanda Tangan
                 </th>							  
                 <td>
-                  <input type="file" class="form-control" name="userfile" >
+                  <input type="file" class="form-control" name="userfile" data-maks-mb="2" accept=".png,image/png">
+                  <p class="help-block">Format PNG (disarankan latar transparan).</p>
                 </td>							
               </tr>	
 			  <tr>
 				<th class="col-md-3">Status Tanda Tangan</th>
 				<td>
-					<select class="form-control" name="status_tandatangan">
+					<select class="form-control pilih-select2-kecil" name="status_tandatangan" style="width:100%">
 						<option value="1" <?php if (set_value('status_tandatangan')=="1"){ echo "selected";} ?> >Aktif</option>
 						<option value="0" <?php if (set_value('status_tandatangan')=="0"){ echo "selected";} ?> >Tidak Aktif</option>
 					</select>
@@ -154,7 +163,7 @@
   <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-<script>	var ckeditor = CKEDITOR.replace('ckeditor');
+<script>	if (document.getElementById('ckeditor')) { var ckeditor = CKEDITOR.replace('ckeditor'); }
 </script>
 <script type="text/javascript">	$(function() {
     $('#datepicker').datepicker({
@@ -162,4 +171,11 @@
                                );
   }
                                  );
+</script>
+<script type="text/javascript">
+  // Select2 untuk semua pilihan di form pegawai (popup native select di halaman ini bisa langsung menutup)
+  $(function () {
+    $('.pilih-select2').select2({ width: '100%' });
+    $('.pilih-select2-kecil').select2({ width: '100%', minimumResultsForSearch: Infinity });
+  });
 </script>

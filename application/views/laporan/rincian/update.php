@@ -127,7 +127,7 @@
 					</tr>
 					<tr>
 					  <th class="col-md-3">Foto</th>
-					  <td><input type="file" class="form-control" name="userfile">
+					  <td><input type="file" class="form-control" name="userfile" data-maks-mb="2" accept="image/png,image/jpeg,image/gif">
 					  <br><img src="<?php echo base_url();?>upload/bukti/<?php echo $entry[0]['foto']?>" width="200" height="150">
 					  </td>
 					</tr>

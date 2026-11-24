@@ -39,10 +39,11 @@ class M_widget extends CI_Model
   																		LEFT JOIN table_pimpinan 	c ON b.telaah_pelaksana		=	c.pegawai_id
   																		LEFT JOIN table_skpd 			d ON d.skpd_id						=	c.skpd_id
   															");
+  	} else {
+  		// timeline tidak dikenal: tidak ada data (sebelumnya error "Undefined variable $query")
+  		return array();
   	}
-  	
 
-    
     return $query->result();
 
   }

@@ -64,6 +64,7 @@
   									$no++;
   								} 
   								?>
+  							<?php if (empty($anggota)) { echo baris_data_kosong(4); } ?>
   							</table>
   						</div>
   						<!-- /.box-body -->

@@ -54,21 +54,21 @@
 							</div>
 							<div class="col-md-12">
 								<div class="form-group">
-									<label>Password</label>
-									<input type="password" class="form-control" name="password" >
+									<label>Password <small class="text-muted">(kosongkan bila tidak ingin mengganti)</small></label>
+									<input type="password" class="form-control" name="password" autocomplete="new-password">
 								</div>
 							</div>
 							<div class="col-md-12">
 								<div class="form-group">
 									<label>Ulangi Password</label>
-									<input type="password" class="form-control" name="password_confirm">
+									<input type="password" class="form-control" name="password_confirm" autocomplete="new-password">
 								</div>
 							</div>
 							<div class="col-md-12">
 								<div class="form-group">
 									<label>SKPD</label>
 									<select class="form-control select2" name="skpd_id" id="skpd" onchange="tampilkan()">
-										<option >- Pilih -</option>
+										<option value="">- Pilih SKPD -</option>
 										<?php
 										foreach ($skpd as $s) {
 											if	($s->skpd_id==$entry[0]['skpd_id']){
@@ -84,11 +84,14 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label>Pilih Group</label>
-									<select class="form-control" name="groups[]" id="group" onchange="tampilkan()">
+									<select class="form-control pilih-select2" name="groups[]" id="group" onchange="tampilkan()">
 										<option value="">- Pilih Group -</option>
 										<?php foreach($groups as $v){
 											if($entry[0]['group_id'] == $v->id){
 												echo "<option value='$v->id' selected>$v->name</option>" ;
+											} else if (!empty($v->penuh)) {
+												// role berkuota yang sudah penuh (mis. Walikota 2/2) tidak bisa dipilih
+												echo "<option value='$v->id' disabled>$v->name (penuh: $v->penuh)</option>";
 											} else{
 												echo "<option value='$v->id'>$v->name</option>" ;
 											}
@@ -104,7 +107,7 @@
 									<div class="col-md-12">
 										<div class="form-group">
 											<label>Pilih Sub Bagian</label>
-											<select class="form-control" name="subbagian">
+											<select class="form-control pilih-select2" name="subbagian">
 												<option value="">- Pilih Sub Bagian -</option>
 												<?php foreach($subbagian as $v){
 													if($entry[0]['subbagian_id'] == $v->subbagian_id){
@@ -125,7 +128,7 @@
 										<div class="col-md-12">
 											<div class="form-group">
 												<label>Pilih Bagian</label>
-												<select class="form-control" name="bagian">
+												<select class="form-control pilih-select2" name="bagian">
 													<option value="">- Pilih Bagian -</option>
 													<?php foreach($bagian as $v){
 														if($entry[0]['bagian_id'] == $v->bagian_id){
@@ -146,7 +149,7 @@
 											<div class="col-md-12">
 												<div class="form-group">
 													<label>Pilih Asisten</label>
-													<select class="form-control" name="asisten">
+													<select class="form-control pilih-select2" name="asisten">
 														<option value="">- Pilih Asisten -</option>
 														<?php foreach($asisten as $v){
 															if($entry[0]['asisten_id'] == $v->asisten_id){
@@ -180,7 +183,7 @@
 				</div>
 				<!-- /.content-wrapper -->
 				<script>
-					var ckeditor = CKEDITOR.replace('ckeditor');
+					if (window.CKEDITOR && document.getElementById('ckeditor')) { CKEDITOR.replace('ckeditor'); }
 				</script><script>
 				function tampilkan(){
 					var id_user=document.getElementById("form1").skpd.value;
@@ -221,6 +224,8 @@
 <script>
 	$(function () {
 		//Initialize Select2 Elements
-		$(".select2").select2();
+		$(".select2").select2({ width: '100%' });
+		// pilihan pendek tanpa kolom cari; dipakai pengganti dropdown bawaan browser yang menutup sendiri
+		$(".pilih-select2").select2({ minimumResultsForSearch: Infinity, width: '100%' });
 	});
 </script>

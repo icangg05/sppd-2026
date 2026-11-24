@@ -194,6 +194,7 @@
 								}
   							} 
   							?>
+  						<?php if (empty($data)) { echo baris_data_kosong(7); } ?>
   						</table>
   					</div>
   				</div>

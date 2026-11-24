@@ -37,6 +37,7 @@
 				<td> <a href="#"  class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal<?php echo $v->id_anggaran;?>"><i class="fa fa-eyes"></i> Lihat</a></td>
 			</tr>
 			<?php } ?>
+		  <?php if (empty($anggaran)) { echo baris_data_kosong(3); } ?>
 		  </table>
 		  
 			<?php foreach($anggaran as $v){ ?>

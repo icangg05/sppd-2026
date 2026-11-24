@@ -12,8 +12,41 @@ class Skpd extends public_Controller
 		$this->load->model('telaah/m_relasi_kelurahan');
 		$this->load->model('setting_admin/m_jenis_skpd');
 
-		if ((!$this->ion_auth->get_users_groups()->row()->id == 9) || (!$this->ion_auth->get_users_groups()->row()->id == 100)) {
-			redirect('beranda');
+		$this->wajib_admin(); // pembatasan per method ada di bawah
+
+		// Daftar/tambah/hapus SKPD hanya untuk super admin.
+		// Admin OPD hanya boleh membuka dan mengubah SKPD miliknya sendiri.
+		$method = strtolower((string) $this->router->fetch_method());
+		if (!in_array($method, array('update_view', 'update'), TRUE)) {
+			$this->wajib_super_admin();
+		}
+	}
+
+	// Super admin boleh semua SKPD; admin OPD hanya SKPD miliknya
+	private function boleh_ubah_skpd($skpd_id)
+	{
+		$skpd_id = (int) $skpd_id;
+		if ($skpd_id <= 0) {
+			return FALSE;
+		}
+		return $this->is_super_admin() || $skpd_id === $this->skpd_id_login();
+	}
+
+	// Nama file kop surat: jangan pakai input mentah (dulu memakai skpd_nama apa adanya).
+	// Tanpa titik agar ekstensi diambil dari file upload yang sudah divalidasi CI.
+	private function nama_file_kop($nama)
+	{
+		$nama = trim(preg_replace('/[^A-Za-z0-9]+/', '_', (string) $nama), '_');
+		$nama = substr($nama, 0, 60);
+		return ($nama !== '' ? $nama : 'kop_surat') . '_' . bin2hex(random_bytes(4));
+	}
+
+	private function hapus_file_kop($nama_file)
+	{
+		$nama_file = basename((string) $nama_file);
+		$path = './upload/kop_surat/' . $nama_file;
+		if ($nama_file !== '' && is_file($path)) {
+			unlink($path);
 		}
 	}
 
@@ -179,18 +212,18 @@ class Skpd extends public_Controller
 				redirect('setting_root/skpd');
 			} else {
 
-				$filename = $this->input->post('skpd_nama');
+				$filename = $this->nama_file_kop($this->input->post('skpd_nama'));
 				$config['upload_path'] = './upload/kop_surat/';
 				$config['allowed_types'] = "gif|jpg|jpeg|png|webp";
-				$config['overwrite'] = "true";
-				$config['max_size'] = "20000000";
+				$config['overwrite'] = FALSE;
+				$config['max_size'] = MAKS_UPLOAD_GAMBAR_KB;
 				$config['max_width'] = "10000";
 				$config['max_height'] = "10000";
-				$config['file_name'] = '' . $filename;
+				$config['file_name'] = $filename; // sudah acak
 				$this->upload->initialize($config);
 
 				if (!$this->upload->do_upload('userfile')) {
-					$this->session->set_flashdata('error', 'Gagal upload KOP Surat: ' . $this->upload->display_errors('', ''));
+					$this->session->set_flashdata('error', 'Gagal upload KOP Surat: ' . $this->upload->display_errors('', '') . ' (format JPG, PNG, GIF, WEBP, maks. 2 MB)');
 					redirect('setting_root/skpd/create_view');
 				} else {
 					$userfile = $this->upload->data();
@@ -258,6 +291,9 @@ class Skpd extends public_Controller
 	public function update_view()
 	{
 		$skpd_id = $this->encrypt->decode(base64_decode($this->input->get('skpd_id')), $this->session->userdata('encrypt_key'));
+		if (!$this->boleh_ubah_skpd($skpd_id)) {
+			redirect('beranda');
+		}
 
 		$this->data['skpd'] = $this->m_skpd->get_kecamatan();
 		$this->data['jenis_skpd'] = $this->m_jenis_skpd->get_all();
@@ -272,6 +308,10 @@ class Skpd extends public_Controller
 	//Update Data
 	public function update()
 	{
+		if (!$this->boleh_ubah_skpd($this->input->post('skpd_id'))) {
+			redirect('beranda');
+		}
+
 		//$this->form_validation->set_rules('skpd_kode', 'Kode SKPD', 'required');
 		$this->form_validation->set_rules('skpd_nama', 'Nama SKPD', 'required');
 
@@ -332,7 +372,6 @@ class Skpd extends public_Controller
 				}
 			} else {
 
-				$filename = $this->input->post('skpd_nama');
 				$path_file = './upload/kop_surat/';
 
 				// Ambil nama file lama dari database
@@ -350,21 +389,21 @@ class Skpd extends public_Controller
 					$config_upload = array();
 					$config_upload['upload_path'] = $path_file;
 					$config_upload['allowed_types'] = "gif|jpg|jpeg|png|webp";
-					$config_upload['overwrite'] = TRUE;
-					$config_upload['max_size'] = 20000000;
+					$config_upload['overwrite'] = FALSE;
+					$config_upload['max_size'] = MAKS_UPLOAD_GAMBAR_KB;
 					$config_upload['max_width'] = 10000;
 					$config_upload['max_height'] = 10000;
-					$config_upload['file_name'] = $filename;
+					$config_upload['file_name'] = $this->nama_file_kop($this->input->post('skpd_nama'));
 					$this->upload->initialize($config_upload);
 
 					if ($this->upload->do_upload('userfile')) {
 						$userfile = $this->upload->data();
 						// Hapus file lama hanya jika nama berbeda dengan file baru
-						if ($old_kop_surat && $old_kop_surat != $userfile['file_name'] && file_exists($path_file . $old_kop_surat)) {
-							unlink($path_file . $old_kop_surat);
+						if ($old_kop_surat && $old_kop_surat != $userfile['file_name']) {
+							$this->hapus_file_kop($old_kop_surat);
 						}
 					} else {
-						$this->session->set_flashdata('error', 'Gagal upload KOP Surat: ' . $this->upload->display_errors('', ''));
+						$this->session->set_flashdata('error', 'Gagal upload KOP Surat: ' . $this->upload->display_errors('', '') . ' (format JPG, PNG, GIF, WEBP, maks. 2 MB)');
 						$skpd_id = base64_encode($this->encrypt->encode($this->input->post('skpd_id'), $this->session->userdata('encrypt_key')));
 						redirect('setting_root/skpd/update_view?skpd_id=' . $skpd_id);
 					}
@@ -375,21 +414,21 @@ class Skpd extends public_Controller
 					$config_upload2 = array();
 					$config_upload2['upload_path'] = $path_file;
 					$config_upload2['allowed_types'] = "gif|jpg|jpeg|png|webp";
-					$config_upload2['overwrite'] = TRUE;
-					$config_upload2['max_size'] = 20000000;
+					$config_upload2['overwrite'] = FALSE;
+					$config_upload2['max_size'] = MAKS_UPLOAD_GAMBAR_KB;
 					$config_upload2['max_width'] = 10000;
 					$config_upload2['max_height'] = 10000;
-					$config_upload2['file_name'] = $filename;
+					$config_upload2['file_name'] = $this->nama_file_kop($this->input->post('skpd_nama'));
 					$this->upload->initialize($config_upload2);
 
 					if ($this->upload->do_upload('userfile2')) {
 						$userfile2 = $this->upload->data();
 						// Hapus file lama hanya jika nama berbeda dengan file baru
-						if ($old_kop_surat2 && $old_kop_surat2 != $userfile2['file_name'] && file_exists($path_file . $old_kop_surat2)) {
-							unlink($path_file . $old_kop_surat2);
+						if ($old_kop_surat2 && $old_kop_surat2 != $userfile2['file_name']) {
+							$this->hapus_file_kop($old_kop_surat2);
 						}
 					} else {
-						$this->session->set_flashdata('error', 'Gagal upload KOP Surat Anggota DPRD: ' . $this->upload->display_errors('', ''));
+						$this->session->set_flashdata('error', 'Gagal upload KOP Surat Anggota DPRD: ' . $this->upload->display_errors('', '') . ' (format JPG, PNG, GIF, WEBP, maks. 2 MB)');
 						$skpd_id = base64_encode($this->encrypt->encode($this->input->post('skpd_id'), $this->session->userdata('encrypt_key')));
 						redirect('setting_root/skpd/update_view?skpd_id=' . $skpd_id);
 					}
@@ -441,12 +480,14 @@ class Skpd extends public_Controller
 	{
 		$skpd_id = $this->encrypt->decode(base64_decode($this->input->get('skpd_id')), $this->session->userdata('encrypt_key'));
 
+		if ((int) $skpd_id <= 0) {
+			redirect('setting_root/skpd');
+		}
+
 		$image = $this->m_skpd->link_gambar($skpd_id);
-		if ($image->num_rows() > 0) {
+		if ($image && $image->num_rows() > 0) {
 			$row = $image->row();
-			$file_gambar = $row->kop_surat;
-			$path_file = './upload/kop_surat/';
-			unlink($path_file . $file_gambar);
+			$this->hapus_file_kop($row->kop_surat);
 		}
 
 		$this->m_skpd->delete($skpd_id);

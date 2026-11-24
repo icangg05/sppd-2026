@@ -87,6 +87,7 @@
 					</tr>           
 					<?php
 					} ?>         
+					<?php if (empty($pegawai)) { echo baris_data_kosong(4); } ?>
 					</table>       
 					</div>  
 					

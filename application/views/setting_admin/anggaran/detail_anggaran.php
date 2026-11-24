@@ -27,7 +27,7 @@
   									<th style="width: 150px">Perihal (Maksud Perjalanan Dinas)</th>
   									<th style="width: 200px">Pelaksana</th>
 									<th style="width: 125px">Anggaran Terpakai</th>
-                    <?php if($this->ion_auth->user()->row()->id==1){ ?>
+                    <?php $kolom_tambahan = 0; if($this->ion_auth->user()->row()->id==1){ $kolom_tambahan = 1; ?>
                     <th style="width: 100px">#</th>
                     <?php } ?>
   								</tr>
@@ -51,6 +51,7 @@
   								$number++;
   							} 
   							?>
+  						<?php if (empty($telaah)) { echo baris_data_kosong(5 + $kolom_tambahan); } ?>
   						</table>
   					</div>
   				</div>

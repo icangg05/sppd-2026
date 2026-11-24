@@ -9,6 +9,8 @@ class Anggotadprd extends public_Controller {
 		if(!($this->ion_auth->user()->row()->id)){
 			redirect('login');
 		}
+
+		$this->wajib_admin();
 	}
 	//View All Data
 	public function index()

@@ -2,6 +2,72 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class M_walikota extends CI_Model
 {
+	// Rekap yang dihitung sekali per request (dashboard & disposisi Walikota memanggil fungsi di bawah
+	// berkali-kali; dulu tiap panggilan memindai seluruh tabel perjalanan / biaya).
+	private $rekap_belanja_kota = NULL;
+	private $rekap_perjalanan_skpd = NULL;
+
+	// Jumlah rincian biaya & pengeluaran riil se-kota: semua, dan per jenis anggaran (1 dalam daerah,
+	// 2 luar daerah, 3 bimtek). Dua query satu kali jalan menggantikan delapan query terpisah.
+	// CASE tanpa ELSE: hasil NULL bila tidak ada data, sama seperti query lama.
+	private function rekap_belanja_kota()
+	{
+		if ($this->rekap_belanja_kota === NULL) {
+			$jenis = '';
+			foreach (array(1, 2, 3) as $j) {
+				$jenis .= ", SUM(CASE WHEN c.jenis_anggaran = $j THEN %s END) AS j$j";
+			}
+			$rincian = $this->db->query("SELECT SUM(a.tarif*a.item) AS semua" . sprintf($jenis, 'a.tarif*a.item', 'a.tarif*a.item', 'a.tarif*a.item') . "
+				FROM table_rincian_biaya a
+				LEFT JOIN table_telaah b ON a.telaah_id = b.telaah_id
+				LEFT JOIN table_anggaran c ON b.telaah_kegiatan = c.id_anggaran")->row_array();
+			$pengeluaran = $this->db->query("SELECT SUM(a.tarif) AS semua" . sprintf($jenis, 'a.tarif', 'a.tarif', 'a.tarif') . "
+				FROM table_pengeluaran_rill a
+				LEFT JOIN table_telaah b ON a.telaah_id = b.telaah_id
+				LEFT JOIN table_anggaran c ON b.telaah_kegiatan = c.id_anggaran")->row_array();
+			$this->rekap_belanja_kota = array('rincian' => $rincian, 'pengeluaran' => $pengeluaran);
+		}
+		return $this->rekap_belanja_kota;
+	}
+
+	private function jumlah_belanja_kota($sumber, $kolom)
+	{
+		$rekap = $this->rekap_belanja_kota();
+		return array(array('jumlah' => $rekap[$sumber][$kolom]));
+	}
+
+	// Jumlah perjalanan (status 1, 2, 5) per SKPD: total, luar daerah (domain 1/2/5), dalam daerah (domain 3/4).
+	// Satu query menggantikan grafik_perjalanan() x4 + grafik_pdld()/grafik_pddd() untuk setiap SKPD.
+	private function rekap_perjalanan_skpd()
+	{
+		if ($this->rekap_perjalanan_skpd === NULL) {
+			$this->rekap_perjalanan_skpd = array();
+			$baris = $this->db->query("SELECT s.skpd_id, s.skpd_nama, s.jenis_skpd, COUNT(*) AS total,
+					SUM(t.telaah_domainperjalanan IN ('1','2','5')) AS pdld,
+					SUM(t.telaah_domainperjalanan IN ('3','4')) AS pddd
+				FROM table_telaah t
+				JOIN table_pegawai p ON t.telaah_pelaksana = p.pegawai_id
+				JOIN table_skpd s ON p.skpd_id = s.skpd_id
+				WHERE t.telaah_status IN ('1','2','5')
+				GROUP BY s.skpd_id, s.skpd_nama, s.jenis_skpd")->result();
+			foreach ($baris as $b) {
+				$this->rekap_perjalanan_skpd[(int) $b->skpd_id] = $b;
+			}
+		}
+		return $this->rekap_perjalanan_skpd;
+	}
+
+	private function jumlah_perjalanan_skpd($skpd_id, $kolom)
+	{
+		$rekap = $this->rekap_perjalanan_skpd();
+		$b = isset($rekap[(int) $skpd_id]) ? $rekap[(int) $skpd_id] : NULL;
+		return array(array(
+			'total'     => $b ? (int) $b->$kolom : 0,
+			'skpd_id'   => $b ? $b->skpd_id : NULL,
+			'skpd_nama' => $b ? $b->skpd_nama : NULL,
+		));
+	}
+
 	// TAMPILAN DASHBOARD-----------------------------------------------------------------------------------------//
 	
 	// Total List Telaah Camat
@@ -73,17 +139,11 @@ class M_walikota extends CI_Model
 	}
 	
 	public function rincian_belanja() {
-		$query  = $this->db->query("SELECT (SELECT SUM(tarif*item) ) as jumlah  FROM table_rincian_biaya a 
-									LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
-									LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran ");
-		return $query->result_array();
+		return $this->jumlah_belanja_kota('rincian', 'semua');
 	}
 	
 	public function pengeluaran_rill() {
-		$query  = $this->db->query("SELECT SUM(tarif) as jumlah FROM table_pengeluaran_rill a
-									LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
-									LEFT JOIN table_anggaran c ON b.telaah_kegiatan=c.id_anggaran");
-		return $query->result_array();
+		return $this->jumlah_belanja_kota('pengeluaran', 'semua');
 	}
 	
 	## Total Anggaran Dalam Daerah
@@ -96,6 +156,9 @@ class M_walikota extends CI_Model
 	}
 	
 	public function rincian_belanja_dalam_daerah($skpd_id) {
+		if (!$skpd_id) {
+			return $this->jumlah_belanja_kota('rincian', 'j1'); // se-kota: dari rekap
+		}
 		if($skpd_id){
 			$query  = $this->db->query("SELECT (SELECT SUM(tarif*item) ) as jumlah FROM table_rincian_biaya a 
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
@@ -111,6 +174,9 @@ class M_walikota extends CI_Model
 	}
 	
 	public function pengeluaran_rill_dalam_daerah($skpd_id) {
+		if (!$skpd_id) {
+			return $this->jumlah_belanja_kota('pengeluaran', 'j1'); // se-kota: dari rekap
+		}
 		if($skpd_id){
 			$query  = $this->db->query("SELECT SUM(tarif) as jumlah FROM table_pengeluaran_rill a
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
@@ -135,6 +201,9 @@ class M_walikota extends CI_Model
 	}
 	
 	public function rincian_belanja_luar_daerah($skpd_id) {
+		if (!$skpd_id) {
+			return $this->jumlah_belanja_kota('rincian', 'j2'); // se-kota: dari rekap
+		}
 		if($skpd_id){
 			$query  = $this->db->query("SELECT (SELECT SUM(tarif*item)) as jumlah FROM table_rincian_biaya a 
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
@@ -150,6 +219,9 @@ class M_walikota extends CI_Model
 	}
 	
 	public function pengeluaran_rill_luar_daerah($skpd_id) {
+		if (!$skpd_id) {
+			return $this->jumlah_belanja_kota('pengeluaran', 'j2'); // se-kota: dari rekap
+		}
 		if($skpd_id){
 			$query  = $this->db->query("SELECT SUM(tarif) as jumlah FROM table_pengeluaran_rill a
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
@@ -174,6 +246,9 @@ class M_walikota extends CI_Model
 	}
 	
 	public function rincian_belanja_bimtek($skpd_id) {
+		if (!$skpd_id) {
+			return $this->jumlah_belanja_kota('rincian', 'j3'); // se-kota: dari rekap
+		}
 		if($skpd_id){
 			$query  = $this->db->query("SELECT (SELECT SUM(tarif*item) ) as jumlah FROM table_rincian_biaya a 
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id 
@@ -189,6 +264,9 @@ class M_walikota extends CI_Model
 	}
 	
 	public function pengeluaran_rill_bimtek($skpd_id) {
+		if (!$skpd_id) {
+			return $this->jumlah_belanja_kota('pengeluaran', 'j3'); // se-kota: dari rekap
+		}
 		if($skpd_id){
 			$query  = $this->db->query("SELECT SUM(tarif) as jumlah FROM table_pengeluaran_rill a
 										LEFT JOIN table_telaah b ON a.telaah_id=b.telaah_id
@@ -505,31 +583,18 @@ class M_walikota extends CI_Model
 	}
 	
 	public function grafik_perjalanan($skpd_id) {
-		$this->db->select('count(*) as total, table_skpd.skpd_id, skpd_nama');
-		$this->db->from('table_telaah');
-		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana = table_pegawai.pegawai_id');
-		$this->db->join('table_skpd','table_pegawai.skpd_id = table_skpd.skpd_id');
-		$this->db->where("(table_telaah.telaah_status='1' OR table_telaah.telaah_status='2' OR table_telaah.telaah_status='5')");
-		$this->db->where("table_skpd.skpd_id !='171'");
-		$this->db->where("table_skpd.skpd_id !='172'");
-		$this->db->where('table_skpd.jenis_skpd',$skpd_id);
-		$this->db->group_by('table_skpd.skpd_id');
-		$this->db->order_by('total','DESC');
-		$query = $this->db->get ();
-		return $query->result();
+		$hasil = array();
+		foreach ($this->rekap_perjalanan_skpd() as $b) {
+			if ((int) $b->jenis_skpd === (int) $skpd_id && !in_array((int) $b->skpd_id, array(171, 172), TRUE)) {
+				$hasil[] = (object) array('total' => (int) $b->total, 'skpd_id' => $b->skpd_id, 'skpd_nama' => $b->skpd_nama);
+			}
+		}
+		usort($hasil, function ($a, $b) { return $b->total - $a->total; });
+		return $hasil;
 	}
 	
 	public function grafik_pdld($skpd_id) {
-		$this->db->select('count(*) as total, table_skpd.skpd_id, skpd_nama');
-		$this->db->from('table_telaah');
-		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana = table_pegawai.pegawai_id');
-		$this->db->join('table_skpd','table_pegawai.skpd_id = table_skpd.skpd_id');
-		$this->db->where("(table_telaah.telaah_status='1' OR table_telaah.telaah_status='2' OR table_telaah.telaah_status='5')");
-		$this->db->where("(table_telaah.telaah_domainperjalanan='1' OR table_telaah.telaah_domainperjalanan='2' OR table_telaah.telaah_domainperjalanan='5')");
-		$this->db->where('table_skpd.skpd_id',$skpd_id);
-		$this->db->order_by('total','DESC');
-		$query = $this->db->get ();
-		return $query->result_array();
+		return $this->jumlah_perjalanan_skpd($skpd_id, 'pdld');
 	}
 	
 	public function grafik_pdld_all($jenis_skpd) {
@@ -548,16 +613,7 @@ class M_walikota extends CI_Model
 	}
 	
 	public function grafik_pddd($skpd_id) {
-		$this->db->select('count(*) as total, table_skpd.skpd_id, skpd_nama');
-		$this->db->from('table_telaah');
-		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana = table_pegawai.pegawai_id');
-		$this->db->join('table_skpd','table_pegawai.skpd_id = table_skpd.skpd_id');
-		$this->db->where("(table_telaah.telaah_status='1' OR table_telaah.telaah_status='2' OR table_telaah.telaah_status='5')");
-		$this->db->where("(table_telaah.telaah_domainperjalanan='3' OR table_telaah.telaah_domainperjalanan='4')");
-		$this->db->where('table_skpd.skpd_id',$skpd_id);
-		$this->db->order_by('total','DESC');
-		$query = $this->db->get ();
-		return $query->result_array();
+		return $this->jumlah_perjalanan_skpd($skpd_id, 'pddd');
 	}
 	
 	public function grafik_pddd_all($jenis_skpd) {

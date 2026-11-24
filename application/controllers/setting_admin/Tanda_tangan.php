@@ -9,6 +9,16 @@ class Tanda_tangan extends public_Controller {
 		$this->load->model('telaah/m_relasi_kelurahan');
 		$this->load->model('setting_admin/m_jenis_skpd');
 		$this->load->model('setting/m_log');
+
+		$this->wajib_admin();
+
+		// Admin hanya boleh mengelola tanda tangan milik SKPD-nya sendiri
+		$method = strtolower((string) $this->router->fetch_method());
+		if (in_array($method, array('update_view', 'delete'), TRUE)) {
+			$this->wajib_milik_skpd('table_tanda_tangan', 'tanda_tangan_id', $this->id_dari_get('tanda_tangan_id'), 'setting_admin/tanda_tangan');
+		} elseif ($method === 'update') {
+			$this->wajib_milik_skpd('table_tanda_tangan', 'tanda_tangan_id', $this->input->post('tanda_tangan_id'), 'setting_admin/tanda_tangan');
+		}
 	}
 	//View All Data
 	public function index()
@@ -155,14 +165,15 @@ class Tanda_tangan extends public_Controller {
 					$filename = $this->input->post('userfile');
 					$config['upload_path'] = './upload/tanda_tangan/';
 					$config['allowed_types'] = "gif|jpg|jpeg|png";
-					$config['overwrite']="true";
-					$config['max_size']="20000000";
+					$config['overwrite']=FALSE;
+					$config['max_size']=MAKS_UPLOAD_GAMBAR_KB;
 					$config['max_width']="10000";
 					$config['max_height']="10000";
-					$config['file_name'] = ''.$filename;
+					$config['file_name'] = nama_file_unggah($filename);
 					$this->upload->initialize($config);
 					if(!$this->upload->do_upload()){
-						echo  $this->upload->display_errors();
+						$this->session->set_flashdata('error', 'Tanda tangan gagal diunggah: ' . $this->upload->display_errors('', '') . ' (format PNG, JPG, GIF, maks. 2 MB)');
+						redirect('setting_admin/tanda_tangan/create_view');
 					}else {
 						
 						$dat = $this->upload->data();
@@ -242,14 +253,15 @@ class Tanda_tangan extends public_Controller {
 					$filename = $this->input->post('userfile');
 					$config['upload_path'] = './upload/tanda_tangan/';
 					$config['allowed_types'] = "gif|jpg|jpeg|png";
-					$config['overwrite']="true";
-					$config['max_size']="20000000";
+					$config['overwrite']=FALSE;
+					$config['max_size']=MAKS_UPLOAD_GAMBAR_KB;
 					$config['max_width']="10000";
 					$config['max_height']="10000";
-					$config['file_name'] = ''.$filename;
+					$config['file_name'] = nama_file_unggah($filename);
 					$this->upload->initialize($config);
 					if(!$this->upload->do_upload()){
-						echo  $this->upload->display_errors();
+						$this->session->set_flashdata('error', 'Tanda tangan gagal diunggah: ' . $this->upload->display_errors('', '') . ' (format PNG, JPG, GIF, maks. 2 MB)');
+						redirect('setting_admin/tanda_tangan/update_view?tanda_tangan_id=' . base64_encode($this->encrypt->encode($this->input->post('tanda_tangan_id'), $this->session->userdata('encrypt_key'))));
 					}else {
 						
 						$image = $this->m_tanda_tangan->link_gambar($this->input->post('tanda_tangan_id'));
@@ -258,7 +270,7 @@ class Tanda_tangan extends public_Controller {
 							$row = $image->row();			
 							$file_gambar = $row->tanda_tangan;
 							$path_file = './upload/tanda_tangan/';
-							unlink($path_file.$file_gambar);
+							hapus_file_unggah($path_file, $file_gambar);
 						}					
 						
 						$dat = $this->upload->data();
@@ -295,10 +307,11 @@ class Tanda_tangan extends public_Controller {
 			$row = $image->row();			
 			$file_gambar = $row->tanda_tangan;
 			$path_file = './upload/tanda_tangan/';
-			unlink($path_file.$file_gambar);
+			hapus_file_unggah($path_file, $file_gambar);
 		}	
 		$this->m_tanda_tangan->delete($tanda_tangan_id);
-		$this->m_relasi_kelurahan->delete($tanda_tangan_id);
+		// (dulu juga memanggil m_relasi_kelurahan->delete($tanda_tangan_id): salinan dari controller SKPD
+		//  yang ikut menghapus relasi kecamatan-kelurahan milik SKPD dengan id yang sama)
 		
 		/*$log['kode_log_action'] = "56";
 		$log['action'] = "DELETE skpd_id = ".$skpd_id;

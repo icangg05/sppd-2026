@@ -106,6 +106,7 @@
              <a href="<?php echo base_url();?>setting_admin/anggaran/delete?id_anggaran=<?php echo $id_anggaran?>" class="btn btn-sm btn-flat btn-danger btn-block" onclick="return confirm('Anda Yakin ?');"><i class="fa fa-trash"></i> HAPUS</a></td>
            </tr>
            <?php } ?>
+         <?php if (empty($anggaran)) { echo baris_data_kosong(10); } ?>
          </table>
        </div>
        <!-- /.box-body -->

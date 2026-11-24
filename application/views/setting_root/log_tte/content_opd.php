@@ -62,6 +62,7 @@
           <td><?php echo $v->action_table;?></td>
         </tr>
         <?php } ?>
+      <?php if (empty($log)) { echo baris_data_kosong(5); } ?>
       </table>
     </div>
     <!-- /.box-body -->

@@ -51,6 +51,7 @@
                <a href="<?php echo base_url();?>setting_root/skpd/delete?skpd_id=<?php echo $skpd_id?>" class="btn btn-sm btn-flat btn-danger" onclick="return confirm('Anda Yakin ?');"><i class="fa fa-trash"></i> HAPUS</a>
              </tr>
              <?php } ?>
+           <?php if (empty($skpd)) { echo baris_data_kosong(2); } ?>
            </table>
          </div>
          <!-- /.box-body -->

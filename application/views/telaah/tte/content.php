@@ -112,6 +112,7 @@
 			</div>
 			
            <?php } ?>
+         <?php if (empty($data)) { echo baris_data_kosong(8); } ?>
          </table>
        </div>
        <!-- /.box-body -->

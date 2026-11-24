@@ -19,10 +19,7 @@ class Export extends public_Controller {
 		$this->load->model('setting/m_log');	
 		$this->load->library('excel');	
 		
-		if((!$this->ion_auth->get_users_groups()->row()->id == 9) || (!$this->ion_auth->get_users_groups()->row()->id == 100))
-		{
-			redirect('login');
-		}
+		$this->wajib_admin();
     }
     
     //View All Data

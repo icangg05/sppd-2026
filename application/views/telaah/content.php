@@ -1,3 +1,10 @@
+  <?php
+  // Halaman ini (index_admin / search_admin / result_admin) khusus super admin: user id 1 atau grup 100
+  $grup_login_telaah = $this->ion_auth->get_users_groups()->row();
+  $super_admin_telaah = ((int) $this->ion_auth->user()->row()->id === 1)
+    || ($grup_login_telaah && (int) $grup_login_telaah->id === 100);
+  $data = (isset($data) && is_array($data)) ? $data : array();
+  ?>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
   	<!-- Content Header (Page header) -->
@@ -30,7 +37,7 @@
 					</h3>
   					</div>
   					<div class="box-header with-border">
-  						<?php if ($this->ion_auth->user()->row()->id==1){ ?>
+  						<?php if ($super_admin_telaah){ ?>
   						<?php echo form_open("telaah/list_telaah/search_admin/".$this->uri->segment(4));?>
   						<div class="col-md-9"></div>
   						<div class="col-md-3">
@@ -70,7 +77,7 @@
   						}
   						?>
   						<p><center>
-							<?php if ($this->ion_auth->get_users_groups()->row()->id == 9 && $this->ion_auth->user()->row()->id==1){ ?>
+							<?php if ($super_admin_telaah){ ?>
 								<a href="<?php echo base_url();?>telaah/list_telaah/index_admin/<?php echo $this->uri->segment(4);?>" class="btn btn-flat <?php if($this->uri->segment(3)=="index_admin"){ echo "btn-info";}else{ echo "btn-default";}?>">ALL</a>
 								<a href="<?php echo base_url();?>telaah/list_telaah/result_admin/<?php echo $this->uri->segment(4);?>/0" class="btn btn-flat <?php if($this->uri->segment(3)=="result_admin" && $this->uri->segment(5)==0){ echo "btn-primary";}else{ echo "btn-default";}?>">MASUK</a>
 								<a href="<?php echo base_url();?>telaah/list_telaah/result_admin/<?php echo $this->uri->segment(4);?>/1" class="btn btn-flat <?php if($this->uri->segment(3)=="result_admin" && $this->uri->segment(5)==1){ echo "btn-warning";}else{ echo "btn-default";}?>">DI PROSES</a>
@@ -93,16 +100,17 @@
   									<th style="width: 200px">Pelaksana</th>
   									<th style="width: 40px">Status</th>
 									<?php 
+									$kolom_tambahan = 0; // kolom OPD/Kategori/Bagian sesuai jenis telaah
 									switch($this->uri->segment(4)){
 										case "esselon" 			: if($this->ion_auth->user()->row()->jenis_skpd == 10 || 
-																	($this->ion_auth->user()->row()->id==1)){
-																		echo "<th style='width: 40px'>OPD</th>"; 
+																	$super_admin_telaah){
+																		echo "<th style='width: 40px'>OPD</th>"; $kolom_tambahan = 1;
 																	} break;
-										case "kadis" 			: echo "<th style='width: 40px'>OPD</th>";  break;
-										case "dprd" 			: echo "<th style='width: 40px'>Kategori</th>"; break;
-										case "staff_lurah" 		: echo "<th style='width: 40px'>Kategori</th>"; break;
-										case "staff_setda" 		: echo "<th style='width: 40px'>Sub Bagian</th>"; break;
-										case "staff_camat" 		: echo "<th style='width: 40px'>Bagian</th>"; break;
+										case "kadis" 			: echo "<th style='width: 40px'>OPD</th>";  $kolom_tambahan = 1; break;
+										case "dprd" 			: echo "<th style='width: 40px'>Kategori</th>"; $kolom_tambahan = 1; break;
+										case "staff_lurah" 		: echo "<th style='width: 40px'>Kategori</th>"; $kolom_tambahan = 1; break;
+										case "staff_setda" 		: echo "<th style='width: 40px'>Sub Bagian</th>"; $kolom_tambahan = 1; break;
+										case "staff_camat" 		: echo "<th style='width: 40px'>Bagian</th>"; $kolom_tambahan = 1; break;
 										case "staff_lurah" 		: echo "<th style='width: 40px'>Bagian</th>"; break;
 									} 
 									?>		
@@ -179,7 +187,7 @@
 																			} else { 
 																				echo "<td><span class='label label-danger'>".$v->skpd_nama."</span></td>";
 																			} 
-																		} else if ($this->ion_auth->user()->row()->id==1){
+																		} else if ($super_admin_telaah){
 																			echo "<td>".$v->skpd_nama."</td>";
 																		}  break;
 											case "kadis" 			: echo "<td>".$v->skpd_nama."</td>"; break;
@@ -203,7 +211,7 @@
   										
   										<a href="<?php echo base_url();?>telaah/list_telaah/update_view/<?php echo $this->uri->segment(4)?>?telaah_id=<?php echo $telaah_id?>" class="btn btn-sm btn-block btn-primary"><i class="fa fa-edit"></i> Edit Telaah</a>
 										
-										<?php if($this->ion_auth->user()->row()->id==1 || $this->ion_auth->get_users_groups()->row()->id == 9){?>
+										<?php if($super_admin_telaah || ($grup_login_telaah && (int) $grup_login_telaah->id === 9)){?>
 											<button class="btn btn-sm btn-block btn-danger"" data-toggle="modal" data-target="#myModal<?php echo $v->telaah_id?>" ><i class="fa fa-trash-o"></i> Hapus Telaah </button>
 										<?php } ?>
   										</td>
@@ -222,16 +230,12 @@
 										<h4 class="modal-title">Hapus Telaah <?php echo $v->telaah_id?></h4>
 									  </div>
 									  <?php 
-									  if($this->ion_auth->user()->row()->id==1 ){
-										echo form_open("admin/delete_telaah");
-									  } else {
-										echo form_open("list_telaah/esselon/delete_telaah");  
-									  }
+									  echo form_open("telaah/list_telaah/delete_telaah");
 									  ?>
 									  <div class="modal-body">
 										<p>Apakah anda yakin ingin menghapus telaah <?php echo "<b>".($this->uri->segment(4)=="dprd" ? $v->anggotadprd_name : $v->pegawai_nama)."</b> dengan Perihal : <b>".$v->telaah_perihal."</b> ?"?>.</p>
-										<input type="text" name="telaah_id" value="<?php echo $v->telaah_id?>">
-										<input type="text" name="url" value="<?php echo $this->uri->segment(4)?>">
+										<input type="hidden" name="telaah_id" value="<?php echo $v->telaah_id?>">
+										<input type="hidden" name="url" value="<?php echo html_escape($this->uri->segment(4))?>">
 									  </div>
 									  <div class="modal-footer">
 										<button type="submit" class="btn btn-danger">Hapus</button>
@@ -251,6 +255,7 @@
   								$number++;
   							} 
   							?>
+  							<?php if (empty($data)) { echo baris_data_kosong(7 + $kolom_tambahan); } ?>
   						</table>
   					</div>
   				</div>

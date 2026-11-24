@@ -9,6 +9,13 @@
 		window.tteTombolLoading = true;
 		var BATAS_WAKTU = 90000; // ms
 
+		// input passphrase bisa dibungkus tombol lihat/sembunyikan (span.lihat-sandi, dari footer):
+		// pesan ditaruh setelah pembungkusnya agar tidak tertimpa tombol
+		function jangkarPesan($pass) {
+			var $bungkus = $pass.parent('.lihat-sandi');
+			return $bungkus.length ? $bungkus : $pass;
+		}
+
 		function pulihkan(form, pesan) {
 			var $form = $(form);
 			clearTimeout($form.data('tte-timer'));
@@ -20,7 +27,7 @@
 					$tombol.prop('disabled', false).html($tombol.data('tte-label'));
 				}
 			});
-			var $pass = $(form.elements).filter('[name="passphrase"]');
+			var $pass = jangkarPesan($(form.elements).filter('[name="passphrase"]'));
 			$pass.siblings('.tte-pesan').remove();
 			if (pesan) {
 				$('<p class="text-danger tte-pesan" style="margin-top:6px;"></p>').text(pesan).insertAfter($pass);
@@ -33,7 +40,7 @@
 				return false;
 			}
 			$form.data('tte-proses', true);
-			$(form.elements).filter('[name="passphrase"]').siblings('.tte-pesan').remove();
+			jangkarPesan($(form.elements).filter('[name="passphrase"]')).siblings('.tte-pesan').remove();
 
 			$(form.elements).filter(':submit').each(function() {
 				var $tombol = $(this);

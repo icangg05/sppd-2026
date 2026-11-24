@@ -24,31 +24,31 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label>Nama Depan</label>
-									<input type="text" class="form-control" name="first_name">
+									<input type="text" class="form-control" name="first_name" value="<?php echo html_escape(set_value('first_name')); ?>">
 								</div>
 							</div>
 							<div class="col-md-12">
 								<div class="form-group">
 									<label>Nama Belakang</label>
-									<input type="text" class="form-control" name="last_name">
+									<input type="text" class="form-control" name="last_name" value="<?php echo html_escape(set_value('last_name')); ?>">
 								</div>
 							</div>
 							<div class="col-md-12">
 								<div class="form-group">
 									<label>Telepon</label>
-									<input type="text" class="form-control" name="phone">
+									<input type="text" class="form-control" name="phone" value="<?php echo html_escape(set_value('phone')); ?>">
 								</div>
 							</div>
 							<div class="col-md-12">
 								<div class="form-group">
 									<label>User Name</label>
-									<input type="text" class="form-control" name="username">
+									<input type="text" class="form-control" name="username" value="<?php echo html_escape(set_value('username')); ?>">
 								</div>
 							</div>
 							<div class="col-md-12">
 								<div class="form-group">
 									<label>Email</label>
-									<input type="text" class="form-control" name="email">
+									<input type="text" class="form-control" name="email" value="<?php echo html_escape(set_value('email')); ?>">
 								</div>
 							</div>
 							<div class="col-md-12">
@@ -68,7 +68,7 @@
 								<div class="form-group">
 									<label>SKPD</label>
 									<select class="form-control select2" name="skpd_id" id="skpd" onchange="tampilkan()">
-										<option >- Pilih -</option>
+										<option value="">- Pilih SKPD -</option>
 										<?php
 										foreach ($skpd as $s) {
 											echo '<option value="'.$s->skpd_id.'">'.$s->skpd_nama.'</option>';
@@ -80,10 +80,15 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label>Pilih Group</label>
-									<select class="form-control" name="groups[]" id="group" onchange="tampilkan()">
+									<select class="form-control pilih-select2" name="groups[]" id="group" onchange="tampilkan()">
 										<option value="">- Pilih Group -</option>
 										<?php foreach($groups as $v){
-											echo "<option value='$v->id'>$v->name</option>" ;
+											// role berkuota yang sudah penuh (mis. Walikota 2/2) tidak bisa dipilih
+											if (!empty($v->penuh)) {
+												echo "<option value='$v->id' disabled>$v->name (penuh: $v->penuh)</option>";
+											} else {
+												echo "<option value='$v->id'>$v->name</option>" ;
+											}
 										}?>
 									</select>
 								</div>
@@ -92,7 +97,7 @@
 								<div class="col-md-12">
 									<div class="form-group">
 										<label>Pilih Sub Bagian</label>
-										<select class="form-control" name="subbagian">
+										<select class="form-control pilih-select2" name="subbagian">
 											<option value="">- Pilih Sub Bagian -</option>
 											<?php
 											foreach ($subbagian as $s) {
@@ -107,7 +112,7 @@
 								<div class="col-md-12">
 									<div class="form-group">
 										<label>Pilih Bagian</label>
-										<select class="form-control" name="bagian">
+										<select class="form-control pilih-select2" name="bagian">
 											<option value="">- Pilih Bagian -</option>
 											<?php
 											foreach ($bagian as $s) {
@@ -122,7 +127,7 @@
 								<div class="col-md-12">
 									<div class="form-group">
 										<label>Pilih Asisten</label>
-										<select class="form-control" name="asisten">
+										<select class="form-control pilih-select2" name="asisten">
 											<option value="">- Pilih Asisten -</option>
 											<?php
 											foreach ($asisten as $s) {
@@ -153,7 +158,7 @@
 	</div>
 	<!-- /.content-wrapper -->
 	<script>
-		var ckeditor = CKEDITOR.replace('ckeditor');
+		if (window.CKEDITOR && document.getElementById('ckeditor')) { CKEDITOR.replace('ckeditor'); }
 	</script>
 	<script>
 		function tampilkan(){
@@ -194,6 +199,8 @@
 <script>
 	$(function () {
 		//Initialize Select2 Elements
-		$(".select2").select2();
+		$(".select2").select2({ width: '100%' });
+		// pilihan pendek tanpa kolom cari; dipakai pengganti dropdown bawaan browser yang menutup sendiri
+		$(".pilih-select2").select2({ minimumResultsForSearch: Infinity, width: '100%' });
 	});
 </script>

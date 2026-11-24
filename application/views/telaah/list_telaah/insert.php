@@ -31,6 +31,24 @@
 		padding-left: 20px;
 	}
 
+	/* Penanda field wajib / opsional */
+	.wajib {
+		color: #dd4b39;
+		font-weight: 700;
+		margin-left: 2px;
+	}
+
+	.opsional {
+		color: #999;
+		font-weight: 400;
+		font-size: 12px;
+	}
+
+	.keterangan-wajib {
+		margin: 0 0 10px;
+		color: #777;
+	}
+
 	/* Select2 tujuan (negara, provinsi, kota) setinggi input lain (34px) agar kolomnya sejajar */
 	#ln .select2-container .select2-selection--single,
 	#ldlp .select2-container .select2-selection--single,
@@ -119,6 +137,7 @@
 								<ul><?php echo validation_errors('<li>', '</li>'); ?></ul>
 							</div>
 						<?php } ?>
+						<p class="keterangan-wajib">Tanda <span class="wajib" title="Wajib diisi">*</span> wajib diisi.</p>
 						<table class="table table-bordered ">
 							<tr class="info">
 								<th class="col-md-3" colspan="2">
@@ -158,27 +177,27 @@
 								</td>
 							</tr>
 							<tr>
-								<th class="col-md-3">Perihal (Maksud Perjalanan Dinas)</th>
+								<th class="col-md-3">Perihal (Maksud Perjalanan Dinas) <span class="wajib" title="Wajib diisi">*</span></th>
 								<td><?php echo form_error('telaah_perihal'); ?>
 									<textarea class="form-control" name="telaah_perihal" rows="4"><?php echo set_value('telaah_perihal'); ?></textarea>
 								</td>
 							</tr>
 							<tr>
-								<th class="col-md-3">Persoalan</th>
+								<th class="col-md-3">Persoalan <span class="wajib" title="Wajib diisi">*</span></th>
 								<td>
 									<?php echo form_error('telaah_persoalan'); ?>
 									<textarea class="form-control" name="telaah_persoalan" rows="4"><?php echo set_value('telaah_persoalan'); ?></textarea>
 								</td>
 							</tr>
 							<tr>
-								<th class="col-md-3">Fakta yang mempengaruhi</th>
+								<th class="col-md-3">Fakta yang mempengaruhi <span class="wajib" title="Wajib diisi">*</span></th>
 								<td>
 									<?php echo form_error('telaah_fakta'); ?>
 									<textarea class="form-control" name="telaah_fakta" rows="4"><?php echo set_value('telaah_fakta'); ?></textarea>
 								</td>
 							</tr>
 							<tr>
-								<th class="col-md-3">Analisis</th>
+								<th class="col-md-3">Analisis <span class="wajib" title="Wajib diisi">*</span></th>
 								<td>
 									<?php echo form_error('telaah_analisis'); ?>
 									<textarea class="form-control" name="telaah_analisis" rows="4"><?php echo set_value('telaah_analisis'); ?></textarea>
@@ -197,7 +216,7 @@
 											if (form_error('telaah_jenisangkutan')) {
 												echo form_error('telaah_jenisangkutan');
 											} else {
-												echo "<label> Jenis Angkutan</label>";
+												echo "<label> Jenis Angkutan <span class=\"wajib\" title=\"Wajib diisi\">*</span></label>";
 											}
 											?>
 											<select class="form-control" name="telaah_jenisangkutan">
@@ -220,7 +239,7 @@
 											if (form_error('telaah_angkutan')) {
 												echo form_error('telaah_angkutan');
 											} else {
-												echo "<label> Angkutan</label>";
+												echo "<label> Angkutan <span class=\"wajib\" title=\"Wajib diisi\">*</span></label>";
 											}
 											?>
 											<select class="form-control" name="telaah_angkutan">
@@ -252,7 +271,7 @@
 											if (form_error('telaah_tanggalberangkat')) {
 												echo form_error('telaah_tanggalberangkat');
 											} else {
-												echo "<label> Tanggal Berangkat</label>";
+												echo "<label> Tanggal Berangkat <span class=\"wajib\" title=\"Wajib diisi\">*</span></label>";
 											}
 											?>
 											<div class="input-group ">
@@ -271,7 +290,7 @@
 											if (form_error('telaah_tanggalkembali')) {
 												echo form_error('telaah_tanggalkembali');
 											} else {
-												echo "<label> Tanggal Kembali</label>";
+												echo "<label> Tanggal Kembali <span class=\"wajib\" title=\"Wajib diisi\">*</span></label>";
 											}
 											?>
 											<div class="input-group ">
@@ -290,7 +309,7 @@
 											if (form_error('telaah_hari')) {
 												echo form_error('telaah_hari');
 											} else {
-												echo "<label> Lama Perjalanan (Hari)</label>";
+												echo "<label> Lama Perjalanan (Hari) <span class=\"wajib\" title=\"Wajib diisi\">*</span></label>";
 											}
 											?>
 											<div class="input-group ">
@@ -305,7 +324,7 @@
 											if (form_error('telaah_tempatberangkat')) {
 												echo form_error('telaah_tempatberangkat');
 											} else {
-												echo "<label> Tempat Berangkat</label>";
+												echo "<label> Tempat Berangkat <span class=\"wajib\" title=\"Wajib diisi\">*</span></label>";
 											}
 											?>
 											<input type="text" class="form-control" value="<?php echo set_value('telaah_tempatberangkat'); ?>" name="telaah_tempatberangkat">
@@ -317,7 +336,7 @@
 											if (form_error('telaah_domainperjalanan')) {
 												echo form_error('telaah_domainperjalanan');
 											} else {
-												echo "<label> Domain Perjalanan</label>";
+												echo "<label> Domain Perjalanan <span class=\"wajib\" title=\"Wajib diisi\">*</span></label>";
 											}
 											?>
 											<select class="form-control" name="telaah_domainperjalanan" onchange="toggleDomainPerjalanan(this.value);">
@@ -352,7 +371,7 @@
 											if (form_error('telaah_provinsitujuan')) {
 												echo form_error('telaah_provinsitujuan');
 											} else {
-												echo "<label> Provinsi</label>";
+												echo "<label> Provinsi <span class=\"wajib\" title=\"Wajib diisi\">*</span></label>";
 											}
 											?>
 											<select class="form-control select2" name="telaah_provinsitujuan" id="provinsi_id" onChange="tampil_kabupaten()" style="width: 100%;">
@@ -373,7 +392,7 @@
 											if (form_error('telaah_kotatujuan')) {
 												echo form_error('telaah_kotatujuan');
 											} else {
-												echo "<label> Kota Tujuan</label>";
+												echo "<label> Kota Tujuan <span class=\"wajib\" title=\"Wajib diisi\">*</span></label>";
 											}
 											?>
 											<select class="form-control select2" name="telaah_kotatujuan" id="kabkot_id" style="width: 100%;">
@@ -404,7 +423,7 @@
 							if (form_error('telaah_kotatujuan2')) {
 								echo form_error('telaah_kotatujuan2');
 							} else {
-								echo "<label> Kota Tujuan</label>";
+								echo "<label> Kota Tujuan <span class=\"wajib\" title=\"Wajib diisi\">*</span></label>";
 							}
 							?>
 							<select class="form-control select2" name="telaah_kotatujuan2" style="width: 100%;">
@@ -429,7 +448,7 @@
 							if (form_error('telaah_negaratujuan')) {
 								echo form_error('telaah_negaratujuan');
 							} else {
-								echo "<label> Negara Tujuan</label>";
+								echo "<label> Negara Tujuan <span class=\"wajib\" title=\"Wajib diisi\">*</span></label>";
 							}
 							?>
 							<select class="form-control select2" name="telaah_negaratujuan" style="width: 100%;">
@@ -448,7 +467,7 @@
 							if (form_error('telaah_kotatujuan_ln')) {
 								echo form_error('telaah_kotatujuan_ln');
 							} else {
-								echo "<label> Kota Tujuan</label>";
+								echo "<label> Kota Tujuan <span class=\"wajib\" title=\"Wajib diisi\">*</span></label>";
 							}
 							?>
 							<input type="text" class="form-control" name="telaah_kotatujuan_ln" maxlength="100" placeholder="Contoh : Tokyo" value="<?php echo set_value('telaah_kotatujuan_ln'); ?>">
@@ -461,7 +480,7 @@
 						if (form_error('telaah_kantortujuan')) {
 							echo form_error('telaah_kantortujuan');
 						} else {
-							echo "<label> Tempat Tujuan(Contoh : Kantor, Gedung, Hotel, Dll)</label>";
+							echo "<label> Tempat Tujuan (Contoh : Kantor, Gedung, Hotel, Dll) <span class=\"wajib\" title=\"Wajib diisi\">*</span></label>";
 						}
 						?>
 						<label></label>
@@ -486,7 +505,7 @@
 					</th>
 				</tr>
 				<tr>
-					<th class="col-md-3">Kegiatan</th>
+					<th class="col-md-3">Kegiatan <span class="wajib" title="Wajib diisi">*</span></th>
 					<td>
 						<?php echo form_error('telaah_kegiatan'); ?>
 						<select class="form-control select2" name="telaah_kegiatan" id="anggaran" onChange="tampil_anggaran()">
@@ -589,7 +608,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th class="col-md-3">Kategori Perjalanan</th>
+					<th class="col-md-3">Kategori Perjalanan <span class="wajib" title="Wajib diisi">*</span></th>
 					<td>
 						<?php echo form_error('telaah_kategoriperjalanan'); ?>
 						<select class="form-control" name="telaah_kategoriperjalanan">
@@ -607,7 +626,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th class="col-md-3">Kecepatan Telaah</th>
+					<th class="col-md-3">Kecepatan Telaah <span class="wajib" title="Wajib diisi">*</span></th>
 					<td>
 						<?php echo form_error('telaah_kecepatan'); ?>
 						<select class="form-control" name="telaah_kecepatan">
@@ -622,10 +641,10 @@
 					</td>
 				</tr>
 				<tr>
-					<th class="col-md-3">Dokumen Pendukung</th>
+					<th class="col-md-3">Dokumen Pendukung <span class="opsional">(opsional)</span></th>
 					<td>
 						<?php echo form_error('userfile'); ?>
-						<input type="file" class="form-control" name="userfile" value="<?php echo set_value('userfile'); ?>">
+						<input type="file" class="form-control" name="userfile" data-maks-mb="10" accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx,.ppt,.pptx" value="<?php echo set_value('userfile'); ?>">
 							<?php if ($dokumen_sementara) { ?>
 								<p class="help-block"><i class="fa fa-paperclip"></i> File yang sudah dipilih tetap tersimpan: <b><?php echo html_escape($dokumen_sementara['nama']); ?></b>. Pilih file lain hanya jika ingin menggantinya.</p>
 							<?php } ?>
@@ -650,7 +669,7 @@
 					</tr>
 				<?php } ?>
 				<tr>
-					<th class="col-md-3">Pelaksana Perjalanan Dinas</th>
+					<th class="col-md-3">Pelaksana Perjalanan Dinas <span class="wajib" title="Wajib diisi">*</span></th>
 					<td><b>PERINGATAN : UNTUK MELAKUKAN PERJALANAN DINAS YANG BARU PASTIKAN ANDA TELAH MENGISI LAPORAN PERJALANAN DINAS SEBELUMNYA. JIKA BELUM MENGISI LAPORAN PERJALANAN DINAS, SPPD INI TIDAK DAPAT DI PROSES OLEH SISTEM.</b>
 						<br><?php echo form_error('telaah_pelaksana'); ?>
 
@@ -666,7 +685,7 @@
 												echo "selected";
 											}
 
-											?>><?php echo $v->pegawai_nip ?> || <?php echo $v->pegawai_nama ?></option>
+											?>><?php echo html_escape($v->pegawai_nip) ?> || <?php echo html_escape($v->pegawai_nama) ?></option>
 									<?php } ?>
 								<?php } else { ?>
 									<select class="form-control select2" name="telaah_pelaksana" onchange="showPelaksana(this.value)">
@@ -680,7 +699,7 @@
 													echo "selected";
 												}
 
-												?>><?php echo $v->pegawai_nip ?> || <?php echo $v->pegawai_nama ?></option>
+												?>><?php echo html_escape($v->pegawai_nip) ?> || <?php echo html_escape($v->pegawai_nama) ?></option>
 										<?php } ?>
 									<?php } ?>
 									</select>
@@ -696,7 +715,7 @@
 
 											<?php foreach ($pelaksana as $v): ?>
 												<option value="<?= $v->pegawai_id ?>" <?= $selected_id == $v->pegawai_id ? 'selected' : '' ?>>
-													<?= !empty($v->pegawai_nip) ? (int) $v->pegawai_nip . ' || ' : '' ?> <?= $v->pegawai_nama ?>
+													<?= !empty($v->pegawai_nip) ? (int) $v->pegawai_nip . ' || ' : '' ?> <?= html_escape($v->pegawai_nama) ?>
 												</option>
 											<?php endforeach ?>
 
@@ -710,7 +729,7 @@
 
 												<option value="<?= $v->pegawai_id ?>"
 													<?= ($status_pelaksana[0] == $v->pegawai_id) ? 'selected' : '' ?>>
-													<?= !empty($v->pegawai_nip) ? (int) $v->pegawai_nip . ' || ' : '' ?> <?= $v->pegawai_nama ?>
+													<?= !empty($v->pegawai_nip) ? (int) $v->pegawai_nip . ' || ' : '' ?> <?= html_escape($v->pegawai_nama) ?>
 												</option>
 											<?php endforeach; ?>
 
@@ -747,7 +766,7 @@
 
 							<?php foreach ($pengikut as $v): ?>
 								<option value="<?= $v->pegawai_id ?>" <?= set_select('telaah_pengikut', $v->pegawai_id) ?>>
-									<?= !empty($v->pegawai_nip) ? $v->pegawai_nip . ' || ' : '' ?> <?= $v->pegawai_nama ?>
+									<?= !empty($v->pegawai_nip) ? html_escape($v->pegawai_nip) . ' || ' : '' ?> <?= html_escape($v->pegawai_nama) ?>
 								</option>
 							<?php endforeach; ?>
 
@@ -760,7 +779,7 @@
 					</th>
 				</tr>
 				<tr>
-					<th class="col-md-3">Tanggal SPPD</th>
+					<th class="col-md-3">Tanggal SPPD <span class="wajib" title="Wajib diisi">*</span></th>
 					<td>
 						<?php echo form_error('telaah_tanggalspd'); ?>
 						<input type="text" class="form-control" name="telaah_tanggalspd" id="datepicker3" value="<?php if (set_value('telaah_tanggalspd')) {
@@ -771,7 +790,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th class="col-md-3">Tanggal SPT</th>
+					<th class="col-md-3">Tanggal SPT <span class="wajib" title="Wajib diisi">*</span></th>
 					<td>
 						<?php echo form_error('telaah_tanggalspt'); ?>
 						<input type="text" class="form-control" name="telaah_tanggalspt" id="datepicker4" value="<?php if (set_value('telaah_tanggalspt')) {

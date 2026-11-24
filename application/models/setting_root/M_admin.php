@@ -519,16 +519,19 @@ class M_admin extends CI_Model
 	}
 	
 	//Model Camat
+	// Camat & Lurah sama-sama telaah_kategori 5; dibedakan dari SKPD pelaksana
+	// (kecamatan / kelurahan di table_relasi_kelurahan). Dipakai lewat subquery
+	// agar tidak ada baris ganda (satu kecamatan punya banyak kelurahan).
 	public function record_count_camat() {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='5'");
+			WHERE telaah_kategori='5' AND table_pegawai.skpd_id IN (SELECT id_kecamatan FROM table_relasi_kelurahan)");
 	}
 	
 	public function record_count_search_camat($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='5' AND $column like '%".$this->db->escape_str((string) $data)."%'");
+			WHERE telaah_kategori='5' AND table_pegawai.skpd_id IN (SELECT id_kecamatan FROM table_relasi_kelurahan) AND $column like '%".$this->db->escape_str((string) $data)."%'");
 	}
 	
 	public function data_camat($limit, $start) {
@@ -536,8 +539,8 @@ class M_admin extends CI_Model
 		$this->db->from('table_telaah');
 		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana=table_pegawai.pegawai_id','left');
 		$this->db->join('table_skpd','table_skpd.skpd_id=table_pegawai.skpd_id', 'LEFT');
-		$this->db->join('table_relasi_kelurahan','table_skpd.skpd_id=table_relasi_kelurahan.id_kecamatan');
 		$this->db->where('table_telaah.telaah_kategori',5);
+		$this->db->where("table_pegawai.skpd_id IN (SELECT id_kecamatan FROM table_relasi_kelurahan)", NULL, FALSE);
 		$this->db->limit ($limit, $start);
 		$this->db->order_by('table_telaah.telaah_waktuinput','DESC');
 		$query = $this->db->get ();
@@ -549,6 +552,7 @@ class M_admin extends CI_Model
 		$this->db->from('table_telaah');
 		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana=table_pegawai.pegawai_id','left');
 		$this->db->where('table_telaah.telaah_kategori',5);
+		$this->db->where("table_pegawai.skpd_id IN (SELECT id_kecamatan FROM table_relasi_kelurahan)", NULL, FALSE);
 		$this->db->like($column,$value);
 		$this->db->limit ($limit, $start);
 		$query = $this->db->get ();
@@ -609,13 +613,19 @@ class M_admin extends CI_Model
 	public function record_count_lurah() {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='5'");
+			WHERE telaah_kategori='5' AND table_pegawai.skpd_id IN (SELECT id_kelurahan FROM table_relasi_kelurahan)");
 	}
 	
-	public function record_count_search($column, $data) {
+	// dipanggil search_admin / result_admin (dulu bernama record_count_search sehingga filter Lurah error 500)
+	public function record_count_search_lurah($column, $data) {
 		return $this->db->count_all("table_telaah 
 			LEFT JOIN table_pegawai ON table_telaah.telaah_pelaksana=table_pegawai.pegawai_id
-			WHERE telaah_kategori='5' AND $column like '%".$this->db->escape_str((string) $data)."%'");
+			WHERE telaah_kategori='5' AND table_pegawai.skpd_id IN (SELECT id_kelurahan FROM table_relasi_kelurahan) AND $column like '%".$this->db->escape_str((string) $data)."%'");
+	}
+
+	// nama lama, masih dipakai setting_root/admin/search_lurah
+	public function record_count_search($column, $data) {
+		return $this->record_count_search_lurah($column, $data);
 	}
 	
 	public function data_lurah($limit, $start) {
@@ -623,8 +633,8 @@ class M_admin extends CI_Model
 		$this->db->from('table_telaah');
 		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana=table_pegawai.pegawai_id','left');
 		$this->db->join('table_skpd','table_skpd.skpd_id=table_pegawai.skpd_id', 'LEFT');
-		$this->db->join('table_relasi_kelurahan','table_skpd.skpd_id=table_relasi_kelurahan.id_kelurahan');
 		$this->db->where('table_telaah.telaah_kategori',5);
+		$this->db->where("table_pegawai.skpd_id IN (SELECT id_kelurahan FROM table_relasi_kelurahan)", NULL, FALSE);
 		$this->db->limit ($limit, $start);
 		$this->db->order_by('table_telaah.telaah_waktuinput','DESC');
 		$query = $this->db->get ();
@@ -636,6 +646,7 @@ class M_admin extends CI_Model
 		$this->db->from('table_telaah');
 		$this->db->join('table_pegawai','table_telaah.telaah_pelaksana=table_pegawai.pegawai_id','left');
 		$this->db->where('table_telaah.telaah_kategori',5);
+		$this->db->where("table_pegawai.skpd_id IN (SELECT id_kelurahan FROM table_relasi_kelurahan)", NULL, FALSE);
 		$this->db->like($column,$value);
 		$this->db->limit ($limit, $start);
 		$query = $this->db->get ();

@@ -192,10 +192,19 @@
   <script>
     // Tombol lihat/sembunyikan di semua input password & passphrase (kecuali yang diberi data-tanpa-lihat)
     (function ($) {
+      var nomorForm = 0;
       function pasang(input) {
         var $in = $(input);
         if ($in.data('lihat-sandi') || $in.is('[data-tanpa-lihat]')) return;
+        // Form yang ditulis di dalam <table> dikeluarkan browser sebagai elemen kosong; inputnya hanya
+        // terikat lewat parser. Saat dibungkus (dipindah di DOM) ikatan itu putus dan nilainya tidak ikut
+        // terkirim, jadi ikat ulang lewat atribut form.
+        var form = input.form;
         $in.data('lihat-sandi', true).wrap('<span class="lihat-sandi"></span>');
+        if (form && input.form !== form) {
+          if (!form.id) form.id = 'form-lihat-sandi-' + (++nomorForm);
+          input.setAttribute('form', form.id);
+        }
         $('<button type="button" class="lihat-sandi-tombol" aria-pressed="false"></button>')
           .attr({ 'aria-label': 'Tampilkan', title: 'Tampilkan' })
           .html('<i class="fa fa-eye"></i>')
@@ -213,7 +222,7 @@
       });
       // sebelum dikirim, kembalikan ke password agar isian tidak tersimpan sebagai teks biasa oleh browser
       $(document).on('submit', 'form', function () {
-        $(this).find('.lihat-sandi > input[type="text"]').each(function () { this.type = 'password'; });
+        $(this.elements).filter('.lihat-sandi > input[type="text"]').each(function () { this.type = 'password'; });
       });
       $(function () { $('input[type="password"]').each(function () { pasang(this); }); });
       $(document).on('shown.bs.modal', function (e) {

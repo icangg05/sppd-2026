@@ -297,14 +297,14 @@
 										<a href="" class="btn btn-warning btn-lg btn-block" data-toggle="modal" data-target="#perbaiki">PERBAIKI</a>
 									</th>
  								</tr>
-								
-								<!-- Modal -->
-								<?php $this->load->view('telaah/disposisi/lihat_laporan/modal_terima');?>
-								<?php $this->load->view('telaah/disposisi/lihat_laporan/modal_tolak');?>
-								<?php $this->load->view('telaah/disposisi/lihat_laporan/modal_perbaikan');?>
-								<?php $this->load->view('telaah/disposisi/lihat_laporan/modal_passphrase');?>
-								<!-- Modal -->
 						  </table>
+
+						  <!-- Modal: harus di luar <table>; form di dalam tabel dikeluarkan browser dan isiannya bisa tidak terkirim -->
+						  <?php $this->load->view('telaah/disposisi/lihat_laporan/modal_terima');?>
+						  <?php $this->load->view('telaah/disposisi/lihat_laporan/modal_tolak');?>
+						  <?php $this->load->view('telaah/disposisi/lihat_laporan/modal_perbaikan');?>
+						  <?php $this->load->view('telaah/disposisi/lihat_laporan/modal_passphrase');?>
+						  <!-- Modal -->
 						  <?php } ?>
 						</div>
 					</div>
